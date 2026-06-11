@@ -1,9 +1,27 @@
 const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const finePointer = window.matchMedia("(pointer: fine)").matches;
 const hasGsap = typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined";
+let lenis = null;
 
 // ===== Footer year =====
 document.getElementById("year").textContent = new Date().getFullYear();
+
+// ===== Smooth-scroll helper =====
+function goTo(target) {
+  const el = typeof target === "string" ? document.querySelector(target) : target;
+  if (!el) return;
+  if (lenis) lenis.scrollTo(el, { offset: -70, duration: 1.4 });
+  else el.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth" });
+}
+
+document.querySelectorAll('a[href^="#"]').forEach((a) => {
+  a.addEventListener("click", (e) => {
+    const target = document.querySelector(a.getAttribute("href"));
+    if (!target) return;
+    e.preventDefault();
+    goTo(target);
+  });
+});
 
 // ===== Typing effect =====
 const roles = [
@@ -64,29 +82,254 @@ const sectionObserver = new IntersectionObserver(
 );
 document.querySelectorAll("section[id]").forEach((s) => sectionObserver.observe(s));
 
+// ===== Petals =====
+const PETAL_COLORS = ["#ff7d5c", "#ffb3c7", "#b89cff", "#ff9b73"];
+
+function makePetal(x, y) {
+  const p = document.createElement("span");
+  p.className = "petal";
+  p.textContent = "✿";
+  p.style.color = PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)];
+  p.style.left = x + "px";
+  p.style.top = y + "px";
+  document.body.appendChild(p);
+  return p;
+}
+
+function petalBurst(x, y, n = 8) {
+  if (!hasGsap || prefersReduced) return;
+  for (let i = 0; i < n; i++) {
+    const p = makePetal(x, y);
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 40 + Math.random() * 70;
+    gsap.fromTo(p, { scale: 0.6, opacity: 1 }, {
+      x: Math.cos(angle) * dist,
+      y: Math.sin(angle) * dist + 24,
+      rotation: gsap.utils.random(-180, 180),
+      scale: gsap.utils.random(0.4, 1.1),
+      opacity: 0,
+      duration: gsap.utils.random(0.6, 1.1),
+      ease: "power2.out",
+      onComplete: () => p.remove(),
+    });
+  }
+}
+
+function petalRain(count = 44) {
+  if (!hasGsap || prefersReduced) return;
+  for (let i = 0; i < count; i++) {
+    const p = makePetal(Math.random() * window.innerWidth, -30);
+    p.style.fontSize = gsap.utils.random(11, 22) + "px";
+    gsap.to(p, {
+      y: window.innerHeight + 80,
+      x: "+=" + gsap.utils.random(-130, 130),
+      rotation: gsap.utils.random(-360, 360),
+      duration: gsap.utils.random(2.6, 5.5),
+      delay: Math.random() * 0.9,
+      ease: "power1.in",
+      onComplete: () => p.remove(),
+    });
+  }
+}
+
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".palette-panel") || e.target.closest(".terminal")) return;
+  petalBurst(e.clientX, e.clientY);
+});
+
+// ===== Interactive terminal =====
+const terminal = document.getElementById("terminal");
+const termOut = document.getElementById("term-out");
+const termBody = document.getElementById("term-body");
+const termInput = document.getElementById("term-input");
+
+if (terminal && termInput) {
+  terminal.addEventListener("click", () => termInput.focus());
+
+  const print = (text, cls = "t-out") => {
+    const div = document.createElement("div");
+    div.className = cls;
+    div.textContent = text;
+    termOut.appendChild(div);
+  };
+
+  const echo = (cmd) => {
+    const div = document.createElement("div");
+    const prompt = document.createElement("span");
+    prompt.className = "t-prompt";
+    prompt.textContent = "$";
+    div.appendChild(prompt);
+    div.appendChild(document.createTextNode(" " + cmd));
+    termOut.appendChild(div);
+  };
+
+  const commands = {
+    help: () => print("commands: whoami · projects · skills · contact · gh · petals · clear · sudo hire-me"),
+    whoami: () => print("vinisha — engineer · researcher · builder"),
+    projects: () => {
+      print("rta · interview-simulator · big-back-bites · burnlist · the-hollow-pact · pipelens · mercuryci · aml-detection …");
+      print("↳ see ‘Selected work’ and ‘The lab’ above, or run `gh`");
+    },
+    skills: () => print("python · c/c++/c# · java · sql · js/ts · react · fastapi · tensorflow · aws · azure · docker"),
+    contact: () => print("viba2022@gmail.com · linkedin.com/in/vinishab · github.com/vinisha231"),
+    gh: () => {
+      print("opening github.com/vinisha231 …");
+      window.open("https://github.com/vinisha231", "_blank");
+    },
+    petals: () => {
+      if (!hasGsap || prefersReduced) return print("petals are napping (reduced motion is on) 🌙");
+      print("✿ ✿ ✿");
+      petalRain();
+    },
+    clear: () => { termOut.innerHTML = ""; },
+    "sudo hire-me": () => {
+      print("permission granted ✿ opening inbox…");
+      setTimeout(() => { window.location.href = "mailto:viba2022@gmail.com"; }, 600);
+    },
+  };
+
+  termInput.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    const cmd = termInput.value.trim();
+    termInput.value = "";
+    if (!cmd) return;
+    echo(cmd);
+    const fn = commands[cmd.toLowerCase()];
+    if (fn) fn();
+    else print(`command not found: ${cmd} — try \`help\``);
+    termBody.scrollTop = termBody.scrollHeight;
+  });
+}
+
+// ===== Command palette (⌘K) =====
+const palette = document.getElementById("palette");
+const paletteInput = document.getElementById("palette-input");
+const paletteList = document.getElementById("palette-list");
+const paletteBtn = document.getElementById("palette-btn");
+const paletteBackdrop = document.getElementById("palette-backdrop");
+
+const paletteItems = [
+  { icon: "✿", label: "About me", hint: "01", action: () => goTo("#about") },
+  { icon: "🔬", label: "Experience", hint: "02", action: () => goTo("#experience") },
+  { icon: "🏆", label: "Selected work", hint: "03", action: () => goTo("#projects") },
+  { icon: "🧪", label: "The lab", hint: "04", action: () => goTo("#lab") },
+  { icon: "🧰", label: "Toolbox", hint: "05", action: () => goTo("#skills") },
+  { icon: "🎓", label: "Education", hint: "06", action: () => goTo("#education") },
+  { icon: "💌", label: "Contact", hint: "say hi", action: () => goTo("#contact") },
+  { icon: "🐙", label: "GitHub", hint: "↗", action: () => window.open("https://github.com/vinisha231", "_blank") },
+  { icon: "💼", label: "LinkedIn", hint: "↗", action: () => window.open("https://linkedin.com/in/vinishab", "_blank") },
+  { icon: "✉️", label: "Email me", hint: "mailto", action: () => { window.location.href = "mailto:viba2022@gmail.com"; } },
+  { icon: "🌸", label: "Make it rain petals", hint: "fun", action: () => petalRain(60) },
+];
+
+let filtered = paletteItems;
+let selected = 0;
+
+function renderPalette() {
+  paletteList.innerHTML = "";
+  filtered.forEach((item, i) => {
+    const li = document.createElement("li");
+    if (i === selected) li.classList.add("is-selected");
+    const icon = document.createElement("span");
+    icon.className = "p-icon";
+    icon.textContent = item.icon;
+    const label = document.createElement("span");
+    label.textContent = item.label;
+    const hint = document.createElement("span");
+    hint.className = "p-hint";
+    hint.textContent = item.hint;
+    li.append(icon, label, hint);
+    li.addEventListener("click", () => runItem(item));
+    li.addEventListener("mousemove", () => {
+      if (selected === i) return;
+      selected = i;
+      paletteList.querySelectorAll("li").forEach((el, j) =>
+        el.classList.toggle("is-selected", j === selected)
+      );
+    });
+    paletteList.appendChild(li);
+  });
+  const sel = paletteList.querySelector(".is-selected");
+  if (sel) sel.scrollIntoView({ block: "nearest" });
+}
+
+function openPalette() {
+  palette.hidden = false;
+  document.body.classList.add("palette-open");
+  if (lenis) lenis.stop();
+  paletteInput.value = "";
+  filtered = paletteItems;
+  selected = 0;
+  renderPalette();
+  paletteInput.focus();
+}
+
+function closePalette() {
+  palette.hidden = true;
+  document.body.classList.remove("palette-open");
+  if (lenis) lenis.start();
+}
+
+function runItem(item) {
+  closePalette();
+  setTimeout(item.action, 60);
+}
+
+paletteBtn.addEventListener("click", openPalette);
+paletteBackdrop.addEventListener("click", closePalette);
+
+window.addEventListener("keydown", (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+    e.preventDefault();
+    palette.hidden ? openPalette() : closePalette();
+  } else if (e.key === "Escape" && !palette.hidden) {
+    closePalette();
+  }
+});
+
+paletteInput.addEventListener("input", () => {
+  const q = paletteInput.value.trim().toLowerCase();
+  filtered = paletteItems.filter((it) => it.label.toLowerCase().includes(q));
+  selected = 0;
+  renderPalette();
+});
+
+paletteInput.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    selected = Math.min(selected + 1, filtered.length - 1);
+    renderPalette();
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    selected = Math.max(selected - 1, 0);
+    renderPalette();
+  } else if (e.key === "Enter" && filtered[selected]) {
+    runItem(filtered[selected]);
+  }
+});
+
+// ===== Spotlight follows the mouse on cards =====
+if (finePointer) {
+  document.querySelectorAll(".spot").forEach((el) => {
+    el.addEventListener("mousemove", (e) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--mx", e.clientX - r.left + "px");
+      el.style.setProperty("--my", e.clientY - r.top + "px");
+    });
+  });
+}
+
 // ===== Scroll choreography (GSAP + Lenis) =====
 if (hasGsap && !prefersReduced) {
   gsap.registerPlugin(ScrollTrigger);
 
   // Smooth inertia scrolling
-  let lenis = null;
   if (typeof Lenis !== "undefined") {
     lenis = new Lenis({ duration: 1.15 });
     lenis.on("scroll", ScrollTrigger.update);
     gsap.ticker.add((time) => lenis.raf(time * 1000));
     gsap.ticker.lagSmoothing(0);
   }
-
-  // Anchor links through Lenis
-  document.querySelectorAll('a[href^="#"]').forEach((a) => {
-    a.addEventListener("click", (e) => {
-      const target = document.querySelector(a.getAttribute("href"));
-      if (!target) return;
-      e.preventDefault();
-      if (lenis) lenis.scrollTo(target, { offset: -70, duration: 1.4 });
-      else target.scrollIntoView({ behavior: "smooth" });
-    });
-  });
 
   // Scroll progress bar
   gsap.to(".progress-bar", {
@@ -100,6 +343,38 @@ if (hasGsap && !prefersReduced) {
   gsap.from([".hero-eyebrow", ".hero-roles", ".hero-blurb", ".hero-actions", ".hero-stats"], {
     y: 28, autoAlpha: 0, duration: 0.9, ease: "power3.out", stagger: 0.1, delay: 0.55,
   });
+
+  // Hero name: split into letters that bounce on hover
+  if (finePointer) {
+    document.querySelectorAll(".hero-line").forEach((line) => {
+      const frag = document.createDocumentFragment();
+      const split = (text, grad) => {
+        for (const ch of text) {
+          if (ch === " ") {
+            frag.appendChild(document.createTextNode(" "));
+            continue;
+          }
+          const s = document.createElement("span");
+          s.className = grad ? "ch grad" : "ch";
+          s.textContent = ch;
+          frag.appendChild(s);
+        }
+      };
+      [...line.childNodes].forEach((node) => {
+        split(node.textContent, node.nodeType === Node.ELEMENT_NODE);
+      });
+      line.innerHTML = "";
+      line.appendChild(frag);
+      line.querySelectorAll(".ch").forEach((chEl) => {
+        chEl.addEventListener("mouseenter", () => {
+          if (gsap.isTweening(chEl)) return;
+          gsap.timeline()
+            .to(chEl, { y: -16, rotation: gsap.utils.random(-10, 10), duration: 0.22, ease: "power2.out" })
+            .to(chEl, { y: 0, rotation: 0, duration: 1, ease: "elastic.out(1, 0.35)" });
+        });
+      });
+    });
+  }
 
   // Hero drifts away as you scroll
   gsap.to(".hero-inner", {
