@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600;1,9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <script>try { if (localStorage.getItem("theme") === "dusk") document.documentElement.classList.add("dusk"); } catch (e) {}</script>
 </head>
 <body>
   <!-- Ambient layers -->
@@ -47,6 +48,7 @@
         <li><a href="#skills">Skills</a></li>
       </ul>
       <div class="nav-right">
+        <button class="theme-btn" id="theme-btn" aria-label="Toggle dusk mode">☾</button>
         <button class="palette-btn" id="palette-btn" aria-label="Open command menu">
           <span class="pb-desktop">⌘K</span><span class="pb-mobile">✿ menu</span>
         </button>
@@ -81,6 +83,12 @@
         <div class="stat"><span class="stat-num"><span data-count="40">40</span>+</span><span class="stat-label">repos &amp; counting</span></div>
       </div>
     </div>
+    <div class="stickers" aria-hidden="true">
+      <span class="sticker" style="top: 16%; left: 70%">✿</span>
+      <span class="sticker" style="top: 34%; left: 86%">☁️</span>
+      <span class="sticker" style="top: 58%; left: 78%">⭐</span>
+      <span class="sticker" style="top: 76%; left: 88%">🌙</span>
+    </div>
     <div class="scroll-hint" aria-hidden="true"><span></span></div>
   </header>
 
@@ -95,7 +103,7 @@
     <!-- ===== About ===== -->
     <section id="about" class="section">
       <span class="giant">about</span>
-      <h2 class="section-title" data-reveal><span class="section-num">01</span> About me</h2>
+      <h2 class="section-title" data-reveal><span class="section-num">01</span> <span class="st-text">About me</span></h2>
       <div class="about-grid">
         <div class="about-text" data-reveal>
           <p>
@@ -139,7 +147,7 @@
     <!-- ===== Experience ===== -->
     <section id="experience" class="section">
       <span class="giant">career</span>
-      <h2 class="section-title" data-reveal><span class="section-num">02</span> Where I've worked</h2>
+      <h2 class="section-title" data-reveal><span class="section-num">02</span> <span class="st-text">Where I've worked</span></h2>
       <div class="timeline">
         <div class="timeline-line" aria-hidden="true"></div>
 
@@ -200,7 +208,7 @@
     <section id="projects" class="work">
       <div class="work-head section">
         <span class="giant">work</span>
-        <h2 class="section-title" data-reveal><span class="section-num">03</span> Selected work <span class="work-hint">— keep scrolling →</span></h2>
+        <h2 class="section-title" data-reveal><span class="section-num">03</span> <span class="st-text">Selected work</span> <span class="work-hint">— keep scrolling →</span></h2>
       </div>
       <div class="work-viewport">
         <div class="work-track">
@@ -275,7 +283,7 @@
     <!-- ===== Lab / more builds ===== -->
     <section id="lab" class="section">
       <span class="giant">lab</span>
-      <h2 class="section-title" data-reveal><span class="section-num">04</span> The lab <span class="work-hint">— side quests &amp; experiments</span></h2>
+      <h2 class="section-title" data-reveal><span class="section-num">04</span> <span class="st-text">The lab</span> <span class="work-hint">— side quests &amp; experiments</span></h2>
       <div class="lab-grid">
 
         <article class="lab-card tilt spot" data-reveal>
@@ -343,7 +351,7 @@
     <!-- ===== Skills ===== -->
     <section id="skills" class="section">
       <span class="giant">toolbox</span>
-      <h2 class="section-title" data-reveal><span class="section-num">05</span> Toolbox</h2>
+      <h2 class="section-title" data-reveal><span class="section-num">05</span> <span class="st-text">Toolbox</span></h2>
       <div class="skills-grid">
         <div class="skill-group spot" data-reveal>
           <h3>Languages</h3>
@@ -367,7 +375,7 @@
     <!-- ===== Education ===== -->
     <section id="education" class="section">
       <span class="giant">school</span>
-      <h2 class="section-title" data-reveal><span class="section-num">06</span> Education</h2>
+      <h2 class="section-title" data-reveal><span class="section-num">06</span> <span class="st-text">Education</span></h2>
       <div class="edu-grid">
         <div class="card edu-card tilt spot" data-reveal>
           <p class="edu-when">Sep 2026 — Jun 2028</p>
@@ -409,6 +417,8 @@
     </div>
     <p>Designed &amp; built by <strong>Vinisha Bala Dhayanidhi</strong> · © <span id="year"></span> · press <kbd>⌘K</kbd></p>
   </footer>
+
+  <div class="toast" id="toast" hidden></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
