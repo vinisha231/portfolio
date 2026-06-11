@@ -82,6 +82,51 @@ const sectionObserver = new IntersectionObserver(
 );
 document.querySelectorAll("section[id]").forEach((s) => sectionObserver.observe(s));
 
+// ===== Toast =====
+const toastEl = document.getElementById("toast");
+let toastTimer;
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toastEl.hidden = true; }, 2200);
+}
+
+// ===== Time-aware greeting =====
+const hour = new Date().getHours();
+document.querySelector(".hero-eyebrow").textContent =
+  "✿ " + (hour < 5 ? "up late? same — I'm" : hour < 12 ? "good morning, I'm" : hour < 18 ? "good afternoon, I'm" : "good evening, I'm");
+
+// ===== Dusk mode =====
+const themeBtn = document.getElementById("theme-btn");
+function setTheme(dusk, announce = false) {
+  document.documentElement.classList.toggle("dusk", dusk);
+  themeBtn.textContent = dusk ? "☀" : "☾";
+  try { localStorage.setItem("theme", dusk ? "dusk" : "dawn"); } catch (e) {}
+  if (announce) showToast(dusk ? "☾ dusk mode on" : "☀ back to dawn");
+}
+themeBtn.textContent = document.documentElement.classList.contains("dusk") ? "☀" : "☾";
+themeBtn.addEventListener("click", () => setTheme(!document.documentElement.classList.contains("dusk"), true));
+
+// ===== Party mode (try the Konami code) =====
+function partyMode() {
+  showToast("✿ PARTY MODE ✿");
+  petalRain(120);
+  document.body.classList.add("party");
+  setTimeout(() => document.body.classList.remove("party"), 6000);
+}
+const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+let konamiIdx = 0;
+window.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+  const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  konamiIdx = key === KONAMI[konamiIdx] ? konamiIdx + 1 : key === KONAMI[0] ? 1 : 0;
+  if (konamiIdx === KONAMI.length) {
+    konamiIdx = 0;
+    partyMode();
+  }
+});
+
 // ===== Petals =====
 const PETAL_COLORS = ["#ff7d5c", "#ffb3c7", "#b89cff", "#ff9b73"];
 
@@ -164,7 +209,25 @@ if (terminal && termInput) {
   };
 
   const commands = {
-    help: () => print("commands: whoami · projects · skills · contact · gh · petals · clear · sudo hire-me"),
+    help: () => print("commands: whoami · projects · skills · stats · contact · gh · theme · petals · party · clear · sudo hire-me"),
+    stats: () => {
+      print("fetching live from the github api…");
+      fetch("https://api.github.com/users/vinisha231")
+        .then((r) => r.json())
+        .then((d) => {
+          print(`public repos: ${d.public_repos} · followers: ${d.followers} · on github since ${new Date(d.created_at).getFullYear()}`);
+          termBody.scrollTop = termBody.scrollHeight;
+        })
+        .catch(() => print("github api unreachable — try again later"));
+    },
+    theme: () => {
+      themeBtn.click();
+      print(document.documentElement.classList.contains("dusk") ? "☾ dusk mode on" : "☀ dawn mode on");
+    },
+    party: () => {
+      print("✿ ✿ ✿");
+      partyMode();
+    },
     whoami: () => print("vinisha — engineer · researcher · builder"),
     projects: () => {
       print("rta · interview-simulator · big-back-bites · burnlist · the-hollow-pact · pipelens · mercuryci · aml-detection …");
@@ -219,7 +282,9 @@ const paletteItems = [
   { icon: "🐙", label: "GitHub", hint: "↗", action: () => window.open("https://github.com/vinisha231", "_blank") },
   { icon: "💼", label: "LinkedIn", hint: "↗", action: () => window.open("https://linkedin.com/in/vinishab", "_blank") },
   { icon: "✉️", label: "Email me", hint: "mailto", action: () => { window.location.href = "mailto:viba2022@gmail.com"; } },
+  { icon: "🌗", label: "Toggle dusk mode", hint: "theme", action: () => themeBtn.click() },
   { icon: "🌸", label: "Make it rain petals", hint: "fun", action: () => petalRain(60) },
+  { icon: "🎉", label: "Party mode", hint: "konami", action: partyMode },
 ];
 
 let filtered = paletteItems;
@@ -452,6 +517,56 @@ if (hasGsap && !prefersReduced) {
     });
   });
 
+  // Section titles scramble into place
+  const SCRAMBLE_CHARS = "✿*+~<>/-";
+  gsap.utils.toArray(".st-text").forEach((el) => {
+    const original = el.textContent;
+    ScrollTrigger.create({
+      trigger: el, start: "top 88%", once: true,
+      onEnter: () => {
+        let frame = 0;
+        const total = 16;
+        const timer = setInterval(() => {
+          frame++;
+          const settled = Math.floor((frame / total) * original.length);
+          el.textContent = [...original]
+            .map((c, i) => (c === " " ? " " : i < settled ? c : SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0]))
+            .join("");
+          if (frame >= total) {
+            clearInterval(timer);
+            el.textContent = original;
+          }
+        }, 42);
+      },
+    });
+  });
+
+  // Cards lean with scroll velocity
+  const skewTargets = gsap.utils.toArray(".lab-card, .timeline-item .card");
+  if (skewTargets.length) {
+    const skewSetters = skewTargets.map((el) => gsap.quickSetter(el, "skewY", "deg"));
+    const skewClamp = gsap.utils.clamp(-4, 4);
+    const skewProxy = { v: 0 };
+    ScrollTrigger.create({
+      onUpdate(self) {
+        const skew = skewClamp(self.getVelocity() / -500);
+        if (Math.abs(skew) > Math.abs(skewProxy.v)) {
+          skewProxy.v = skew;
+          gsap.to(skewProxy, {
+            v: 0, duration: 0.9, ease: "power3", overwrite: true,
+            onUpdate: () => skewSetters.forEach((set) => set(skewProxy.v)),
+          });
+        }
+      },
+    });
+  }
+
+  // Nav flower spins as you scroll
+  gsap.to(".logo-dot", {
+    rotation: 1080, ease: "none",
+    scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0.6 },
+  });
+
   // Pinned horizontal project gallery (desktop only)
   const mm = gsap.matchMedia();
   mm.add("(min-width: 900px)", () => {
@@ -473,6 +588,49 @@ if (hasGsap && !prefersReduced) {
       },
     });
   });
+
+  // Draggable hero stickers — grab and toss them
+  if (finePointer) {
+    document.querySelectorAll(".sticker").forEach((st) => {
+      gsap.to(st, { y: "+=14", duration: gsap.utils.random(1.8, 2.8), ease: "sine.inOut", yoyo: true, repeat: -1 });
+      let offsetX = 0, offsetY = 0, lastX = 0, lastY = 0, lastT = 0, vx = 0, vy = 0, dragging = false;
+      st.addEventListener("pointerdown", (e) => {
+        dragging = true;
+        st.setPointerCapture(e.pointerId);
+        gsap.killTweensOf(st);
+        offsetX = e.clientX - gsap.getProperty(st, "x");
+        offsetY = e.clientY - gsap.getProperty(st, "y");
+        lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
+        vx = 0; vy = 0;
+      });
+      st.addEventListener("pointermove", (e) => {
+        if (!dragging) return;
+        const now = performance.now();
+        const dt = Math.max(now - lastT, 1);
+        vx = ((e.clientX - lastX) / dt) * 1000;
+        vy = ((e.clientY - lastY) / dt) * 1000;
+        lastX = e.clientX; lastY = e.clientY; lastT = now;
+        gsap.set(st, {
+          x: e.clientX - offsetX,
+          y: e.clientY - offsetY,
+          rotation: gsap.utils.clamp(-24, 24, vx / 30),
+        });
+      });
+      const release = () => {
+        if (!dragging) return;
+        dragging = false;
+        gsap.to(st, {
+          x: "+=" + gsap.utils.clamp(-260, 260, vx * 0.15),
+          y: "+=" + gsap.utils.clamp(-260, 260, vy * 0.15),
+          rotation: 0,
+          duration: 0.9,
+          ease: "power3.out",
+        });
+      };
+      st.addEventListener("pointerup", release);
+      st.addEventListener("pointercancel", release);
+    });
+  }
 
   // 3D tilt on cards (mouse only)
   if (finePointer) {
