@@ -6,9 +6,10 @@ My personal portfolio — built with vanilla HTML, CSS, and JavaScript. No frame
 
 ## What's inside
 
-- 🎨 Dark glassmorphism design with animated gradient orbs
-- ⌨️ Typing-effect hero and terminal-style about card
-- 🧭 Scroll-revealed sections with an experience timeline
+- 🌸 Soft peach-pastel design with parallax gradient blobs and grain texture
+- 🌀 Scroll choreography — Lenis smooth scrolling + GSAP ScrollTrigger (pinned horizontal project gallery, velocity-reactive marquee, self-drawing timeline, drifting outline typography)
+- 🖱️ Trailing custom cursor, magnetic buttons, and 3D-tilt cards
+- ⌨️ Typing-effect hero, count-up stats, terminal-style about card
 - 🏆 Project showcase — AWS Hacks 2026 (2nd place), IxDA Designathon 2026 (1st place), and more
 - 📱 Fully responsive, with `prefers-reduced-motion` support
 
