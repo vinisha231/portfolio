@@ -8,7 +8,7 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✿</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600;1,9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -25,6 +25,16 @@
   <div class="cursor-dot" aria-hidden="true"></div>
   <div class="cursor-ring" aria-hidden="true"></div>
 
+  <!-- Command palette -->
+  <div class="palette" id="palette" hidden>
+    <div class="palette-backdrop" id="palette-backdrop"></div>
+    <div class="palette-panel" role="dialog" aria-label="Command menu">
+      <input id="palette-input" type="text" placeholder="Where to? Type to search…" autocomplete="off" spellcheck="false" />
+      <ul id="palette-list"></ul>
+      <p class="palette-foot"><kbd>↑↓</kbd> navigate · <kbd>↵</kbd> go · <kbd>esc</kbd> close</p>
+    </div>
+  </div>
+
   <!-- ===== Nav ===== -->
   <nav class="nav">
     <div class="nav-inner">
@@ -33,10 +43,15 @@
         <li><a href="#about">About</a></li>
         <li><a href="#experience">Experience</a></li>
         <li><a href="#projects">Work</a></li>
+        <li><a href="#lab">Lab</a></li>
         <li><a href="#skills">Skills</a></li>
-        <li><a href="#education">Education</a></li>
       </ul>
-      <a href="mailto:viba2022@gmail.com" class="btn btn-sm btn-outline nav-cta">Get in touch</a>
+      <div class="nav-right">
+        <button class="palette-btn" id="palette-btn" aria-label="Open command menu">
+          <span class="pb-desktop">⌘K</span><span class="pb-mobile">✿ menu</span>
+        </button>
+        <a href="mailto:viba2022@gmail.com" class="btn btn-sm btn-outline nav-cta">Get in touch</a>
+      </div>
     </div>
   </nav>
 
@@ -63,7 +78,7 @@
         <div class="stat"><span class="stat-num"><span data-count="3.88" data-decimals="2">3.88</span></span><span class="stat-label">GPA · double major</span></div>
         <div class="stat"><span class="stat-num">🥇 1st</span><span class="stat-label">IxDA Designathon ’26</span></div>
         <div class="stat"><span class="stat-num">🥈 2nd</span><span class="stat-label">AWS Hacks ’26</span></div>
-        <div class="stat"><span class="stat-num"><span data-count="18">18</span>+</span><span class="stat-label">languages shipped</span></div>
+        <div class="stat"><span class="stat-num"><span data-count="40">40</span>+</span><span class="stat-label">repos &amp; counting</span></div>
       </div>
     </div>
     <div class="scroll-hint" aria-hidden="true"><span></span></div>
@@ -100,18 +115,22 @@
             for them, even better.
           </p>
         </div>
-        <div class="about-card tilt" data-reveal>
-          <div class="terminal">
-            <div class="terminal-bar"><span></span><span></span><span></span><p>vinisha@uw ~ %</p></div>
-            <pre class="terminal-body"><code><span class="t-prompt">$</span> whoami
-<span class="t-out">vinisha — engineer · researcher · builder</span>
-<span class="t-prompt">$</span> cat location.txt
-<span class="t-out">Seattle, WA 🌲</span>
-<span class="t-prompt">$</span> ls interests/
-<span class="t-out">ml-for-healthcare  serverless  nlp
-accessibility  hackathons  ux-design</span>
-<span class="t-prompt">$</span> echo $STATUS
-<span class="t-out">open to opportunities ✿</span><span class="t-cursor">█</span></code></pre>
+        <div class="about-card" data-reveal>
+          <div class="terminal" id="terminal">
+            <div class="terminal-bar"><span></span><span></span><span></span><p>vinisha@uw ~ % — it's interactive, try `help`</p></div>
+            <div class="terminal-body" id="term-body">
+              <div id="term-out">
+                <div><span class="t-prompt">$</span> whoami</div>
+                <div class="t-out">vinisha — engineer · researcher · builder</div>
+                <div><span class="t-prompt">$</span> echo $STATUS</div>
+                <div class="t-out">open to opportunities ✿</div>
+                <div class="t-out t-hint"># try: help · projects · sudo hire-me</div>
+              </div>
+              <div class="term-input-row">
+                <span class="t-prompt">$</span>
+                <input id="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal input" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -126,7 +145,7 @@ accessibility  hackathons  ux-design</span>
 
         <article class="timeline-item" data-reveal>
           <div class="timeline-marker"></div>
-          <div class="card">
+          <div class="card spot">
             <div class="card-head">
               <h3>Student Researcher <span class="at">· UW Bothell</span></h3>
               <span class="date">Jun 2024 — Present</span>
@@ -143,7 +162,7 @@ accessibility  hackathons  ux-design</span>
 
         <article class="timeline-item" data-reveal>
           <div class="timeline-marker"></div>
-          <div class="card">
+          <div class="card spot">
             <div class="card-head">
               <h3>Software Engineer Intern <span class="at">· Quadrant Technologies</span></h3>
               <span class="date">Jul 2025 — Aug 2025</span>
@@ -160,7 +179,7 @@ accessibility  hackathons  ux-design</span>
 
         <article class="timeline-item" data-reveal>
           <div class="timeline-marker"></div>
-          <div class="card">
+          <div class="card spot">
             <div class="card-head">
               <h3>Teaching Assistant <span class="at">· Edmonds Community College</span></h3>
               <span class="date">Mar 2024 — Jun 2024</span>
@@ -186,7 +205,7 @@ accessibility  hackathons  ux-design</span>
       <div class="work-viewport">
         <div class="work-track">
 
-          <article class="work-card tilt">
+          <article class="work-card tilt spot">
             <span class="work-num">01</span>
             <div class="award-badge">🥈 2nd Place · AWS Hacks 2026</div>
             <h3>Rta — AI Benefits Navigator</h3>
@@ -201,9 +220,10 @@ accessibility  hackathons  ux-design</span>
               <span>AWS Bedrock</span><span>Lambda</span><span>API Gateway</span><span>Aurora</span>
               <span>Cognito</span><span>Polly</span><span>React</span><span>Amplify</span>
             </div>
+            <a class="project-cta" href="https://github.com/vinisha231/AWS-Hacks-2026" target="_blank" rel="noopener">view code ↗</a>
           </article>
 
-          <article class="work-card tilt">
+          <article class="work-card tilt spot">
             <span class="work-num">02</span>
             <div class="award-badge live">● Live in production</div>
             <h3>Interview Simulator Platform</h3>
@@ -217,10 +237,13 @@ accessibility  hackathons  ux-design</span>
               <span>Python</span><span>FastAPI</span><span>PostgreSQL</span><span>Claude API</span>
               <span>Polly</span><span>Transcribe</span><span>Node.js</span>
             </div>
-            <a class="project-cta" href="https://vdhaya-interview-simulator.com" target="_blank" rel="noopener">vdhaya-interview-simulator.com ↗</a>
+            <div class="cta-row">
+              <a class="project-cta" href="https://vdhaya-interview-simulator.com" target="_blank" rel="noopener">live site ↗</a>
+              <a class="project-cta" href="https://github.com/vinisha231/Interview_simulator" target="_blank" rel="noopener">view code ↗</a>
+            </div>
           </article>
 
-          <article class="work-card tilt">
+          <article class="work-card tilt spot">
             <span class="work-num">03</span>
             <div class="award-badge gold">🥇 1st Place · IxDA UWB Designathon 2026</div>
             <h3>Big Back Bites</h3>
@@ -232,31 +255,109 @@ accessibility  hackathons  ux-design</span>
             <div class="chips">
               <span>TypeScript</span><span>Figma</span><span>REST APIs</span><span>Agile UX</span>
             </div>
-            <a class="project-cta" href="https://github.com/vinisha231" target="_blank" rel="noopener">more on github ↗</a>
+            <a class="project-cta" href="https://github.com/vinisha231/Big-Back-Bites" target="_blank" rel="noopener">view code ↗</a>
+          </article>
+
+          <article class="work-card work-card-cta spot">
+            <span class="work-num">✿</span>
+            <h3>…and a whole lab full of experiments</h3>
+            <p>
+              Self-destructing Spotify playlists, an astrologically governed CI/CD pipeline,
+              a game companion that might betray you — keep scrolling, the weird stuff is next.
+            </p>
+            <a href="#lab" class="btn btn-primary magnetic">Enter the lab ✿</a>
           </article>
 
         </div>
       </div>
     </section>
 
+    <!-- ===== Lab / more builds ===== -->
+    <section id="lab" class="section">
+      <span class="giant">lab</span>
+      <h2 class="section-title" data-reveal><span class="section-num">04</span> The lab <span class="work-hint">— side quests &amp; experiments</span></h2>
+      <div class="lab-grid">
+
+        <article class="lab-card tilt spot" data-reveal>
+          <div class="lab-head"><h3>Burnlist</h3><a class="lab-link" href="https://vinisha231.github.io/Burnlist/" target="_blank" rel="noopener">live ↗</a></div>
+          <p>A Spotify playlist that self-destructs after one listen. Make someone a mix; once they play it, it's gone forever.</p>
+          <div class="chips"><span>JavaScript</span><span>Spotify API</span></div>
+          <a class="project-cta" href="https://github.com/vinisha231/Burnlist" target="_blank" rel="noopener">code ↗</a>
+        </article>
+
+        <article class="lab-card tilt spot" data-reveal>
+          <div class="lab-head"><h3>The Hollow Pact</h3></div>
+          <p>An asymmetric AI co-op adventure where your companion might be plotting against you — rebuilt in Unity 6 as a narrative action-RPG with a hidden trust system.</p>
+          <div class="chips"><span>Unity 6</span><span>C#</span><span>Companion AI</span></div>
+          <a class="project-cta" href="https://github.com/vinisha231/The-Hollow-Pact-v2" target="_blank" rel="noopener">code ↗</a>
+        </article>
+
+        <article class="lab-card tilt spot" data-reveal>
+          <div class="lab-head"><h3>Lease Clause Decoder</h3></div>
+          <p>AI that reads your lease and flags illegal clauses, landlord-favoring terms, and negotiation opportunities before you sign.</p>
+          <div class="chips"><span>TypeScript</span><span>LLM</span></div>
+          <a class="project-cta" href="https://github.com/vinisha231/lease-clause-decoder" target="_blank" rel="noopener">code ↗</a>
+        </article>
+
+        <article class="lab-card tilt spot" data-reveal>
+          <div class="lab-head"><h3>PipeLens</h3></div>
+          <p>AI-powered security auditor for Dockerfiles and CI/CD pipelines — catches misconfigurations before they ship.</p>
+          <div class="chips"><span>TypeScript</span><span>Docker</span><span>CI/CD</span></div>
+          <a class="project-cta" href="https://github.com/vinisha231/pipelens" target="_blank" rel="noopener">code ↗</a>
+        </article>
+
+        <article class="lab-card tilt spot" data-reveal>
+          <div class="lab-head"><h3>AML Detection System</h3></div>
+          <p>Anti-money-laundering toolkit: synthetic typology generator, rules engine, graph-based scoring, and an analyst dashboard.</p>
+          <div class="chips"><span>Python</span><span>Graph Analysis</span></div>
+          <a class="project-cta" href="https://github.com/vinisha231/aml-detection" target="_blank" rel="noopener">code ↗</a>
+        </article>
+
+        <article class="lab-card tilt spot" data-reveal>
+          <div class="lab-head"><h3>MercuryCI</h3></div>
+          <p>The emotionally aware, astrologically governed CI/CD pipeline. Deploys are blocked during Mercury retrograde. Obviously.</p>
+          <div class="chips"><span>Python</span><span>CI/CD</span><span>✨ vibes</span></div>
+          <a class="project-cta" href="https://github.com/vinisha231/MercuryCI" target="_blank" rel="noopener">code ↗</a>
+        </article>
+
+        <article class="lab-card tilt spot" data-reveal>
+          <div class="lab-head"><h3>OpenMRS Contributions</h3></div>
+          <p>Open-source accessibility, TypeScript, and UX improvements to the OpenMRS patient chart used in global-health clinics.</p>
+          <div class="chips"><span>TypeScript</span><span>Open Source</span><span>A11y</span></div>
+          <a class="project-cta" href="https://github.com/vinisha231/openmrs-patient-chart-improvements" target="_blank" rel="noopener">code ↗</a>
+        </article>
+
+        <article class="lab-card tilt spot" data-reveal>
+          <div class="lab-head"><h3>Atma Milan</h3></div>
+          <p>A Vedic soul-compatibility checker inspired by Hindu Jyotish astrology — kundali matching, but make it TypeScript.</p>
+          <div class="chips"><span>TypeScript</span><span>Jyotish</span></div>
+          <a class="project-cta" href="https://github.com/vinisha231/atma-milan" target="_blank" rel="noopener">code ↗</a>
+        </article>
+
+      </div>
+      <p class="more-projects" data-reveal>
+        the full archive lives on <a href="https://github.com/vinisha231?tab=repositories" target="_blank" rel="noopener">github.com/vinisha231 ↗</a>
+      </p>
+    </section>
+
     <!-- ===== Skills ===== -->
     <section id="skills" class="section">
       <span class="giant">toolbox</span>
-      <h2 class="section-title" data-reveal><span class="section-num">04</span> Toolbox</h2>
+      <h2 class="section-title" data-reveal><span class="section-num">05</span> Toolbox</h2>
       <div class="skills-grid">
-        <div class="skill-group" data-reveal>
+        <div class="skill-group spot" data-reveal>
           <h3>Languages</h3>
           <div class="chips lg"><span>Python</span><span>C</span><span>C#</span><span>C++</span><span>Java</span><span>SQL</span><span>JavaScript</span><span>TypeScript</span><span>HTML</span><span>CSS</span></div>
         </div>
-        <div class="skill-group" data-reveal>
+        <div class="skill-group spot" data-reveal>
           <h3>Frameworks</h3>
           <div class="chips lg"><span>React</span><span>Node.js</span><span>FastAPI</span><span>Flask</span><span>TensorFlow</span></div>
         </div>
-        <div class="skill-group" data-reveal>
+        <div class="skill-group spot" data-reveal>
           <h3>Cloud &amp; DevOps</h3>
           <div class="chips lg"><span>AWS</span><span>Bedrock</span><span>Lambda</span><span>RDS</span><span>Amplify</span><span>Elastic Beanstalk</span><span>Azure</span><span>Azure DevOps</span><span>Docker</span><span>Vercel</span><span>CI/CD</span></div>
         </div>
-        <div class="skill-group" data-reveal>
+        <div class="skill-group spot" data-reveal>
           <h3>Libraries &amp; Tools</h3>
           <div class="chips lg"><span>NumPy</span><span>pandas</span><span>Matplotlib</span><span>OpenCV</span><span>Git</span><span>Postman</span><span>Figma</span><span>VS Code</span></div>
         </div>
@@ -266,14 +367,14 @@ accessibility  hackathons  ux-design</span>
     <!-- ===== Education ===== -->
     <section id="education" class="section">
       <span class="giant">school</span>
-      <h2 class="section-title" data-reveal><span class="section-num">05</span> Education</h2>
+      <h2 class="section-title" data-reveal><span class="section-num">06</span> Education</h2>
       <div class="edu-grid">
-        <div class="card edu-card tilt" data-reveal>
+        <div class="card edu-card tilt spot" data-reveal>
           <p class="edu-when">Sep 2026 — Jun 2028</p>
           <h3>University of Washington, Seattle</h3>
           <p class="edu-degree">M.S. in Computational Linguistics</p>
         </div>
-        <div class="card edu-card tilt" data-reveal>
+        <div class="card edu-card tilt spot" data-reveal>
           <p class="edu-when">Sep 2022 — Jun 2026</p>
           <h3>University of Washington, Bothell</h3>
           <p class="edu-degree">B.S. in Computer Science &amp; Software Engineering<br />B.S. in Mathematics</p>
@@ -306,7 +407,7 @@ accessibility  hackathons  ux-design</span>
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
       </a>
     </div>
-    <p>Designed &amp; built by <strong>Vinisha Bala Dhayanidhi</strong> · © <span id="year"></span></p>
+    <p>Designed &amp; built by <strong>Vinisha Bala Dhayanidhi</strong> · © <span id="year"></span> · press <kbd>⌘K</kbd></p>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
