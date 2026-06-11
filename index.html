@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vinisha Bala Dhayanidhi — Software Engineer</title>
+  <meta name="description" content="Portfolio of Vinisha Bala Dhayanidhi — software engineer, ML researcher, and award-winning hackathon builder based in Seattle." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="orb orb-3" aria-hidden="true"></div>
+
+  <!-- ===== Nav ===== -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#top" class="logo">V<span class="logo-dot">✦</span></a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#education">Education</a></li>
+      </ul>
+      <a href="mailto:viba2022@gmail.com" class="btn btn-sm btn-outline nav-cta">Get in touch</a>
+    </div>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="hero" id="top">
+    <p class="hero-eyebrow reveal">Hi, my name is</p>
+    <h1 class="hero-name reveal d-1">Vinisha Bala<br /><span class="gradient-text">Dhayanidhi.</span></h1>
+    <h2 class="hero-roles reveal d-2">I'm a <span id="typed" class="typed"></span><span class="caret">|</span></h2>
+    <p class="hero-blurb reveal d-3">
+      Computer Science &amp; Math student at the University of Washington, ML researcher,
+      and award-winning hackathon builder. I love shipping full-stack products that are
+      fast, accessible, and actually useful.
+    </p>
+    <div class="hero-actions reveal d-4">
+      <a href="#projects" class="btn btn-primary">View my work</a>
+      <a href="https://github.com/vinisha231" target="_blank" rel="noopener" class="btn btn-outline">GitHub</a>
+      <a href="https://linkedin.com/in/vinishab" target="_blank" rel="noopener" class="btn btn-outline">LinkedIn</a>
+    </div>
+    <div class="hero-stats reveal d-5">
+      <div class="stat"><span class="stat-num">3.88</span><span class="stat-label">GPA · Double Major</span></div>
+      <div class="stat"><span class="stat-num">🥇 1st</span><span class="stat-label">IxDA Designathon 2026</span></div>
+      <div class="stat"><span class="stat-num">🥈 2nd</span><span class="stat-label">AWS Hacks 2026</span></div>
+      <div class="stat"><span class="stat-num">2yr+</span><span class="stat-label">ML Research</span></div>
+    </div>
+    <a href="#about" class="scroll-hint" aria-label="Scroll down"><span></span></a>
+  </header>
+
+  <main>
+    <!-- ===== About ===== -->
+    <section id="about" class="section">
+      <h2 class="section-title reveal"><span class="section-num">01.</span> About me</h2>
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <p>
+            I'm a senior at <strong>UW Bothell</strong> double-majoring in Computer Science &amp;
+            Software Engineering and Mathematics, heading to <strong>UW Seattle</strong> next for a
+            Master's in Computational Linguistics.
+          </p>
+          <p>
+            By day I research <strong>sparse-view CT reconstruction</strong> — training CNNs that cut
+            patient radiation exposure without sacrificing image quality. By night I build and ship
+            full-stack products: serverless AI apps on AWS, interview-prep platforms, and whatever a
+            48-hour hackathon throws at me.
+          </p>
+          <p>
+            I care about software that meets people where they are — multilingual, voice-driven,
+            and built on real-world data. If it helps someone navigate a system that wasn't designed
+            for them, even better.
+          </p>
+        </div>
+        <div class="about-card reveal d-2">
+          <div class="terminal">
+            <div class="terminal-bar"><span></span><span></span><span></span><p>vinisha@uw ~ %</p></div>
+            <pre class="terminal-body"><code><span class="t-prompt">$</span> whoami
+<span class="t-out">vinisha — engineer · researcher · builder</span>
+<span class="t-prompt">$</span> cat location.txt
+<span class="t-out">Seattle, WA 🌲</span>
+<span class="t-prompt">$</span> ls interests/
+<span class="t-out">ml-for-healthcare  serverless  nlp
+accessibility  hackathons  ux-design</span>
+<span class="t-prompt">$</span> echo $STATUS
+<span class="t-out">open to opportunities ✦</span><span class="t-cursor">█</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Experience ===== -->
+    <section id="experience" class="section">
+      <h2 class="section-title reveal"><span class="section-num">02.</span> Where I've worked</h2>
+      <div class="timeline">
+
+        <article class="timeline-item reveal">
+          <div class="timeline-marker"></div>
+          <div class="card">
+            <div class="card-head">
+              <h3>Student Researcher <span class="at">· UW Bothell</span></h3>
+              <span class="date">Jun 2024 — Present</span>
+            </div>
+            <p class="card-sub">Computed Tomography Reconstruction Lab</p>
+            <ul>
+              <li>Improved CT image quality from sparse 144- and 360-projection scans to match full-scan output, <strong>reducing patient radiation exposure</strong>.</li>
+              <li>Implemented CNNs combined with Simultaneous Algebraic Reconstruction Technique (SART) for sparse-view and limited-angle reconstruction.</li>
+              <li>Validated accuracy with <strong>PSNR of 36.5–39.9 dB</strong> and <strong>SSIM of 0.95–0.97</strong>; preparing findings for peer-reviewed publication.</li>
+            </ul>
+            <div class="chips"><span>Python</span><span>TensorFlow</span><span>CNNs</span><span>OpenCV</span><span>NumPy</span></div>
+          </div>
+        </article>
+
+        <article class="timeline-item reveal">
+          <div class="timeline-marker"></div>
+          <div class="card">
+            <div class="card-head">
+              <h3>Software Engineer Intern <span class="at">· Quadrant Technologies</span></h3>
+              <span class="date">Jul 2025 — Aug 2025</span>
+            </div>
+            <p class="card-sub">Redmond, WA</p>
+            <ul>
+              <li>Developed and deployed <strong>four full-stack portals</strong> (Admin, HR, Employee, IT), improving cross-team operational efficiency by <strong>35%</strong>.</li>
+              <li>Built modular REST APIs and React components for authentication, role-based access control, and real-time analytics dashboards.</li>
+              <li>Cut deployment time by <strong>30%</strong> through Azure App Service, Container Registry, and Azure DevOps CI/CD pipeline optimizations.</li>
+            </ul>
+            <div class="chips"><span>React</span><span>REST APIs</span><span>Azure</span><span>CI/CD</span><span>Docker</span></div>
+          </div>
+        </article>
+
+        <article class="timeline-item reveal">
+          <div class="timeline-marker"></div>
+          <div class="card">
+            <div class="card-head">
+              <h3>Teaching Assistant <span class="at">· Edmonds Community College</span></h3>
+              <span class="date">Mar 2024 — Jun 2024</span>
+            </div>
+            <p class="card-sub">Intro Programming Instruction</p>
+            <ul>
+              <li>Delivered hands-on Scratch programming instruction covering sequences, loops, conditionals, and event-driven programming.</li>
+              <li>Developed reusable lesson templates and used data-driven instructional adjustments to improve learning outcomes across the cohort.</li>
+            </ul>
+            <div class="chips"><span>Teaching</span><span>Curriculum Design</span><span>Scratch</span></div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ===== Projects ===== -->
+    <section id="projects" class="section">
+      <h2 class="section-title reveal"><span class="section-num">03.</span> Things I've built</h2>
+      <div class="projects-grid">
+
+        <article class="project-card featured reveal">
+          <div class="award-badge">🥈 2nd Place · AWS Hacks 2026</div>
+          <h3>Rta — AI Benefits Navigator</h3>
+          <p>
+            A full-stack, multilingual AI benefits navigator built from scratch in 48 hours.
+            Checks cross-program eligibility across SNAP, Medicaid, WIC, LIHEAP, Section 8, CHIP,
+            EITC, TANF and more using real 2025 Federal Poverty Level thresholds and Amazon Bedrock
+            (Claude Sonnet). Six serverless Lambda functions power eligibility scoring, AI advocate-letter
+            generation, mock caseworker roleplay, translation, and TTS — with <strong>18+ languages</strong>
+            via Amazon Translate and neural voice in 13 languages via Polly.
+          </p>
+          <div class="chips">
+            <span>AWS Bedrock</span><span>Lambda</span><span>API Gateway</span><span>Aurora Serverless</span>
+            <span>Cognito</span><span>Polly</span><span>SNS</span><span>React</span><span>Zustand</span><span>Amplify</span>
+          </div>
+        </article>
+
+        <article class="project-card reveal d-1">
+          <div class="project-links">
+            <a href="https://vdhaya-interview-simulator.com" target="_blank" rel="noopener" aria-label="Live site">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+          <h3>Interview Simulator Platform</h3>
+          <p>
+            A live, voice-driven interview coaching platform. Claude generates role-specific questions
+            and structured feedback on behavioral and technical answers, while AWS Polly and Transcribe
+            make every mock session fully conversational. Deployed on Elastic Beanstalk + Amplify with
+            PostgreSQL on RDS.
+          </p>
+          <div class="chips">
+            <span>Python</span><span>FastAPI</span><span>PostgreSQL</span><span>Claude API</span>
+            <span>Polly</span><span>Transcribe</span><span>Node.js</span>
+          </div>
+          <a class="project-cta" href="https://vdhaya-interview-simulator.com" target="_blank" rel="noopener">vdhaya-interview-simulator.com →</a>
+        </article>
+
+        <article class="project-card reveal d-2">
+          <div class="award-badge gold">🥇 1st Place · IxDA UWB Designathon 2026</div>
+          <h3>Big Back Bites</h3>
+          <p>
+            A food discovery app designed end-to-end: researched, prototyped in Figma, then brought to
+            life with a fully interactive TypeScript frontend. Took first place across all competing
+            teams at the IxDA UWB Designathon 2026.
+          </p>
+          <div class="chips">
+            <span>TypeScript</span><span>Figma</span><span>REST APIs</span><span>Agile UX</span>
+          </div>
+        </article>
+
+      </div>
+      <p class="more-projects reveal">
+        More on <a href="https://github.com/vinisha231" target="_blank" rel="noopener">github.com/vinisha231 →</a>
+      </p>
+    </section>
+
+    <!-- ===== Skills ===== -->
+    <section id="skills" class="section">
+      <h2 class="section-title reveal"><span class="section-num">04.</span> Toolbox</h2>
+      <div class="skills-grid">
+        <div class="skill-group reveal">
+          <h3>Languages</h3>
+          <div class="chips lg"><span>Python</span><span>C</span><span>C#</span><span>C++</span><span>Java</span><span>SQL</span><span>JavaScript</span><span>TypeScript</span><span>HTML</span><span>CSS</span></div>
+        </div>
+        <div class="skill-group reveal d-1">
+          <h3>Frameworks</h3>
+          <div class="chips lg"><span>React</span><span>Node.js</span><span>FastAPI</span><span>Flask</span><span>TensorFlow</span></div>
+        </div>
+        <div class="skill-group reveal d-2">
+          <h3>Cloud &amp; DevOps</h3>
+          <div class="chips lg"><span>AWS</span><span>Bedrock</span><span>Lambda</span><span>RDS</span><span>Amplify</span><span>Elastic Beanstalk</span><span>Azure</span><span>Azure DevOps</span><span>Docker</span><span>Vercel</span><span>CI/CD</span></div>
+        </div>
+        <div class="skill-group reveal d-3">
+          <h3>Libraries &amp; Tools</h3>
+          <div class="chips lg"><span>NumPy</span><span>pandas</span><span>Matplotlib</span><span>OpenCV</span><span>Git</span><span>Postman</span><span>Figma</span><span>VS Code</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Education ===== -->
+    <section id="education" class="section">
+      <h2 class="section-title reveal"><span class="section-num">05.</span> Education</h2>
+      <div class="edu-grid">
+        <div class="card edu-card reveal">
+          <p class="edu-when">Sep 2026 — Jun 2028</p>
+          <h3>University of Washington, Seattle</h3>
+          <p class="edu-degree">M.S. in Computational Linguistics</p>
+        </div>
+        <div class="card edu-card reveal d-1">
+          <p class="edu-when">Sep 2022 — Jun 2026</p>
+          <h3>University of Washington, Bothell</h3>
+          <p class="edu-degree">B.S. in Computer Science &amp; Software Engineering<br />B.S. in Mathematics</p>
+          <p class="edu-gpa">GPA 3.88</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Contact ===== -->
+    <section id="contact" class="section contact">
+      <h2 class="section-title centered reveal"><span class="section-num">06.</span> Get in touch</h2>
+      <p class="contact-blurb reveal d-1">
+        I'm always excited to talk about ML for healthcare, serverless architecture, NLP,
+        or that project you've been meaning to build. My inbox is open!
+      </p>
+      <a href="mailto:viba2022@gmail.com" class="btn btn-primary btn-lg reveal d-2">Say hello ✦</a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="https://github.com/vinisha231" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+      </a>
+      <a href="https://linkedin.com/in/vinishab" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+      </a>
+      <a href="mailto:viba2022@gmail.com" aria-label="Email">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+      </a>
+    </div>
+    <p>Designed &amp; built by <strong>Vinisha Bala Dhayanidhi</strong> · © <span id="year"></span></p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
