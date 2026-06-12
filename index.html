@@ -421,9 +421,21 @@
 
   <button class="sky-edit-btn" id="sky-edit-btn">✎ edit the sky</button>
   <div class="sky-toolbar" id="sky-toolbar">
-    <span class="hint">click sky = new star · click two stars = connect · drag = move · double-click = remove</span>
+    <span class="hint">add your own stars (the named constellations stay put) · click sky = star · two stars = line · drag = move · double-click = remove</span>
     <button class="sky-tool-btn" id="sky-reset">reset</button>
     <button class="sky-tool-btn primary" id="sky-done">done ✓</button>
+  </div>
+
+  <div class="star-modal" id="star-modal" hidden>
+    <div class="star-backdrop" id="star-backdrop"></div>
+    <div class="star-card">
+      <button class="star-card-close" id="star-card-close" aria-label="Close">✕</button>
+      <p class="star-card-const" id="star-card-const"></p>
+      <h3 id="star-card-title"></h3>
+      <p class="star-card-desc" id="star-card-desc"></p>
+      <div class="star-card-links" id="star-card-links"></div>
+      <p class="star-card-foot">every constellation holds one of my projects ✦</p>
+    </div>
   </div>
 
   <div class="toast" id="toast" hidden></div>
