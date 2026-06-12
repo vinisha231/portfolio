@@ -103,7 +103,9 @@ function setTheme(dusk, announce = false) {
   document.documentElement.classList.toggle("dusk", dusk);
   themeBtn.textContent = dusk ? "☀" : "☾";
   try { localStorage.setItem("theme", dusk ? "dusk" : "dawn"); } catch (e) {}
-  if (announce) showToast(dusk ? "☾ dusk mode on" : "☀ back to dawn");
+  if (!dusk && window.exitSkyEdit) window.exitSkyEdit();
+  if (window.renderSky) window.renderSky();
+  if (announce) showToast(dusk ? "☾ welcome to the night sky" : "☀ back to dawn");
 }
 themeBtn.textContent = document.documentElement.classList.contains("dusk") ? "☀" : "☾";
 themeBtn.addEventListener("click", () => setTheme(!document.documentElement.classList.contains("dusk"), true));
@@ -178,6 +180,7 @@ function petalRain(count = 44) {
 }
 
 document.addEventListener("click", (e) => {
+  if (document.body.classList.contains("sky-editing")) return;
   if (e.target.closest(".palette-panel") || e.target.closest(".terminal")) return;
   petalBurst(e.clientX, e.clientY);
 });
@@ -209,7 +212,11 @@ if (terminal && termInput) {
   };
 
   const commands = {
-    help: () => print("commands: whoami · projects · skills · stats · contact · gh · theme · petals · party · clear · sudo hire-me"),
+    help: () => print("commands: whoami · projects · skills · stats · contact · gh · theme · sky · petals · party · clear · sudo hire-me"),
+    sky: () => {
+      print("✎ opening the sky editor — go draw your constellation");
+      if (window.enterSkyEdit) window.enterSkyEdit();
+    },
     stats: () => {
       print("fetching live from the github api…");
       fetch("https://api.github.com/users/vinisha231")
@@ -282,7 +289,8 @@ const paletteItems = [
   { icon: "🐙", label: "GitHub", hint: "↗", action: () => window.open("https://github.com/vinisha231", "_blank") },
   { icon: "💼", label: "LinkedIn", hint: "↗", action: () => window.open("https://linkedin.com/in/vinishab", "_blank") },
   { icon: "✉️", label: "Email me", hint: "mailto", action: () => { window.location.href = "mailto:viba2022@gmail.com"; } },
-  { icon: "🌗", label: "Toggle dusk mode", hint: "theme", action: () => themeBtn.click() },
+  { icon: "🌗", label: "Toggle night / dawn", hint: "theme", action: () => themeBtn.click() },
+  { icon: "🌌", label: "Edit the night sky", hint: "✎", action: () => window.enterSkyEdit && window.enterSkyEdit() },
   { icon: "🌸", label: "Make it rain petals", hint: "fun", action: () => petalRain(60) },
   { icon: "🎉", label: "Party mode", hint: "konami", action: partyMode },
 ];
@@ -681,4 +689,268 @@ if (hasGsap && !prefersReduced) {
       });
     }
   }
+}
+
+// ===== Night sky with editable constellations =====
+const skyCanvas = document.getElementById("sky");
+if (skyCanvas) {
+  const ctx = skyCanvas.getContext("2d");
+  const skyEditBtn = document.getElementById("sky-edit-btn");
+  let W = 0, H = 0;
+  let bgStars = [];
+  let editing = false;
+  let selected = -1;
+  let hovered = -1;
+  let shooting = null;
+  let lastShot = 0;
+
+  // Preset: a V, a flower, and a little dipper
+  function defaultSky() {
+    const stars = [];
+    const edges = [];
+    stars.push({ x: 0.13, y: 0.2 }, { x: 0.165, y: 0.38 }, { x: 0.2, y: 0.2 });
+    edges.push([0, 1], [1, 2]);
+    const cx = 0.8, cy = 0.24, r = 0.045;
+    const center = stars.push({ x: cx, y: cy }) - 1;
+    const first = stars.length;
+    for (let i = 0; i < 5; i++) {
+      const a = -Math.PI / 2 + (i * 2 * Math.PI) / 5;
+      stars.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * 1.7 });
+      edges.push([center, first + i], [first + i, first + ((i + 1) % 5)]);
+    }
+    const dip = [
+      [0.4, 0.66], [0.45, 0.61], [0.5, 0.58], [0.55, 0.61],
+      [0.61, 0.59], [0.62, 0.69], [0.56, 0.71],
+    ];
+    const base = stars.length;
+    dip.forEach(([x, y]) => stars.push({ x, y }));
+    edges.push([base, base + 1], [base + 1, base + 2], [base + 2, base + 3]);
+    edges.push([base + 3, base + 4], [base + 4, base + 5], [base + 5, base + 6], [base + 6, base + 3]);
+    return { stars, edges };
+  }
+
+  let sky = null;
+  try { sky = JSON.parse(localStorage.getItem("skyData")); } catch (e) {}
+  if (!sky || !Array.isArray(sky.stars) || !Array.isArray(sky.edges)) sky = defaultSky();
+
+  const saveSky = () => {
+    try { localStorage.setItem("skyData", JSON.stringify(sky)); } catch (e) {}
+  };
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    skyCanvas.width = W * dpr;
+    skyCanvas.height = H * dpr;
+    skyCanvas.style.width = W + "px";
+    skyCanvas.style.height = H + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const count = Math.min(220, Math.floor((W * H) / 11000));
+    bgStars = Array.from({ length: count }, () => ({
+      x: Math.random(),
+      y: Math.random(),
+      r: 0.4 + Math.random() * 1.1,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.5 + Math.random() * 1.5,
+    }));
+    if (prefersReduced) render(0);
+  }
+
+  function render(t) {
+    ctx.clearRect(0, 0, W, H);
+    if (editing) {
+      ctx.fillStyle = "rgba(7, 10, 26, 0.86)";
+      ctx.fillRect(0, 0, W, H);
+    }
+    for (const s of bgStars) {
+      const tw = prefersReduced ? 0.75 : 0.55 + 0.45 * Math.sin((t / 1000) * s.speed + s.phase);
+      ctx.globalAlpha = 0.25 + 0.6 * tw;
+      ctx.fillStyle = "#dfe4ff";
+      ctx.beginPath();
+      ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (shooting) {
+      const sh = shooting;
+      ctx.strokeStyle = "rgba(233, 236, 255, " + Math.max(sh.life, 0) + ")";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(sh.x, sh.y);
+      ctx.lineTo(sh.x - sh.vx * 14, sh.y - sh.vy * 14);
+      ctx.stroke();
+      sh.x += sh.vx;
+      sh.y += sh.vy;
+      sh.life -= 0.016;
+      if (sh.life <= 0) shooting = null;
+    }
+    ctx.strokeStyle = "rgba(184, 156, 255, 0.55)";
+    ctx.lineWidth = 1;
+    for (const [a, b] of sky.edges) {
+      const A = sky.stars[a], B = sky.stars[b];
+      if (!A || !B) continue;
+      ctx.beginPath();
+      ctx.moveTo(A.x * W, A.y * H);
+      ctx.lineTo(B.x * W, B.y * H);
+      ctx.stroke();
+    }
+    sky.stars.forEach((s, i) => {
+      const x = s.x * W, y = s.y * H;
+      ctx.save();
+      ctx.shadowColor = "#b89cff";
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = i === selected ? "#ffb3c7" : "#f2efff";
+      ctx.beginPath();
+      ctx.arc(x, y, i === selected ? 4 : 2.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      if (editing && (i === hovered || i === selected)) {
+        ctx.strokeStyle = i === selected ? "#ffb3c7" : "rgba(233, 236, 255, 0.7)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(x, y, 9, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    });
+  }
+
+  const renderNow = () => render(performance.now());
+  window.renderSky = renderNow;
+
+  function loop(t) {
+    if (document.documentElement.classList.contains("dusk")) {
+      if (!shooting && !editing && t - lastShot > 6000 + Math.random() * 6000) {
+        lastShot = t;
+        const fromLeft = Math.random() > 0.5;
+        shooting = {
+          x: Math.random() * W * 0.6 + (fromLeft ? 0 : W * 0.4),
+          y: Math.random() * H * 0.35,
+          vx: (fromLeft ? 1 : -1) * (3 + Math.random() * 3),
+          vy: 1.5 + Math.random() * 1.5,
+          life: 1,
+        };
+      }
+      render(t);
+    }
+    requestAnimationFrame(loop);
+  }
+
+  resize();
+  window.addEventListener("resize", resize);
+  if (prefersReduced) renderNow();
+  else requestAnimationFrame(loop);
+
+  // --- Editing ---
+  const hitStar = (px, py) => {
+    let best = -1, bestD = 18;
+    sky.stars.forEach((s, i) => {
+      const d = Math.hypot(s.x * W - px, s.y * H - py);
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    return best;
+  };
+
+  let dragIdx = -1, dragMoved = false, downX = 0, downY = 0;
+
+  skyCanvas.addEventListener("pointerdown", (e) => {
+    if (!editing) return;
+    downX = e.clientX;
+    downY = e.clientY;
+    const i = hitStar(e.clientX, e.clientY);
+    if (i >= 0) {
+      dragIdx = i;
+      dragMoved = false;
+      skyCanvas.setPointerCapture(e.pointerId);
+    }
+  });
+
+  skyCanvas.addEventListener("pointermove", (e) => {
+    if (!editing) return;
+    if (dragIdx >= 0) {
+      if (Math.hypot(e.clientX - downX, e.clientY - downY) > 5) dragMoved = true;
+      if (dragMoved) {
+        sky.stars[dragIdx].x = Math.min(Math.max(e.clientX / W, 0.01), 0.99);
+        sky.stars[dragIdx].y = Math.min(Math.max(e.clientY / H, 0.01), 0.99);
+      }
+    } else {
+      hovered = hitStar(e.clientX, e.clientY);
+    }
+    if (prefersReduced) renderNow();
+  });
+
+  skyCanvas.addEventListener("pointerup", (e) => {
+    if (!editing) return;
+    if (dragIdx >= 0) {
+      const i = dragIdx;
+      dragIdx = -1;
+      if (dragMoved) {
+        saveSky();
+      } else if (selected === -1) {
+        selected = i;
+      } else if (selected === i) {
+        selected = -1;
+      } else {
+        const at = sky.edges.findIndex(([a, b]) => (a === selected && b === i) || (a === i && b === selected));
+        if (at >= 0) sky.edges.splice(at, 1);
+        else sky.edges.push([selected, i]);
+        selected = i;
+        saveSky();
+      }
+    } else {
+      sky.stars.push({ x: e.clientX / W, y: e.clientY / H });
+      selected = -1;
+      saveSky();
+    }
+    if (prefersReduced) renderNow();
+  });
+
+  skyCanvas.addEventListener("dblclick", (e) => {
+    if (!editing) return;
+    const i = hitStar(e.clientX, e.clientY);
+    if (i < 0) return;
+    sky.stars.splice(i, 1);
+    sky.edges = sky.edges
+      .filter(([a, b]) => a !== i && b !== i)
+      .map(([a, b]) => [a > i ? a - 1 : a, b > i ? b - 1 : b]);
+    selected = -1;
+    hovered = -1;
+    saveSky();
+    if (prefersReduced) renderNow();
+  });
+
+  function enterSkyEdit() {
+    if (!document.documentElement.classList.contains("dusk")) setTheme(true);
+    editing = true;
+    document.body.classList.add("sky-editing");
+    if (lenis) lenis.stop();
+    showToast("✎ sky editor — changes save automatically");
+    if (prefersReduced) renderNow();
+  }
+
+  function exitSkyEdit() {
+    if (!editing) return;
+    editing = false;
+    selected = -1;
+    hovered = -1;
+    document.body.classList.remove("sky-editing");
+    if (lenis) lenis.start();
+    if (prefersReduced) renderNow();
+  }
+
+  window.enterSkyEdit = enterSkyEdit;
+  window.exitSkyEdit = exitSkyEdit;
+
+  skyEditBtn.addEventListener("click", enterSkyEdit);
+  document.getElementById("sky-done").addEventListener("click", exitSkyEdit);
+  document.getElementById("sky-reset").addEventListener("click", () => {
+    sky = defaultSky();
+    selected = -1;
+    saveSky();
+    showToast("sky reset ✿");
+    if (prefersReduced) renderNow();
+  });
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && editing) exitSkyEdit();
+  });
 }

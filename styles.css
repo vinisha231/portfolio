@@ -523,21 +523,22 @@ body.palette-open { overflow: hidden; }
 .theme-btn:hover { color: var(--ink); border-color: var(--lavender); box-shadow: var(--shadow-soft); }
 
 html.dusk {
-  --bg: #211a2d;
-  --bg-deep: #2b2239;
-  --card: #2a2138;
-  --ink: #f2eaf6;
-  --ink-dim: #b2a4c2;
+  --bg: #0b1026;
+  --bg-deep: #111732;
+  --card: #141a38;
+  --ink: #e9ecff;
+  --ink-dim: #9aa3cf;
   --line: rgba(255, 255, 255, 0.1);
   --shadow-soft: 0 18px 50px rgba(0, 0, 0, 0.32), 0 6px 18px rgba(0, 0, 0, 0.2);
   --shadow-lift: 0 30px 70px rgba(0, 0, 0, 0.45), 0 10px 26px rgba(0, 0, 0, 0.3);
 }
-html.dusk .nav { background: rgba(33, 26, 45, 0.72); }
+html.dusk .nav { background: rgba(11, 16, 38, 0.72); }
 html.dusk .noise { opacity: 0.04; }
-html.dusk .blob-1 { background: #5e3354; }
-html.dusk .blob-2 { background: #3f3568; }
-html.dusk .blob-3 { background: #66344a; }
-html.dusk .btn-outline { background: rgba(42, 33, 56, 0.7); }
+html.dusk .blob { opacity: 0.3; }
+html.dusk .blob-1 { background: #2a2f6b; }
+html.dusk .blob-2 { background: #4a2a5e; }
+html.dusk .blob-3 { background: #1d3a5c; }
+html.dusk .btn-outline { background: rgba(20, 26, 56, 0.7); }
 html.dusk .giant, html.dusk .work-num { -webkit-text-stroke-color: rgba(255, 255, 255, 0.12); }
 html.dusk .chips span:nth-child(odd) { color: #cdb6ff; }
 html.dusk .chips span:nth-child(even) { color: #ffb094; }
@@ -573,3 +574,35 @@ body.party .logo { animation: wiggle 0.35s ease-in-out infinite alternate; }
 @media (max-width: 899px) {
   .stickers { display: none; }
 }
+
+/* ============ Night sky canvas + constellation editor ============ */
+#sky { display: none; position: fixed; inset: 0; z-index: -1; }
+html.dusk #sky { display: block; }
+body.sky-editing #sky { z-index: 250; pointer-events: auto; cursor: crosshair; }
+body.sky-editing { overflow: hidden; }
+
+.sky-edit-btn {
+  display: none; position: fixed; right: 22px; bottom: 22px; z-index: 240;
+  font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink);
+  background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+  padding: 10px 16px; cursor: pointer; box-shadow: var(--shadow-soft);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.sky-edit-btn:hover { border-color: var(--lavender); box-shadow: var(--shadow-lift); }
+html.dusk .sky-edit-btn { display: inline-flex; }
+html.dusk body.sky-editing .sky-edit-btn { display: none; }
+
+.sky-toolbar {
+  display: none; position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+  z-index: 260; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center;
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  padding: 12px 18px; box-shadow: var(--shadow-lift); max-width: calc(100vw - 32px);
+}
+body.sky-editing .sky-toolbar { display: flex; }
+.sky-toolbar .hint { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-dim); }
+.sky-tool-btn {
+  font-family: var(--font-mono); font-size: 0.78rem; padding: 7px 14px; cursor: pointer;
+  border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink);
+}
+.sky-tool-btn:hover { border-color: var(--lavender); }
+.sky-tool-btn.primary { background: var(--gradient); color: #fff; border-color: transparent; }

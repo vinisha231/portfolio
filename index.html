@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600;1,9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <script>try { if (localStorage.getItem("theme") === "dusk") document.documentElement.classList.add("dusk"); } catch (e) {}</script>
+  <script>try { if (localStorage.getItem("theme") !== "dawn") document.documentElement.classList.add("dusk"); } catch (e) { document.documentElement.classList.add("dusk"); }</script>
 </head>
 <body>
   <!-- Ambient layers -->
@@ -18,6 +18,7 @@
   <div class="blob blob-1" aria-hidden="true"></div>
   <div class="blob blob-2" aria-hidden="true"></div>
   <div class="blob blob-3" aria-hidden="true"></div>
+  <canvas id="sky" aria-hidden="true"></canvas>
 
   <!-- Scroll progress -->
   <div class="progress-bar" aria-hidden="true"></div>
@@ -417,6 +418,13 @@
     </div>
     <p>Designed &amp; built by <strong>Vinisha Bala Dhayanidhi</strong> · © <span id="year"></span> · press <kbd>⌘K</kbd></p>
   </footer>
+
+  <button class="sky-edit-btn" id="sky-edit-btn">✎ edit the sky</button>
+  <div class="sky-toolbar" id="sky-toolbar">
+    <span class="hint">click sky = new star · click two stars = connect · drag = move · double-click = remove</span>
+    <button class="sky-tool-btn" id="sky-reset">reset</button>
+    <button class="sky-tool-btn primary" id="sky-done">done ✓</button>
+  </div>
 
   <div class="toast" id="toast" hidden></div>
 

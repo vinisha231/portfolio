@@ -10,7 +10,8 @@ My personal portfolio — built with vanilla HTML, CSS, and JavaScript. No frame
 - 🌀 Scroll choreography — Lenis smooth scrolling + GSAP ScrollTrigger (pinned horizontal project gallery, velocity-reactive marquee, self-drawing timeline, drifting outline typography)
 - ⌨️ An actually-typeable terminal — try `help`, `stats` (live GitHub API), `petals`, or `sudo hire-me`
 - 🎛️ ⌘K command palette for keyboard navigation (doubles as the mobile menu)
-- 🌗 Dusk mode — a dark-pastel theme toggle, remembered between visits
+- 🌌 Night-sky mode (default) — a canvas starfield with twinkling stars, shooting stars, and **editable constellations**: open the sky editor to add stars, connect them, drag them, and your sky is saved in the browser
+- 🌗 Dawn mode — the soft peach-pastel daytime theme, one toggle away and remembered between visits
 - 🧸 Draggable hero stickers you can toss around, scramble-in section titles, and cards that lean with scroll velocity
 - 🕹️ Konami code (↑↑↓↓←→←→BA) unlocks party mode
 - 🌸 Petal-burst on every click, plus a petal-rain easter egg
