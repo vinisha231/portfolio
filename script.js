@@ -212,7 +212,11 @@ if (terminal && termInput) {
   };
 
   const commands = {
-    help: () => print("commands: whoami · projects · skills · stats · contact · gh · theme · sky · petals · party · clear · sudo hire-me"),
+    help: () => print("commands: whoami · projects · skills · stats · contact · gh · theme · sky · constellations · petals · party · clear · sudo hire-me"),
+    constellations: () => {
+      print("orion → rta · ursa major → big back bites · cassiopeia → interview simulator · cygnus → the hollow pact · lyra → burnlist · gemini → atma milan · scorpius → aml detection");
+      print("↳ in night mode, click a constellation to open its project");
+    },
     sky: () => {
       print("✎ opening the sky editor — go draw your constellation");
       if (window.enterSkyEdit) window.enterSkyEdit();
@@ -691,51 +695,176 @@ if (hasGsap && !prefersReduced) {
   }
 }
 
-// ===== Night sky with editable constellations =====
+// ===== Night sky: real constellations mapped to projects =====
 const skyCanvas = document.getElementById("sky");
 if (skyCanvas) {
   const ctx = skyCanvas.getContext("2d");
   const skyEditBtn = document.getElementById("sky-edit-btn");
+  const starModal = document.getElementById("star-modal");
+  const isDusk = () => document.documentElement.classList.contains("dusk");
+
   let W = 0, H = 0;
   let bgStars = [];
   let editing = false;
   let selected = -1;
   let hovered = -1;
+  let hoveredConst = -1;
   let shooting = null;
   let lastShot = 0;
+  const staticLayer = document.createElement("canvas");
 
-  // Preset: a V, a flower, and a little dipper
-  function defaultSky() {
-    const stars = [];
-    const edges = [];
-    stars.push({ x: 0.13, y: 0.2 }, { x: 0.165, y: 0.38 }, { x: 0.2, y: 0.2 });
-    edges.push([0, 1], [1, 2]);
-    const cx = 0.8, cy = 0.24, r = 0.045;
-    const center = stars.push({ x: cx, y: cy }) - 1;
-    const first = stars.length;
-    for (let i = 0; i < 5; i++) {
-      const a = -Math.PI / 2 + (i * 2 * Math.PI) / 5;
-      stars.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * 1.7 });
-      edges.push([center, first + i], [first + i, first + ((i + 1) % 5)]);
-    }
-    const dip = [
-      [0.4, 0.66], [0.45, 0.61], [0.5, 0.58], [0.55, 0.61],
-      [0.61, 0.59], [0.62, 0.69], [0.56, 0.71],
-    ];
-    const base = stars.length;
-    dip.forEach(([x, y]) => stars.push({ x, y }));
-    edges.push([base, base + 1], [base + 1, base + 2], [base + 2, base + 3]);
-    edges.push([base + 3, base + 4], [base + 4, base + 5], [base + 5, base + 6], [base + 6, base + 3]);
-    return { stars, edges };
+  // Real constellations (stick figures, local 0..1 coords), each holding a project.
+  // anchor: normalized screen position of the figure's top-left; scale: vs min(W,H).
+  const CONSTELLATIONS = [
+    {
+      name: "Orion", myth: "the hunter", anchor: [0.05, 0.45], scale: 0.3, bright: [0, 6],
+      stars: [[0.62, 0.18], [0.28, 0.22], [0.52, 0.5], [0.45, 0.53], [0.38, 0.56], [0.58, 0.85], [0.25, 0.88]],
+      edges: [[0, 1], [0, 2], [1, 4], [2, 3], [3, 4], [2, 5], [4, 6], [5, 6]],
+      project: {
+        title: "Rta — AI Benefits Navigator",
+        desc: "Orion hunts; Rta navigates. A multilingual AI benefits navigator built from scratch in 48 hours — 2nd place at AWS Hacks 2026, serverless on AWS Bedrock and Lambda.",
+        links: [["view code ↗", "https://github.com/vinisha231/AWS-Hacks-2026"]],
+      },
+    },
+    {
+      name: "Ursa Major", myth: "the great bear", anchor: [0.55, 0.08], scale: 0.32, bright: [0],
+      stars: [[0.2, 0.2], [0.22, 0.45], [0.45, 0.48], [0.42, 0.24], [0.6, 0.28], [0.76, 0.36], [0.95, 0.5]],
+      edges: [[0, 1], [1, 2], [2, 3], [3, 0], [3, 4], [4, 5], [5, 6]],
+      project: {
+        title: "Big Back Bites",
+        desc: "A big appetite deserves a great bear. Food discovery app designed in Figma and built in TypeScript — 1st place at the IxDA UWB Designathon 2026.",
+        links: [["view code ↗", "https://github.com/vinisha231/Big-Back-Bites"]],
+      },
+    },
+    {
+      name: "Cassiopeia", myth: "the queen", anchor: [0.3, 0.05], scale: 0.2, bright: [2],
+      stars: [[0.05, 0.35], [0.25, 0.6], [0.5, 0.3], [0.75, 0.55], [0.95, 0.25]],
+      edges: [[0, 1], [1, 2], [2, 3], [3, 4]],
+      project: {
+        title: "Interview Simulator Platform",
+        desc: "Practice answering to the throne. A voice-driven AI interview coach — Claude-generated questions and feedback with Polly and Transcribe, live in production.",
+        links: [["live site ↗", "https://vdhaya-interview-simulator.com"], ["view code ↗", "https://github.com/vinisha231/Interview_simulator"]],
+      },
+    },
+    {
+      name: "Cygnus", myth: "the swan", anchor: [0.8, 0.36], scale: 0.26, bright: [0],
+      stars: [[0.5, 0.08], [0.5, 0.45], [0.5, 0.95], [0.12, 0.32], [0.88, 0.6]],
+      edges: [[0, 1], [1, 2], [3, 1], [1, 4]],
+      project: {
+        title: "The Hollow Pact",
+        desc: "A graceful companion — but is it loyal? An asymmetric AI co-op adventure rebuilt in Unity 6, where your party member's hidden trust system decides your fate.",
+        links: [["view code ↗", "https://github.com/vinisha231/The-Hollow-Pact-v2"]],
+      },
+    },
+    {
+      name: "Lyra", myth: "the lyre", anchor: [0.68, 0.72], scale: 0.16, bright: [0],
+      stars: [[0.35, 0.08], [0.45, 0.3], [0.7, 0.42], [0.55, 0.75], [0.78, 0.78]],
+      edges: [[0, 1], [1, 2], [2, 4], [4, 3], [3, 1]],
+      project: {
+        title: "Burnlist",
+        desc: "A song for the lyre, played only once. A Spotify playlist that self-destructs after one listen — make someone a mix and let it vanish.",
+        links: [["live site ↗", "https://vinisha231.github.io/Burnlist/"], ["view code ↗", "https://github.com/vinisha231/Burnlist"]],
+      },
+    },
+    {
+      name: "Gemini", myth: "the twins", anchor: [0.04, 0.07], scale: 0.28, bright: [0, 4],
+      stars: [[0.3, 0.08], [0.28, 0.38], [0.22, 0.68], [0.14, 0.95], [0.62, 0.15], [0.6, 0.45], [0.68, 0.72], [0.6, 0.97]],
+      edges: [[0, 1], [1, 2], [2, 3], [4, 5], [5, 6], [6, 7], [1, 5]],
+      project: {
+        title: "Atma Milan",
+        desc: "Twin souls, matched in the stars. A Vedic soul-compatibility checker inspired by Hindu Jyotish astrology — kundali matching in TypeScript.",
+        links: [["view code ↗", "https://github.com/vinisha231/atma-milan"]],
+      },
+    },
+    {
+      name: "Scorpius", myth: "the scorpion", anchor: [0.36, 0.58], scale: 0.3, bright: [4],
+      stars: [[0.1, 0.1], [0.05, 0.3], [0.12, 0.45], [0.25, 0.3], [0.38, 0.42], [0.45, 0.6], [0.5, 0.8], [0.62, 0.92], [0.78, 0.88], [0.85, 0.75]],
+      edges: [[0, 3], [1, 3], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9]],
+      project: {
+        title: "AML Detection System",
+        desc: "Built to catch what stings. An anti-money-laundering toolkit: synthetic typology generator, rules engine, graph-based scoring, and an analyst dashboard.",
+        links: [["view code ↗", "https://github.com/vinisha231/aml-detection"]],
+      },
+    },
+  ];
+
+  // User-drawn layer
+  let custom = null;
+  try { custom = JSON.parse(localStorage.getItem("skyCustom")); } catch (e) {}
+  if (!custom || !Array.isArray(custom.stars) || !Array.isArray(custom.edges)) custom = { stars: [], edges: [] };
+  const saveSky = () => {
+    try { localStorage.setItem("skyCustom", JSON.stringify(custom)); } catch (e) {}
+  };
+
+  function constPoints(c) {
+    const S = c.scale * Math.min(W, H);
+    const ax = Math.max(8, Math.min(c.anchor[0] * W, W - S - 12));
+    const ay = Math.max(8, Math.min(c.anchor[1] * H, H - S - 12));
+    return c.stars.map(([lx, ly]) => [ax + lx * S, ay + ly * S]);
   }
 
-  let sky = null;
-  try { sky = JSON.parse(localStorage.getItem("skyData")); } catch (e) {}
-  if (!sky || !Array.isArray(sky.stars) || !Array.isArray(sky.edges)) sky = defaultSky();
+  function distToSeg(px, py, a, b) {
+    const dx = b[0] - a[0], dy = b[1] - a[1];
+    const len2 = dx * dx + dy * dy || 1;
+    let t = ((px - a[0]) * dx + (py - a[1]) * dy) / len2;
+    t = Math.max(0, Math.min(1, t));
+    return Math.hypot(px - (a[0] + t * dx), py - (a[1] + t * dy));
+  }
 
-  const saveSky = () => {
-    try { localStorage.setItem("skyData", JSON.stringify(sky)); } catch (e) {}
-  };
+  function constellationAt(px, py) {
+    for (let ci = 0; ci < CONSTELLATIONS.length; ci++) {
+      const c = CONSTELLATIONS[ci];
+      const pts = constPoints(c);
+      for (const p of pts) {
+        if (Math.hypot(p[0] - px, p[1] - py) < 26) return ci;
+      }
+      for (const [a, b] of c.edges) {
+        if (distToSeg(px, py, pts[a], pts[b]) < 11) return ci;
+      }
+    }
+    return -1;
+  }
+
+  // Milky way band + nebulae, repainted on resize only
+  function paintStatic() {
+    staticLayer.width = W;
+    staticLayer.height = H;
+    const c2 = staticLayer.getContext("2d");
+    c2.clearRect(0, 0, W, H);
+    const nebulae = [
+      [0.22, 0.3, 0.24, "124, 108, 255"],
+      [0.74, 0.52, 0.26, "76, 140, 200"],
+      [0.5, 0.85, 0.2, "200, 100, 160"],
+    ];
+    for (const [nx, ny, nr, rgb] of nebulae) {
+      const r = nr * Math.max(W, H);
+      const g = c2.createRadialGradient(nx * W, ny * H, 0, nx * W, ny * H, r);
+      g.addColorStop(0, `rgba(${rgb}, 0.09)`);
+      g.addColorStop(1, "rgba(0, 0, 0, 0)");
+      c2.fillStyle = g;
+      c2.fillRect(0, 0, W, H);
+    }
+    const len = Math.hypot(W, H);
+    c2.save();
+    c2.translate(W * 0.5, H * 0.42);
+    c2.rotate(-0.5);
+    const band = c2.createLinearGradient(0, -H * 0.16, 0, H * 0.16);
+    band.addColorStop(0, "rgba(180, 190, 255, 0)");
+    band.addColorStop(0.5, "rgba(180, 190, 255, 0.055)");
+    band.addColorStop(1, "rgba(180, 190, 255, 0)");
+    c2.fillStyle = band;
+    c2.fillRect(-len / 2, -H * 0.16, len, H * 0.32);
+    for (let i = 0; i < 420; i++) {
+      const x = (Math.random() - 0.5) * len;
+      const y = (Math.random() + Math.random() + Math.random() - 1.5) * H * 0.09;
+      c2.globalAlpha = 0.04 + Math.random() * 0.12;
+      c2.fillStyle = Math.random() < 0.8 ? "#cdd5ff" : "#ffe9c9";
+      c2.beginPath();
+      c2.arc(x, y, Math.random() * 0.9 + 0.3, 0, Math.PI * 2);
+      c2.fill();
+    }
+    c2.restore();
+  }
 
   function resize() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -746,32 +875,56 @@ if (skyCanvas) {
     skyCanvas.style.width = W + "px";
     skyCanvas.style.height = H + "px";
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const count = Math.min(220, Math.floor((W * H) / 11000));
+    const count = Math.min(260, Math.floor((W * H) / 9000));
     bgStars = Array.from({ length: count }, () => ({
       x: Math.random(),
       y: Math.random(),
       r: 0.4 + Math.random() * 1.1,
       phase: Math.random() * Math.PI * 2,
       speed: 0.5 + Math.random() * 1.5,
+      color: Math.random() < 0.12 ? "#ffe9c9" : Math.random() < 0.5 ? "#dfe4ff" : "#cfe6ff",
+      bright: Math.random() < 0.04,
     }));
+    paintStatic();
     if (prefersReduced) render(0);
+  }
+
+  function flare(x, y, r, alpha) {
+    ctx.strokeStyle = `rgba(242, 239, 255, ${alpha})`;
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(x - r, y); ctx.lineTo(x + r, y);
+    ctx.moveTo(x, y - r); ctx.lineTo(x, y + r);
+    ctx.stroke();
   }
 
   function render(t) {
     ctx.clearRect(0, 0, W, H);
+    ctx.drawImage(staticLayer, 0, 0, W, H);
     if (editing) {
       ctx.fillStyle = "rgba(7, 10, 26, 0.86)";
       ctx.fillRect(0, 0, W, H);
     }
+
+    // Background stars with scroll parallax
+    const off = (window.scrollY || 0) * 0.06;
     for (const s of bgStars) {
       const tw = prefersReduced ? 0.75 : 0.55 + 0.45 * Math.sin((t / 1000) * s.speed + s.phase);
-      ctx.globalAlpha = 0.25 + 0.6 * tw;
-      ctx.fillStyle = "#dfe4ff";
+      const y = (((s.y * H - off) % H) + H) % H;
+      const x = s.x * W;
+      ctx.globalAlpha = 0.22 + 0.6 * tw;
+      ctx.fillStyle = s.color;
       ctx.beginPath();
-      ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+      ctx.arc(x, y, s.bright ? s.r * 1.8 : s.r, 0, Math.PI * 2);
       ctx.fill();
+      if (s.bright) {
+        ctx.globalAlpha = 1;
+        flare(x, y, 6 + 3 * tw, 0.25 + 0.3 * tw);
+      }
     }
     ctx.globalAlpha = 1;
+
+    // Shooting star
     if (shooting) {
       const sh = shooting;
       ctx.strokeStyle = "rgba(233, 236, 255, " + Math.max(sh.life, 0) + ")";
@@ -785,28 +938,80 @@ if (skyCanvas) {
       sh.life -= 0.016;
       if (sh.life <= 0) shooting = null;
     }
-    ctx.strokeStyle = "rgba(184, 156, 255, 0.55)";
+
+    // Real constellations
+    CONSTELLATIONS.forEach((c, ci) => {
+      const pts = constPoints(c);
+      const hov = ci === hoveredConst && !editing;
+      const lineAlpha = editing ? 0.12 : hov ? 0.95 : 0.42;
+      ctx.save();
+      if (hov) {
+        ctx.shadowColor = "#b89cff";
+        ctx.shadowBlur = 7;
+      }
+      ctx.strokeStyle = `rgba(184, 156, 255, ${lineAlpha})`;
+      ctx.lineWidth = hov ? 1.5 : 1;
+      for (const [a, b] of c.edges) {
+        ctx.beginPath();
+        ctx.moveTo(pts[a][0], pts[a][1]);
+        ctx.lineTo(pts[b][0], pts[b][1]);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      pts.forEach((p, i) => {
+        const isBright = c.bright.includes(i);
+        const r = (isBright ? 3.1 : 2.1) * (hov ? 1.35 : 1);
+        ctx.save();
+        ctx.shadowColor = "#b89cff";
+        ctx.shadowBlur = hov ? 14 : 9;
+        ctx.globalAlpha = editing ? 0.25 : 1;
+        ctx.fillStyle = "#f2efff";
+        ctx.beginPath();
+        ctx.arc(p[0], p[1], r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        if (isBright && !editing) flare(p[0], p[1], hov ? 10 : 7, hov ? 0.6 : 0.35);
+      });
+
+      // Label at the figure's foot
+      let cx = 0, maxY = 0;
+      pts.forEach((p) => { cx += p[0]; maxY = Math.max(maxY, p[1]); });
+      cx /= pts.length;
+      ctx.textAlign = "center";
+      ctx.font = "italic 15px Fraunces, Georgia, serif";
+      ctx.fillStyle = `rgba(233, 236, 255, ${editing ? 0.08 : hov ? 0.95 : 0.38})`;
+      ctx.fillText(c.name, cx, maxY + 22);
+      if (hov) {
+        ctx.font = "11px 'JetBrains Mono', monospace";
+        ctx.fillStyle = "rgba(255, 179, 199, 0.95)";
+        ctx.fillText("→ " + c.project.title + " · click to open", cx, maxY + 40);
+      }
+    });
+
+    // User-drawn layer
+    ctx.strokeStyle = "rgba(255, 179, 199, 0.55)";
     ctx.lineWidth = 1;
-    for (const [a, b] of sky.edges) {
-      const A = sky.stars[a], B = sky.stars[b];
+    for (const [a, b] of custom.edges) {
+      const A = custom.stars[a], B = custom.stars[b];
       if (!A || !B) continue;
       ctx.beginPath();
       ctx.moveTo(A.x * W, A.y * H);
       ctx.lineTo(B.x * W, B.y * H);
       ctx.stroke();
     }
-    sky.stars.forEach((s, i) => {
+    custom.stars.forEach((s, i) => {
       const x = s.x * W, y = s.y * H;
       ctx.save();
-      ctx.shadowColor = "#b89cff";
+      ctx.shadowColor = "#ffb3c7";
       ctx.shadowBlur = 10;
-      ctx.fillStyle = i === selected ? "#ffb3c7" : "#f2efff";
+      ctx.fillStyle = i === selected ? "#ff7d5c" : "#ffd3e0";
       ctx.beginPath();
       ctx.arc(x, y, i === selected ? 4 : 2.8, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
       if (editing && (i === hovered || i === selected)) {
-        ctx.strokeStyle = i === selected ? "#ffb3c7" : "rgba(233, 236, 255, 0.7)";
+        ctx.strokeStyle = i === selected ? "#ff7d5c" : "rgba(255, 211, 224, 0.8)";
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.arc(x, y, 9, 0, Math.PI * 2);
@@ -819,7 +1024,7 @@ if (skyCanvas) {
   window.renderSky = renderNow;
 
   function loop(t) {
-    if (document.documentElement.classList.contains("dusk")) {
+    if (isDusk()) {
       if (!shooting && !editing && t - lastShot > 6000 + Math.random() * 6000) {
         lastShot = t;
         const fromLeft = Math.random() > 0.5;
@@ -841,10 +1046,79 @@ if (skyCanvas) {
   if (prefersReduced) renderNow();
   else requestAnimationFrame(loop);
 
-  // --- Editing ---
+  // --- Constellation hover + click → project card ---
+  const INTERACTIVE_SEL = "a, button, input, textarea, .card, .work-card, .lab-card, .skill-group, .terminal, .stat, .nav, .palette-panel, .sky-toolbar, .star-modal, .marquee, .sticker, .toast";
+
+  document.addEventListener("mousemove", (e) => {
+    if (!finePointer) return;
+    let next = -1;
+    if (isDusk() && !editing && starModal.hidden && !e.target.closest(INTERACTIVE_SEL)) {
+      next = constellationAt(e.clientX, e.clientY);
+    }
+    if (next !== hoveredConst) {
+      hoveredConst = next;
+      document.body.classList.toggle("const-hover", next >= 0);
+      if (prefersReduced) renderNow();
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!isDusk() || editing || !starModal.hidden) return;
+    if (e.target.closest(INTERACTIVE_SEL)) return;
+    const ci = constellationAt(e.clientX, e.clientY);
+    if (ci >= 0) openStarCard(CONSTELLATIONS[ci]);
+  });
+
+  function openStarCard(c) {
+    document.getElementById("star-card-const").textContent = "✦ " + c.name + " — " + c.myth;
+    document.getElementById("star-card-title").textContent = c.project.title;
+    document.getElementById("star-card-desc").textContent = c.project.desc;
+    const linksEl = document.getElementById("star-card-links");
+    linksEl.innerHTML = "";
+    c.project.links.forEach(([label, url]) => {
+      const a = document.createElement("a");
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = label;
+      linksEl.appendChild(a);
+    });
+    starModal.hidden = false;
+    document.body.classList.add("star-open");
+    document.body.classList.remove("const-hover");
+    hoveredConst = -1;
+    if (lenis) lenis.stop();
+    if (prefersReduced) renderNow();
+  }
+
+  function closeStarCard() {
+    starModal.hidden = true;
+    document.body.classList.remove("star-open");
+    if (lenis) lenis.start();
+  }
+
+  document.getElementById("star-card-close").addEventListener("click", closeStarCard);
+  document.getElementById("star-backdrop").addEventListener("click", closeStarCard);
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !starModal.hidden) closeStarCard();
+  });
+
+  // One-time hint
+  if (isDusk()) {
+    setTimeout(() => {
+      try {
+        if (!localStorage.getItem("constHint")) {
+          showToast("✨ psst — the constellations are clickable");
+          localStorage.setItem("constHint", "1");
+        }
+      } catch (e) {}
+    }, 2600);
+  }
+
+  // --- Editing (user layer only) ---
   const hitStar = (px, py) => {
     let best = -1, bestD = 18;
-    sky.stars.forEach((s, i) => {
+    custom.stars.forEach((s, i) => {
       const d = Math.hypot(s.x * W - px, s.y * H - py);
       if (d < bestD) { bestD = d; best = i; }
     });
@@ -870,8 +1144,8 @@ if (skyCanvas) {
     if (dragIdx >= 0) {
       if (Math.hypot(e.clientX - downX, e.clientY - downY) > 5) dragMoved = true;
       if (dragMoved) {
-        sky.stars[dragIdx].x = Math.min(Math.max(e.clientX / W, 0.01), 0.99);
-        sky.stars[dragIdx].y = Math.min(Math.max(e.clientY / H, 0.01), 0.99);
+        custom.stars[dragIdx].x = Math.min(Math.max(e.clientX / W, 0.01), 0.99);
+        custom.stars[dragIdx].y = Math.min(Math.max(e.clientY / H, 0.01), 0.99);
       }
     } else {
       hovered = hitStar(e.clientX, e.clientY);
@@ -891,14 +1165,14 @@ if (skyCanvas) {
       } else if (selected === i) {
         selected = -1;
       } else {
-        const at = sky.edges.findIndex(([a, b]) => (a === selected && b === i) || (a === i && b === selected));
-        if (at >= 0) sky.edges.splice(at, 1);
-        else sky.edges.push([selected, i]);
+        const at = custom.edges.findIndex(([a, b]) => (a === selected && b === i) || (a === i && b === selected));
+        if (at >= 0) custom.edges.splice(at, 1);
+        else custom.edges.push([selected, i]);
         selected = i;
         saveSky();
       }
     } else {
-      sky.stars.push({ x: e.clientX / W, y: e.clientY / H });
+      custom.stars.push({ x: e.clientX / W, y: e.clientY / H });
       selected = -1;
       saveSky();
     }
@@ -909,8 +1183,8 @@ if (skyCanvas) {
     if (!editing) return;
     const i = hitStar(e.clientX, e.clientY);
     if (i < 0) return;
-    sky.stars.splice(i, 1);
-    sky.edges = sky.edges
+    custom.stars.splice(i, 1);
+    custom.edges = custom.edges
       .filter(([a, b]) => a !== i && b !== i)
       .map(([a, b]) => [a > i ? a - 1 : a, b > i ? b - 1 : b]);
     selected = -1;
@@ -920,11 +1194,14 @@ if (skyCanvas) {
   });
 
   function enterSkyEdit() {
-    if (!document.documentElement.classList.contains("dusk")) setTheme(true);
+    if (!isDusk()) setTheme(true);
+    closeStarCard();
     editing = true;
+    hoveredConst = -1;
     document.body.classList.add("sky-editing");
+    document.body.classList.remove("const-hover");
     if (lenis) lenis.stop();
-    showToast("✎ sky editor — changes save automatically");
+    showToast("✎ sky editor — your stars save automatically");
     if (prefersReduced) renderNow();
   }
 
@@ -944,10 +1221,10 @@ if (skyCanvas) {
   skyEditBtn.addEventListener("click", enterSkyEdit);
   document.getElementById("sky-done").addEventListener("click", exitSkyEdit);
   document.getElementById("sky-reset").addEventListener("click", () => {
-    sky = defaultSky();
+    custom = { stars: [], edges: [] };
     selected = -1;
     saveSky();
-    showToast("sky reset ✿");
+    showToast("your stars were cleared ✿");
     if (prefersReduced) renderNow();
   });
   window.addEventListener("keydown", (e) => {
