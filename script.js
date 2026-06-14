@@ -497,3 +497,86 @@ document.addEventListener("click", (e) => {
   if (e.target.closest(".palette-panel, .terminal, .piece-card, .piece, .nav, button, a, input")) return;
   pieceBurst(e.clientX, e.clientY);
 });
+
+// ===== Scroll choreography =====
+if (hasGsap && !prefersReduced) {
+  gsap.registerPlugin(ScrollTrigger);
+
+  if (typeof Lenis !== "undefined") {
+    lenis = new Lenis({ duration: 1.15 });
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add((t) => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+
+  gsap.to(".progress-bar", {
+    scaleX: 1, ease: "none",
+    scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0.3 },
+  });
+
+  gsap.from(".hero-line", { yPercent: 115, duration: 1.2, ease: "power4.out", stagger: 0.14, delay: 0.15 });
+  gsap.from([".hero-eyebrow", ".hero-roles", ".hero-blurb", ".hero-actions", ".hero-stats"], {
+    y: 26, autoAlpha: 0, duration: 0.9, ease: "power3.out", stagger: 0.1, delay: 0.5,
+  });
+  gsap.to(".hero-inner", {
+    yPercent: -10, autoAlpha: 0.3, ease: "none",
+    scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom 30%", scrub: true },
+  });
+
+  gsap.utils.toArray(".giant").forEach((el) => {
+    gsap.fromTo(el, { xPercent: 6 }, {
+      xPercent: -9, ease: "none",
+      scrollTrigger: { trigger: el.parentElement, start: "top bottom", end: "bottom top", scrub: true },
+    });
+  });
+
+  gsap.utils.toArray("[data-reveal]").forEach((el) => {
+    gsap.from(el, {
+      y: 52, autoAlpha: 0, duration: 1, ease: "power3.out",
+      scrollTrigger: { trigger: el, start: "top 88%" },
+    });
+  });
+
+  // chip pop-in
+  gsap.utils.toArray(".skill-group").forEach((g) => {
+    gsap.from(g.querySelectorAll(".chips span"), {
+      scale: 0.5, autoAlpha: 0, duration: 0.5, ease: "back.out(2.2)", stagger: 0.02,
+      scrollTrigger: { trigger: g, start: "top 85%" },
+    });
+  });
+
+  // count-up
+  document.querySelectorAll("[data-count]").forEach((el) => {
+    const end = parseFloat(el.dataset.count);
+    const dec = el.dataset.decimals ? parseInt(el.dataset.decimals, 10) : 0;
+    const proxy = { v: 0 };
+    ScrollTrigger.create({
+      trigger: el, start: "top 92%", once: true,
+      onEnter: () => gsap.to(proxy, { v: end, duration: 1.6, ease: "power2.out", onUpdate: () => { el.textContent = proxy.v.toFixed(dec); } }),
+    });
+  });
+
+  // scramble section titles
+  const SC = "♟♞♝♜♛♚*+";
+  gsap.utils.toArray(".st-text").forEach((el) => {
+    const original = el.textContent;
+    ScrollTrigger.create({
+      trigger: el, start: "top 88%", once: true,
+      onEnter: () => {
+        let frame = 0; const total = 16;
+        const timer = setInterval(() => {
+          frame++;
+          const settled = Math.floor((frame / total) * original.length);
+          el.textContent = [...original].map((c, i) => (c === " " ? " " : i < settled ? c : SC[(Math.random() * SC.length) | 0])).join("");
+          if (frame >= total) { clearInterval(timer); el.textContent = original; }
+        }, 42);
+      },
+    });
+  });
+
+  // board entrance: pieces drop in rank by rank
+  ScrollTrigger.create({
+    trigger: "#chessboard", start: "top 78%", once: true,
+    onEnter: () => gsap.from("#chessboard .piece", { y: -40, autoAlpha: 0, duration: 0.5, ease: "back.out(1.7)", stagger: { each: 0.03, from: "center" } }),
+  });
+}
