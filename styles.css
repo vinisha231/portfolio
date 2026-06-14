@@ -524,3 +524,15 @@ body.brilliant .nav-inner .logo-piece { animation: spin 0.6s linear infinite; di
 .more-projects { text-align: center; margin-top: 36px; color: var(--ink-dim); }
 .more-projects a { color: var(--green-deep); text-decoration: none; font-weight: 500; }
 .more-projects a:hover { text-decoration: underline; }
+
+/* ============ Scene polish: motion + small screens ============ */
+@media (prefers-reduced-motion: reduce) {
+  .piece-rot { transform: none !important; }
+  .scene-body, .scene-art { opacity: 1 !important; }
+}
+@media (max-width: 520px) {
+  .piece-svg { width: clamp(140px, 52vw, 200px); }
+  .scene { padding: 48px 22px; }
+  .lab-grid { grid-template-columns: repeat(2, 1fr); }
+  .mini-grid { grid-template-columns: 1fr; }
+}
