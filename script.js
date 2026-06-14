@@ -383,12 +383,6 @@ if (hasGsap && !prefersReduced) {
       },
     });
   });
-
-  // board entrance: pieces drop in rank by rank
-  ScrollTrigger.create({
-    trigger: "#chessboard", start: "top 78%", once: true,
-    onEnter: () => gsap.from("#chessboard .piece", { y: -40, autoAlpha: 0, duration: 0.5, ease: "back.out(1.7)", stagger: { each: 0.03, from: "center" } }),
-  });
 }
 
 // ===== Pointer flourishes =====
