@@ -495,3 +495,111 @@ window.addEventListener("keydown", (e) => {
   kIdx = key === KONAMI[kIdx] ? kIdx + 1 : key === KONAMI[0] ? 1 : 0;
   if (kIdx === KONAMI.length) { kIdx = 0; brilliancy(); }
 });
+
+// ===== Build project scenes + lab pawns =====
+(function buildProjects() {
+  const scenesEl = document.getElementById("scenes");
+  const labEl = document.getElementById("lab-grid");
+  if (!scenesEl || !labEl) return;
+
+  const ROLE = { king: "King", queen: "Queen", rook: "Rook", bishop: "Bishop", knight: "Knight", pawn: "Pawn" };
+  const pieceSvg = (id, cls = "piece-svg") => `<svg class="${cls}" viewBox="0 0 90 110" aria-hidden="true"><use href="#pc-${id}"/></svg>`;
+
+  const SCENES = [
+    { piece: "queen", title: "Rta, AI Benefits Navigator", award: "2nd Place, AWS Hacks 2026",
+      desc: "The most powerful piece on the board. An AI government benefits navigator: a 9 question intake checks 10+ programs against 2025 Federal Poverty data, then an AI Advocate drafts appeal letters, runs mock caseworker interviews, and helps with denials. Fully serverless, with 75+ language support.",
+      chips: ["AWS Bedrock", "Lambda", "API Gateway", "Aurora", "Cognito", "Polly", "React"],
+      links: [["view code", "https://github.com/vinisha231/AWS-Hacks-2026"]] },
+    { piece: "king", title: "Big Back Bites", award: "1st Place, IxDA UWB Designathon 2026",
+      desc: "The piece the whole game is built to protect. A food discovery app designed end to end in Figma, then built as a fully interactive TypeScript frontend. First place across every competing team.",
+      chips: ["TypeScript", "Figma", "REST APIs", "Agile UX"],
+      links: [["view code", "https://github.com/vinisha231/Big-Back-Bites"]] },
+    { piece: "rook", title: "Interview Simulator Platform", award: "Live in production",
+      desc: "A rook holds the line. A voice driven AI interview coach: Claude generates role specific questions and structured feedback, while Polly and Transcribe make every session fully conversational. Deployed on Elastic Beanstalk and Amplify with PostgreSQL on RDS.",
+      chips: ["Python", "FastAPI", "PostgreSQL", "Claude", "Polly", "Transcribe"],
+      links: [["live site", "https://vdhaya-interview-simulator.com"], ["view code", "https://github.com/vinisha231/Interview_simulator"]] },
+    { piece: "knight", title: "The Hollow Pact", award: null,
+      desc: "Knights move in ways you do not expect, and so might your companion. An asymmetric AI co op adventure in Unity 6 where your party member has a hidden trust system and may be quietly plotting against you.",
+      chips: ["Unity 6", "C#", "Companion AI"],
+      links: [["view code", "https://github.com/vinisha231/The-Hollow-Pact-v2"]] },
+    { piece: "bishop", title: "Atma Milan", award: null,
+      desc: "The bishop moves on faith. A Vedic soul compatibility checker inspired by Hindu Jyotish astrology, bringing kundali matching to TypeScript.",
+      chips: ["TypeScript", "Jyotish"],
+      links: [["view code", "https://github.com/vinisha231/atma-milan"]] },
+    { piece: "rook", title: "AML Detection System", award: null,
+      desc: "Another rook on the board, built to defend. An anti money laundering toolkit with a synthetic typology generator, a rules engine, graph based scoring, and an analyst dashboard.",
+      chips: ["Python", "Graph Analysis"],
+      links: [["view code", "https://github.com/vinisha231/aml-detection"]] },
+    { piece: "bishop", title: "CT Reconstruction with CNNs", award: null,
+      desc: "Precise and exact, like a bishop down a long diagonal. My undergraduate research on sparse view CT reconstruction using CNNs and SART to cut patient radiation exposure. PSNR 36.5 to 39.9 dB, SSIM 0.95 to 0.97, and writing to publish.",
+      chips: ["Python", "TensorFlow", "NumPy", "OpenCV"],
+      links: [["view code", "https://github.com/vinisha231/Computed_Tomography_Reconstruction_using_Convolutional_Neural_Networks"]] },
+    { piece: "knight", title: "BridgeTales AI", award: null,
+      desc: "Knights leap where others cannot. An interactive AI storybook with branching narratives, AI generated images, and speech, plus a Visa API integration for local business donations.",
+      chips: ["AWS Bedrock", "React", "Node.js", "PostgreSQL"],
+      links: [["view code", "https://github.com/HarshitaRag/BridgeTales-AI"]] },
+  ];
+
+  const LAB = [
+    { title: "Burnlist", tag: "Spotify", desc: "A Spotify playlist that self destructs after one listen. Make someone a mix, and once they play it, it is gone.", chips: ["JavaScript", "Spotify API"], links: [["live", "https://vinisha231.github.io/Burnlist/"], ["code", "https://github.com/vinisha231/Burnlist"]] },
+    { title: "Chess Analyzer", tag: "TypeScript", desc: "Naturally. A chess engine and analysis app with play versus computer across five difficulty levels and an analysis mode.", chips: ["TypeScript"], links: [["code", "https://github.com/vinisha231/chess-analyzer"]] },
+    { title: "PipeLens", tag: "DevSecOps", desc: "An AI security auditor for Dockerfiles and CI/CD pipelines that catches misconfigurations before they ship.", chips: ["TypeScript", "Docker", "CI/CD"], links: [["code", "https://github.com/vinisha231/pipelens"]] },
+    { title: "MercuryCI", tag: "Python", desc: "The emotionally aware, astrologically governed CI/CD pipeline. Deploys are blocked during Mercury retrograde, obviously.", chips: ["Python", "CI/CD"], links: [["code", "https://github.com/vinisha231/MercuryCI"]] },
+    { title: "Lease Clause Decoder", tag: "LLM", desc: "AI that reads your lease and flags illegal clauses, landlord favoring terms, and negotiation openings before you sign.", chips: ["TypeScript", "LLM"], links: [["code", "https://github.com/vinisha231/lease-clause-decoder"]] },
+    { title: "OpenMRS Contributions", tag: "Open source", desc: "Accessibility, TypeScript, and UX improvements to the OpenMRS patient chart used in global health clinics.", chips: ["TypeScript", "A11y"], links: [["code", "https://github.com/vinisha231/openmrs-patient-chart-improvements"]] },
+    { title: "Spotify Playlist Generator", tag: "JavaScript", desc: "Generates playlists based on the weather and time of day. A rainy Tuesday evening has its own mood.", chips: ["JavaScript", "Spotify API"], links: [["code", "https://github.com/vinisha231/SpotifyPlaylistGenerator"]] },
+    { title: "Conversation Starter", tag: "MVP", desc: "A small MVP for breaking the ice, with prompts that get people actually talking.", chips: ["JavaScript"], links: [["code", "https://github.com/vinisha231/conversation-starter"]] },
+  ];
+
+  const chipsHtml = (chips) => chips.map((c) => `<span>${c}</span>`).join("");
+  const linksHtml = (links) => links.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${t} ↗</a>`).join("");
+
+  // scenes
+  SCENES.forEach((s, i) => {
+    const scene = document.createElement("article");
+    scene.className = "scene" + (i % 2 ? " flip" : "");
+    const art = `<div class="scene-art"><div class="scene-glow"></div><div class="piece-rot">${pieceSvg(s.piece)}</div></div>`;
+    const body = `<div class="scene-body">
+        <div class="scene-no">move ${String(i + 1).padStart(2, "0")}</div>
+        <div class="scene-piece-name">${ROLE[s.piece]}</div>
+        ${s.award ? `<div class="scene-award">${s.award}</div>` : ""}
+        <h3 class="scene-title">${s.title}</h3>
+        <p class="scene-desc">${s.desc}</p>
+        <div class="chips">${chipsHtml(s.chips)}</div>
+        <div class="scene-links">${linksHtml(s.links)}</div>
+      </div>`;
+    scene.innerHTML = art + body;
+    scenesEl.appendChild(scene);
+  });
+
+  // lab pawns -> modal
+  const modal = document.getElementById("piece-modal");
+  function openLab(p) {
+    document.getElementById("piece-card-glyph").innerHTML = pieceSvg("pawn", "piece-svg");
+    document.getElementById("piece-card-role").textContent = "Pawn, side quest";
+    document.getElementById("piece-card-title").textContent = p.title;
+    const award = document.getElementById("piece-card-award");
+    award.hidden = true;
+    document.getElementById("piece-card-desc").textContent = p.desc;
+    const chipsEl = document.getElementById("piece-card-chips");
+    chipsEl.innerHTML = chipsHtml(p.chips);
+    document.getElementById("piece-card-links").innerHTML = linksHtml(p.links);
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
+    if (lenis) lenis.stop();
+  }
+  function closeLab() { modal.hidden = true; document.body.classList.remove("modal-open"); if (lenis) lenis.start(); }
+
+  LAB.forEach((p) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "lab-pawn";
+    card.innerHTML = `${pieceSvg("pawn")}<span class="lab-pawn-title">${p.title}</span><span class="lab-pawn-tag">${p.tag}</span>`;
+    card.addEventListener("click", () => openLab(p));
+    labEl.appendChild(card);
+  });
+
+  document.getElementById("piece-card-close").addEventListener("click", closeLab);
+  document.getElementById("piece-backdrop").addEventListener("click", closeLab);
+  window.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closeLab(); });
+})();
