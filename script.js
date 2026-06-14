@@ -317,3 +317,73 @@ if (themeBtn) {
   document.getElementById("piece-backdrop").addEventListener("click", closePiece);
   window.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closePiece(); });
 })();
+
+// ===== Command palette (⌘K) =====
+(function paletteInit() {
+  const palette = document.getElementById("palette");
+  const input = document.getElementById("palette-input");
+  const list = document.getElementById("palette-list");
+  const btn = document.getElementById("palette-btn");
+  const backdrop = document.getElementById("palette-backdrop");
+  if (!palette) return;
+
+  const items = [
+    { icon: "♟", label: "On the board (chess stats)", hint: "01", action: () => goTo("#chess") },
+    { icon: "♜", label: "The board (projects)", hint: "02", action: () => goTo("#projects") },
+    { icon: "♚", label: "The player (about)", hint: "03", action: () => goTo("#about") },
+    { icon: "⏱", label: "The moves (experience)", hint: "04", action: () => goTo("#experience") },
+    { icon: "⚔", label: "The arsenal (skills)", hint: "05", action: () => goTo("#skills") },
+    { icon: "🎓", label: "Education", hint: "06", action: () => goTo("#education") },
+    { icon: "♞", label: "Flip the board (theme)", hint: "theme", action: () => themeBtn && themeBtn.click() },
+    { icon: "🐙", label: "GitHub", hint: "↗", action: () => window.open("https://github.com/vinisha231", "_blank") },
+    { icon: "💼", label: "LinkedIn", hint: "↗", action: () => window.open("https://linkedin.com/in/vinishab", "_blank") },
+    { icon: "♟", label: "Chess.com profile", hint: "↗", action: () => window.open("https://www.chess.com/member/Vinu2023", "_blank") },
+    { icon: "✉", label: "Email me", hint: "mailto", action: () => { window.location.href = "mailto:viba2022@gmail.com"; } },
+  ];
+
+  let filtered = items, selected = 0;
+  function render() {
+    list.innerHTML = "";
+    filtered.forEach((it, i) => {
+      const li = document.createElement("li");
+      if (i === selected) li.classList.add("is-selected");
+      const icon = document.createElement("span"); icon.className = "p-icon"; icon.textContent = it.icon;
+      const label = document.createElement("span"); label.textContent = it.label;
+      const hint = document.createElement("span"); hint.className = "p-hint"; hint.textContent = it.hint;
+      li.append(icon, label, hint);
+      li.addEventListener("click", () => run(it));
+      li.addEventListener("mousemove", () => {
+        if (selected === i) return;
+        selected = i;
+        list.querySelectorAll("li").forEach((el, j) => el.classList.toggle("is-selected", j === selected));
+      });
+      list.appendChild(li);
+    });
+    const sel = list.querySelector(".is-selected");
+    if (sel) sel.scrollIntoView({ block: "nearest" });
+  }
+  function open() {
+    palette.hidden = false; document.body.classList.add("palette-open");
+    if (lenis) lenis.stop();
+    input.value = ""; filtered = items; selected = 0; render(); input.focus();
+  }
+  function close() { palette.hidden = true; document.body.classList.remove("palette-open"); if (lenis) lenis.start(); }
+  function run(it) { close(); setTimeout(it.action, 60); }
+
+  btn.addEventListener("click", open);
+  backdrop.addEventListener("click", close);
+  window.addEventListener("keydown", (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); palette.hidden ? open() : close(); }
+    else if (e.key === "Escape" && !palette.hidden) close();
+  });
+  input.addEventListener("input", () => {
+    const q = input.value.trim().toLowerCase();
+    filtered = items.filter((it) => it.label.toLowerCase().includes(q));
+    selected = 0; render();
+  });
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown") { e.preventDefault(); selected = Math.min(selected + 1, filtered.length - 1); render(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); selected = Math.max(selected - 1, 0); render(); }
+    else if (e.key === "Enter" && filtered[selected]) run(filtered[selected]);
+  });
+})();

@@ -21,6 +21,16 @@
   <div class="cursor-dot" aria-hidden="true"></div>
   <div class="cursor-ring" aria-hidden="true"></div>
 
+  <!-- Command palette -->
+  <div class="palette" id="palette" hidden>
+    <div class="palette-backdrop" id="palette-backdrop"></div>
+    <div class="palette-panel" role="dialog" aria-label="Command menu">
+      <input id="palette-input" type="text" placeholder="Where to? Type to search…" autocomplete="off" spellcheck="false" />
+      <ul id="palette-list"></ul>
+      <p class="palette-foot"><kbd>↑↓</kbd> navigate · <kbd>↵</kbd> go · <kbd>esc</kbd> close</p>
+    </div>
+  </div>
+
   <!-- ===== Nav ===== -->
   <nav class="nav">
     <div class="nav-inner">
@@ -34,6 +44,7 @@
       </ul>
       <div class="nav-right">
         <button class="theme-btn" id="theme-btn" aria-label="Flip the board (toggle theme)">⛶</button>
+        <button class="palette-btn" id="palette-btn" aria-label="Open command menu"><span class="pb-desktop">⌘K</span><span class="pb-mobile">♞ menu</span></button>
         <a href="mailto:viba2022@gmail.com" class="btn btn-sm btn-outline nav-cta">Get in touch</a>
       </div>
     </div>
