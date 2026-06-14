@@ -536,3 +536,10 @@ body.brilliant .nav-inner .logo-piece { animation: spin 0.6s linear infinite; di
   .lab-grid { grid-template-columns: repeat(2, 1fr); }
   .mini-grid { grid-template-columns: 1fr; }
 }
+
+/* ============ 3D piece mount ============ */
+.piece3d { position: relative; width: clamp(210px, 32vw, 360px); aspect-ratio: 3 / 4; display: grid; place-items: center; }
+.piece3d canvas { display: block; width: 100% !important; height: 100% !important; }
+.piece3d.has3d .piece-rot { display: none; }
+.piece3d .piece-svg { width: clamp(170px, 28vw, 300px); }
+@media (max-width: 520px) { .piece3d { width: clamp(180px, 60vw, 240px); } }
