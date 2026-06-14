@@ -118,8 +118,46 @@
       </div>
       <p class="chess-foot" data-reveal id="chess-foot">↻ refreshing from Chess.com…</p>
     </section>
+    <!-- ===== Projects as pieces ===== -->
+    <section id="projects" class="section">
+      <span class="giant">board</span>
+      <h2 class="section-title" data-reveal><span class="section-num">02</span> <span class="st-text">The board</span></h2>
+      <p class="section-lead" data-reveal>
+        My projects, set up for the opening. The back rank are flagship pieces; the pawns are
+        lab experiments. <strong>Hover a piece, click to read its story.</strong>
+      </p>
+      <div class="board-wrap" data-reveal>
+        <div class="ranks" id="ranks" aria-hidden="true"></div>
+        <div class="board-main">
+          <div class="chessboard" id="chessboard" role="list" aria-label="Projects laid out as chess pieces"></div>
+          <div class="files" id="files" aria-hidden="true"></div>
+        </div>
+      </div>
+      <p class="board-hint" data-reveal>♙ pawns = side quests · ♚♛♜♝♞ back rank = headline projects · tap any piece</p>
+    </section>
     <!-- more sections appended here -->
   </main>
+
+  <!-- Project modal -->
+  <div class="piece-modal" id="piece-modal" hidden>
+    <div class="piece-backdrop" id="piece-backdrop"></div>
+    <div class="piece-card" role="dialog" aria-label="Project details">
+      <button class="piece-card-close" id="piece-card-close" aria-label="Close">✕</button>
+      <div class="piece-card-head">
+        <span class="piece-card-glyph" id="piece-card-glyph">♚</span>
+        <div>
+          <p class="piece-card-role" id="piece-card-role"></p>
+          <h3 id="piece-card-title"></h3>
+        </div>
+      </div>
+      <p class="piece-card-award" id="piece-card-award" hidden></p>
+      <p class="piece-card-desc" id="piece-card-desc"></p>
+      <div class="chips" id="piece-card-chips"></div>
+      <div class="piece-card-links" id="piece-card-links"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
 
   <footer class="footer">
     <p>footer</p>
