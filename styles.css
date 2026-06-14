@@ -247,22 +247,10 @@ html.midnight .giant { -webkit-text-stroke-color: rgba(255, 255, 255, 0.07); }
   letter-spacing: 0.1em; color: var(--ink-dim);
 }
 .rating-num { font-family: var(--font-display); font-weight: 700; font-size: 3rem; line-height: 1; }
-.rating-best { font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-dim); margin: 4px 0 18px; }
-.wld-bar {
-  display: flex; height: 8px; border-radius: 999px; overflow: hidden;
-  background: var(--bg-deep); margin-bottom: 8px;
-}
-.wld-bar span { display: block; height: 100%; }
-.wld-bar .w { background: var(--green); }
-.wld-bar .d { background: var(--gold); }
-.wld-bar .l { background: var(--crimson); }
-.wld-nums { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-dim); }
-.wld-nums b { color: var(--ink); }
-.wld-nums .w b { color: var(--green-deep); }
-.wld-nums .l b { color: var(--crimson); }
+.rating-best { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-dim); margin: 4px 0 0; }
 
 /* ============ Mini stats ============ */
-.mini-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.mini-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .mini-stat {
   background: var(--card); border: 1px solid var(--line); border-radius: 14px;
   padding: 20px; text-align: center; box-shadow: var(--shadow-soft);
