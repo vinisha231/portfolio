@@ -1,32 +1,26 @@
-# ✦ Vinisha's Portfolio
+# ♞ Vinisha's Portfolio
 
-My personal portfolio — built with vanilla HTML, CSS, and JavaScript. No frameworks, no build step, just fast static files.
+My personal portfolio — built with vanilla HTML, CSS, and JavaScript. No frameworks, no build step. **Chess-themed**: my projects are laid out as pieces on a board, and my live Chess.com stats are right there too.
 
 **Live site:** [vinisha231.github.io/portfolio](https://vinisha231.github.io/portfolio/)
 
 ## What's inside
 
-- 🌸 Soft peach-pastel design with parallax gradient blobs and grain texture
-- 🌀 Scroll choreography — Lenis smooth scrolling + GSAP ScrollTrigger (pinned horizontal project gallery, velocity-reactive marquee, self-drawing timeline, drifting outline typography)
-- ⌨️ An actually-typeable terminal — try `help`, `stats` (live GitHub API), `petals`, or `sudo hire-me`
-- 🎛️ ⌘K command palette for keyboard navigation (doubles as the mobile menu)
-- 🌌 Night-sky mode (default) — a canvas planetarium with a Milky Way band, nebula glows, twinkling multi-color stars with diffraction flares, shooting stars, and scroll parallax
-- ⭐ **Seven real constellations** (Orion, Ursa Major, Cassiopeia, Cygnus, Lyra, Gemini, Scorpius), each mapped to a project — hover to light one up, click to open its project card
-- ✎ A sky editor for drawing your own stars and constellation lines on top, saved in the browser
-- 🌗 Dawn mode — the soft peach-pastel daytime theme, one toggle away and remembered between visits
-- 🧸 Draggable hero stickers you can toss around, scramble-in section titles, and cards that lean with scroll velocity
-- 🕹️ Konami code (↑↑↓↓←→←→BA) unlocks party mode
-- 🌸 Petal-burst on every click, plus a petal-rain easter egg
-- 🖱️ Trailing custom cursor, magnetic buttons, 3D-tilt cards, mouse-following card spotlights, and hero letters that bounce on hover
-- 🏆 Project showcase — AWS Hacks 2026 (2nd place), IxDA Designathon 2026 (1st place), plus a "lab" of 8 more builds
-- 📱 Fully responsive, with `prefers-reduced-motion` support
+- ♟ **Projects as chess pieces** — 16 projects set up on an 8×8 board. Flagships are the back rank (king = Rta, queen = Big Back Bites), lab experiments are the pawns. Hover a piece to see its legal-move dots; click to open its project card.
+- ♚ **Live Chess.com stats** — ratings (rapid/blitz/bullet), win-loss-draw bars, tactics, puzzle rush, total games, and league, pulled live from the public Chess.com API for [@Vinu2023](https://www.chess.com/member/Vinu2023).
+- ⛶ **Flip the board** — ivory (light) and midnight (dark) wood-board themes, remembered between visits.
+- 🎛️ **⌘K command palette** for keyboard navigation (doubles as the mobile menu).
+- ⌨️ **Playable terminal** — try `help`, `rating`, `fen`, `stats` (live), or `sudo hire-me`.
+- ♞ **Flourishes** — captured-piece particle bursts on click, smooth Lenis scrolling, GSAP scroll reveals, parallax, count-up stats, scramble-in titles, custom cursor, magnetic buttons, and 3D-tilt cards.
+- 🕹️ **Konami code** (↑↑↓↓←→←→BA) plays a "Brilliant!!" move.
+- 📱 Fully responsive, with a no-JS fallback and `prefers-reduced-motion` support.
 
 ## Running locally
 
 ```bash
 git clone https://github.com/vinisha231/portfolio.git
 cd portfolio
-open index.html   # or use any static server, e.g. python3 -m http.server
+open index.html   # or any static server, e.g. python3 -m http.server
 ```
 
 ## Deployment
