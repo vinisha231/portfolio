@@ -509,3 +509,16 @@ body.palette-open { overflow: hidden; }
 .brilliant-banner b { background: var(--gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
 body.brilliant .nav-inner .logo-piece { animation: spin 0.6s linear infinite; display: inline-block; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============ No-JS fallback + reduced motion ============ */
+.noscript-list { list-style: none; display: grid; gap: 8px; margin-top: 18px; }
+.noscript-list a { color: var(--green-deep); }
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; }
+  .cpiece, .brilliant-banner { display: none !important; }
+}
+@media (max-width: 600px) {
+  .section { padding-top: 90px; }
+  .rating-num { font-size: 2.5rem; }
+  .hero-actions .btn { flex: 1 1 auto; text-align: center; }
+}
