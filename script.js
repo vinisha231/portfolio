@@ -635,3 +635,36 @@ if (finePointer) {
     }
   }
 }
+
+// ===== Time-aware greeting =====
+(function greeting() {
+  const el = document.querySelector(".hero-eyebrow");
+  if (!el) return;
+  const h = new Date().getHours();
+  const g = h < 5 ? "playing blitz at this hour? I'm" : h < 12 ? "good morning — I'm" : h < 18 ? "good afternoon — I'm" : "good evening — I'm";
+  el.textContent = "♟ opening move · " + g;
+})();
+
+// ===== Brilliancy mode (Konami code) =====
+function brilliancy() {
+  showToast("✦✦ Brilliant!!");
+  pieceRain(120);
+  document.body.classList.add("brilliant");
+  const banner = document.createElement("div");
+  banner.className = "brilliant-banner";
+  banner.innerHTML = "<b>Brilliant!!</b> ✦✦";
+  document.body.appendChild(banner);
+  if (hasGsap && !prefersReduced) {
+    gsap.to(banner, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" });
+    gsap.to(banner, { opacity: 0, scale: 1.2, duration: 0.5, delay: 2.2, ease: "power2.in", onComplete: () => banner.remove() });
+  } else { setTimeout(() => banner.remove(), 2000); }
+  setTimeout(() => document.body.classList.remove("brilliant"), 4000);
+}
+const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+let kIdx = 0;
+window.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+  const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  kIdx = key === KONAMI[kIdx] ? kIdx + 1 : key === KONAMI[0] ? 1 : 0;
+  if (kIdx === KONAMI.length) { kIdx = 0; brilliancy(); }
+});
