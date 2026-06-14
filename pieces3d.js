@@ -101,7 +101,7 @@
     try {
       renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     } catch (e) { return null; }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 2));
     renderer.setSize(w, h);
     if ("outputEncoding" in renderer) renderer.outputEncoding = THREE.sRGBEncoding;
     slot.appendChild(renderer.domElement);
