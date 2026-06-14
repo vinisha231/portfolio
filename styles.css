@@ -407,3 +407,31 @@ body.modal-open { overflow: hidden; }
 #term-input { flex: 1; background: transparent; border: none; outline: none; font: inherit; color: var(--ink); caret-color: var(--green-deep); min-width: 0; }
 
 @media (max-width: 820px) { .about-grid { grid-template-columns: 1fr; } }
+
+/* ============ Experience (moves) ============ */
+.moves { display: flex; flex-direction: column; gap: 22px; }
+.move { display: grid; grid-template-columns: 48px 1fr; gap: 14px; align-items: start; }
+.move-no {
+  font-family: var(--font-mono); font-size: 1.1rem; color: var(--green-deep);
+  font-weight: 500; padding-top: 26px; text-align: right;
+}
+.card {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 26px; box-shadow: var(--shadow-soft);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.card:hover { box-shadow: var(--shadow-lift); border-color: rgba(111, 155, 65, 0.4); }
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.card h3 { font-family: var(--font-display); font-size: 1.18rem; font-weight: 600; }
+.at { color: var(--green-deep); font-weight: 500; }
+.date { font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-dim); white-space: nowrap; }
+.card-sub { color: var(--ink-dim); font-size: 0.88rem; margin: 4px 0 14px; }
+.card ul { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+.card ul li { color: var(--ink-dim); padding-left: 22px; position: relative; font-size: 0.95rem; }
+.card ul li::before { content: "♟"; position: absolute; left: 0; color: var(--green); font-size: 0.78rem; top: 3px; }
+.card ul li strong { color: var(--ink); font-weight: 600; }
+
+@media (max-width: 520px) {
+  .move { grid-template-columns: 1fr; }
+  .move-no { padding-top: 0; text-align: left; }
+}
