@@ -454,3 +454,46 @@ if (themeBtn) {
     termBody.scrollTop = termBody.scrollHeight;
   });
 })();
+
+// ===== Captured-piece particle burst =====
+const PIECE_GLYPHS = ["♟", "♞", "♝", "♜", "♛", "♚"];
+function makePiece(x, y) {
+  const el = document.createElement("span");
+  el.className = "cpiece";
+  el.textContent = PIECE_GLYPHS[(Math.random() * PIECE_GLYPHS.length) | 0];
+  el.style.left = x + "px";
+  el.style.top = y + "px";
+  el.style.color = Math.random() < 0.5 ? "var(--green-deep)" : "var(--gold)";
+  document.body.appendChild(el);
+  return el;
+}
+function pieceBurst(x, y, n = 7) {
+  if (!hasGsap || prefersReduced) return;
+  for (let i = 0; i < n; i++) {
+    const el = makePiece(x, y);
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 36 + Math.random() * 64;
+    gsap.fromTo(el, { scale: 0.6, opacity: 1 }, {
+      x: Math.cos(angle) * dist, y: Math.sin(angle) * dist + 26,
+      rotation: gsap.utils.random(-180, 180), scale: gsap.utils.random(0.4, 1.05),
+      opacity: 0, duration: gsap.utils.random(0.6, 1.1), ease: "power2.out",
+      onComplete: () => el.remove(),
+    });
+  }
+}
+function pieceRain(count = 40) {
+  if (!hasGsap || prefersReduced) return;
+  for (let i = 0; i < count; i++) {
+    const el = makePiece(Math.random() * window.innerWidth, -30);
+    el.style.fontSize = gsap.utils.random(13, 26) + "px";
+    gsap.to(el, {
+      y: window.innerHeight + 80, x: "+=" + gsap.utils.random(-120, 120),
+      rotation: gsap.utils.random(-360, 360), duration: gsap.utils.random(2.6, 5),
+      delay: Math.random() * 0.8, ease: "power1.in", onComplete: () => el.remove(),
+    });
+  }
+}
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".palette-panel, .terminal, .piece-card, .piece, .nav, button, a, input")) return;
+  pieceBurst(e.clientX, e.clientY);
+});

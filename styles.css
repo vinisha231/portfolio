@@ -495,3 +495,6 @@ body.palette-open { overflow: hidden; }
   .pb-mobile { display: inline; }
 }
 @media (max-width: 480px) { .nav-cta { display: none; } }
+
+/* ============ Captured-piece particles ============ */
+.cpiece { position: fixed; z-index: 350; pointer-events: none; font-size: 18px; line-height: 1; will-change: transform; }
