@@ -604,13 +604,6 @@ if (hasGsap && !prefersReduced) {
     });
   });
 
-  gsap.utils.toArray(".piece-rot").forEach((rot) => {
-    gsap.fromTo(rot, { rotation: -80 }, {
-      rotation: 280, ease: "none",
-      scrollTrigger: { trigger: rot.closest(".scene"), start: "top bottom", end: "bottom top", scrub: 1 },
-    });
-  });
-
   gsap.from("#lab-grid .lab-pawn", {
     y: 30, autoAlpha: 0, duration: 0.5, ease: "power2.out", stagger: 0.05,
     scrollTrigger: { trigger: "#lab-grid", start: "top 86%" },
