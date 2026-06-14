@@ -1,13 +1,13 @@
 # ♞ Vinisha's Portfolio
 
-My personal portfolio — built with vanilla HTML, CSS, and JavaScript. No frameworks, no build step. **Chess-themed**: my projects are laid out as pieces on a board, and my live Chess.com stats are right there too.
+My personal portfolio, built with vanilla HTML, CSS, and JavaScript. No frameworks, no build step. **Chess-themed**: each project is a hand-drawn chess piece that turns as you scroll, and my live Chess.com stats are right there too.
 
 **Live site:** [vinisha231.github.io/portfolio](https://vinisha231.github.io/portfolio/)
 
 ## What's inside
 
-- ♟ **Projects as chess pieces** — 16 projects set up on an 8×8 board. Flagships are the back rank (king = Rta, queen = Big Back Bites), lab experiments are the pawns. Hover a piece to see its legal-move dots; click to open its project card.
-- ♚ **Live Chess.com stats** — ratings (rapid/blitz/bullet), win-loss-draw bars, tactics, puzzle rush, total games, and league, pulled live from the public Chess.com API for [@Vinu2023](https://www.chess.com/member/Vinu2023).
+- ♟ **Projects as rotating pieces** — the 8 headline projects each get a full scroll scene with a realistic, hand-drawn ivory chess piece that rotates clockwise as you scroll past it (queen, king, rooks, bishops, knights). The 8 lab experiments are pawns you tap to read.
+- ♚ **Live Chess.com stats** — rapid, blitz, and bullet ratings with peak, plus tactics, league, and years playing, pulled live from the public Chess.com API for [@Vinu2023](https://www.chess.com/member/Vinu2023).
 - ⛶ **Flip the board** — ivory (light) and midnight (dark) wood-board themes, remembered between visits.
 - 🎛️ **⌘K command palette** for keyboard navigation (doubles as the mobile menu).
 - ⌨️ **Playable terminal** — try `help`, `rating`, `fen`, `stats` (live), or `sudo hire-me`.
