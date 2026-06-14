@@ -145,8 +145,8 @@
     cam.position.set(0, 0.15, dist);
     cam.lookAt(0, 0, 0);
 
-    return {
-      slot, renderer, scene, cam, spin,
+    const ctx = {
+      slot, renderer, scene, cam, spin, drag: 0,
       resize() {
         const nw = slot.clientWidth, nh = slot.clientHeight;
         if (!nw || !nh) return;
@@ -155,6 +155,18 @@
         cam.updateProjectionMatrix();
       },
     };
+
+    // grab a piece and spin it on its vertical axis by hand
+    let dragging = false, lastX = 0;
+    const cv = renderer.domElement;
+    cv.style.cursor = "grab";
+    cv.style.touchAction = "pan-y";
+    cv.addEventListener("pointerdown", (e) => { dragging = true; lastX = e.clientX; cv.style.cursor = "grabbing"; cv.setPointerCapture(e.pointerId); });
+    cv.addEventListener("pointermove", (e) => { if (!dragging) return; ctx.drag += (e.clientX - lastX) * 0.01; lastX = e.clientX; });
+    const end = () => { dragging = false; cv.style.cursor = "grab"; };
+    cv.addEventListener("pointerup", end);
+    cv.addEventListener("pointercancel", end);
+    return ctx;
   }
 
   // ---- mount every slot, render only those in view ----
@@ -180,7 +192,7 @@
     active.forEach((c) => {
       const r = c.slot.getBoundingClientRect();
       const progress = (vh - r.top) / (vh + r.height); // ~0 entering bottom, ~1 leaving top
-      c.spin.rotation.y = progress * Math.PI * 2.4 + now * 0.00018;
+      c.spin.rotation.y = progress * Math.PI * 2.4 + now * 0.00018 + c.drag;
       c.renderer.render(c.scene, c.cam);
     });
     requestAnimationFrame(frame);
