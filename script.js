@@ -387,3 +387,70 @@ if (themeBtn) {
     else if (e.key === "Enter" && filtered[selected]) run(filtered[selected]);
   });
 })();
+
+// ===== Interactive terminal =====
+(function terminalInit() {
+  const terminal = document.getElementById("terminal");
+  const termOut = document.getElementById("term-out");
+  const termBody = document.getElementById("term-body");
+  const termInput = document.getElementById("term-input");
+  if (!terminal || !termInput) return;
+
+  terminal.addEventListener("click", (e) => { if (!e.target.closest("a")) termInput.focus(); });
+
+  const print = (text, cls = "t-out") => {
+    const div = document.createElement("div");
+    div.className = cls; div.textContent = text;
+    termOut.appendChild(div);
+  };
+  const echo = (cmd) => {
+    const div = document.createElement("div");
+    const p = document.createElement("span"); p.className = "t-prompt"; p.textContent = "$";
+    div.appendChild(p); div.appendChild(document.createTextNode(" " + cmd));
+    termOut.appendChild(div);
+  };
+
+  const FENS = [
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR — the starting position",
+    "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R — Italian Game",
+    "rnbqkb1r/pp1p1ppp/4pn2/2p5/2P5/2N2N2/PP1PPPPP/R1BQKB1R — English-ish",
+  ];
+
+  const commands = {
+    help: () => print("commands: whoami · rating · projects · skills · fen · stats · gh · theme · clear · sudo hire-me"),
+    whoami: () => print("vinisha — engineer · researcher · chess player (Legend league)"),
+    rating: () => print("Chess.com — rapid ~1074 · blitz ~914 · bullet ~1208 · tactics best 1603"),
+    projects: () => { print("16 projects on the board above — king = Rta, queen = Big Back Bites, pawns = lab experiments."); print("↳ click any piece to read its story"); },
+    skills: () => print("python · c/c++/c# · java · sql · js/ts · react · fastapi · tensorflow · aws · azure · docker"),
+    fen: () => print(FENS[Math.floor(Math.random() * FENS.length)]),
+    stats: () => {
+      print("fetching live from chess.com…");
+      fetch(`https://api.chess.com/pub/player/${CHESS_USER}/stats`)
+        .then((r) => r.json())
+        .then((d) => {
+          const r = d.chess_rapid, b = d.chess_blitz, u = d.chess_bullet;
+          if (r) print(`rapid ${r.last.rating} (best ${r.best.rating}) · ${r.record.win}W/${r.record.loss}L/${r.record.draw}D`);
+          if (b) print(`blitz ${b.last.rating} (best ${b.best.rating})`);
+          if (u) print(`bullet ${u.last.rating} (best ${u.best.rating})`);
+          termBody.scrollTop = termBody.scrollHeight;
+        })
+        .catch(() => print("chess.com api unreachable — try again later"));
+    },
+    gh: () => { print("opening github.com/vinisha231 …"); window.open("https://github.com/vinisha231", "_blank"); },
+    theme: () => { if (themeBtn) themeBtn.click(); print(document.documentElement.classList.contains("midnight") ? "♚ midnight board" : "♔ ivory board"); },
+    clear: () => { termOut.innerHTML = ""; },
+    "sudo hire-me": () => { print("permission granted ♟ opening inbox…"); setTimeout(() => { window.location.href = "mailto:viba2022@gmail.com"; }, 600); },
+  };
+
+  termInput.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    const cmd = termInput.value.trim();
+    termInput.value = "";
+    if (!cmd) return;
+    echo(cmd);
+    const fn = commands[cmd.toLowerCase()];
+    if (fn) fn();
+    else print(`command not found: ${cmd} — try \`help\``);
+    termBody.scrollTop = termBody.scrollHeight;
+  });
+})();
