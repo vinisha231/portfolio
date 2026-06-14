@@ -498,3 +498,14 @@ body.palette-open { overflow: hidden; }
 
 /* ============ Captured-piece particles ============ */
 .cpiece { position: fixed; z-index: 350; pointer-events: none; font-size: 18px; line-height: 1; will-change: transform; }
+
+/* ============ Brilliancy easter egg ============ */
+.brilliant-banner {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.6);
+  z-index: 480; font-family: var(--font-display); font-style: italic; font-weight: 700;
+  font-size: clamp(2.5rem, 9vw, 6rem); color: #fff; pointer-events: none; opacity: 0;
+  text-shadow: 0 6px 30px rgba(111, 155, 65, 0.6);
+}
+.brilliant-banner b { background: var(--gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+body.brilliant .nav-inner .logo-piece { animation: spin 0.6s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
