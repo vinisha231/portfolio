@@ -603,3 +603,32 @@ window.addEventListener("keydown", (e) => {
   document.getElementById("piece-backdrop").addEventListener("click", closeLab);
   window.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closeLab(); });
 })();
+
+// ===== Scene motion: pieces rotate clockwise as you scroll =====
+if (hasGsap && !prefersReduced) {
+  gsap.utils.toArray(".scene").forEach((scene) => {
+    const dir = scene.classList.contains("flip") ? 44 : -44;
+    gsap.from(scene.querySelector(".scene-body"), {
+      x: dir, autoAlpha: 0, duration: 0.9, ease: "power3.out",
+      scrollTrigger: { trigger: scene, start: "top 68%" },
+    });
+    gsap.from(scene.querySelector(".scene-art"), {
+      autoAlpha: 0, scale: 0.78, duration: 0.9, ease: "power3.out",
+      scrollTrigger: { trigger: scene, start: "top 74%" },
+    });
+  });
+
+  gsap.utils.toArray(".piece-rot").forEach((rot) => {
+    gsap.fromTo(rot, { rotation: -80 }, {
+      rotation: 280, ease: "none",
+      scrollTrigger: { trigger: rot.closest(".scene"), start: "top bottom", end: "bottom top", scrub: 1 },
+    });
+  });
+
+  gsap.from("#lab-grid .lab-pawn", {
+    y: 30, autoAlpha: 0, duration: 0.5, ease: "power2.out", stagger: 0.05,
+    scrollTrigger: { trigger: "#lab-grid", start: "top 86%" },
+  });
+
+  ScrollTrigger.refresh();
+}
