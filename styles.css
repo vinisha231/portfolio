@@ -516,3 +516,23 @@ body.brilliant .nav-inner .logo-piece { animation: spin 0.6s linear infinite; di
   .scene-links { justify-content: center; }
   .scene-award { margin-left: auto; margin-right: auto; }
 }
+
+/* ============ Lab pawns grid ============ */
+.lab-wrap { padding-top: 60px; }
+.lab-title { font-family: var(--font-display); font-weight: 600; font-size: 1.4rem; margin-bottom: 24px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.lab-title span { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-dim); font-weight: 400; text-transform: lowercase; }
+.lab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+.lab-pawn {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  padding: 20px 14px 18px; box-shadow: var(--shadow-soft); cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+.lab-pawn:hover { box-shadow: var(--shadow-lift); border-color: rgba(111, 155, 65, 0.4); transform: translateY(-4px); }
+.lab-pawn .piece-svg { width: 52px; transition: transform 0.3s ease; }
+.lab-pawn:hover .piece-svg { transform: translateY(-4px) rotate(-6deg); }
+.lab-pawn-title { font-family: var(--font-display); font-weight: 600; font-size: 0.98rem; }
+.lab-pawn-tag { font-family: var(--font-mono); font-size: 0.66rem; color: var(--ink-dim); }
+.more-projects { text-align: center; margin-top: 36px; color: var(--ink-dim); }
+.more-projects a { color: var(--green-deep); text-decoration: none; font-weight: 500; }
+.more-projects a:hover { text-decoration: underline; }
