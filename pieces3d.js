@@ -188,6 +188,7 @@
   ctxs.forEach((c) => io.observe(c.slot));
 
   function frame(now) {
+    if (document.hidden) { requestAnimationFrame(frame); return; }
     const vh = window.innerHeight;
     active.forEach((c) => {
       const r = c.slot.getBoundingClientRect();
