@@ -469,3 +469,50 @@ body.brilliant .nav-inner .logo-piece { animation: spin 0.6s linear infinite; di
   .rating-num { font-size: 2.5rem; }
   .hero-actions .btn { flex: 1 1 auto; text-align: center; }
 }
+
+/* ============ Project scenes (rotating pieces) ============ */
+.piece-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.section-lead strong { color: var(--ink); font-weight: 600; }
+.play { position: relative; }
+.play-intro { padding-bottom: 0; }
+
+.scene {
+  min-height: 88vh; display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+  align-items: center; max-width: var(--max-w); margin: 0 auto; padding: 48px 24px;
+}
+.scene-art { display: grid; place-items: center; position: relative; }
+.scene.flip .scene-art { order: 2; }
+.piece-rot { transform-origin: 50% 58%; will-change: transform; }
+.piece-svg {
+  width: clamp(170px, 30vw, 330px); height: auto; display: block;
+  filter: drop-shadow(0 34px 26px rgba(40, 26, 10, 0.28));
+}
+.scene-glow {
+  position: absolute; width: 70%; aspect-ratio: 1; border-radius: 50%; z-index: -1;
+  background: radial-gradient(circle, rgba(111, 155, 65, 0.22), transparent 68%);
+}
+.scene-no {
+  font-family: var(--font-mono); font-size: 0.85rem; color: var(--green-deep); margin-bottom: 10px;
+}
+.scene-piece-name {
+  font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--ink-dim); margin-bottom: 8px;
+}
+.scene-award {
+  display: inline-block; font-size: 0.78rem; font-weight: 600; color: var(--ink);
+  background: linear-gradient(115deg, rgba(111,155,65,0.16), rgba(201,162,39,0.18));
+  border: 1px solid rgba(201, 162, 39, 0.4); padding: 5px 13px; border-radius: 999px; margin-bottom: 14px;
+}
+.scene-title { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 3.6vw, 2.4rem); line-height: 1.1; margin-bottom: 14px; }
+.scene-desc { color: var(--ink-dim); margin-bottom: 18px; }
+.scene-body .chips { margin-bottom: 20px; }
+.scene-links { display: flex; gap: 18px; flex-wrap: wrap; }
+.scene-links a { font-family: var(--font-mono); font-size: 0.85rem; color: var(--green-deep); text-decoration: none; }
+.scene-links a:hover { text-decoration: underline; }
+
+@media (max-width: 820px) {
+  .scene { grid-template-columns: 1fr; gap: 24px; min-height: auto; padding: 60px 24px; text-align: center; }
+  .scene.flip .scene-art { order: 0; }
+  .scene-links { justify-content: center; }
+  .scene-award { margin-left: auto; margin-right: auto; }
+}
