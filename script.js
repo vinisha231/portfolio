@@ -618,3 +618,14 @@ if (hasGsap && !prefersReduced) {
 
   ScrollTrigger.refresh();
 }
+
+// ===== Cursor wiring for dynamically built elements =====
+if (finePointer) {
+  const ring = document.querySelector(".cursor-ring");
+  if (ring) {
+    document.querySelectorAll("#scenes a, #lab-grid .lab-pawn, .piece-card a, .rating-card").forEach((el) => {
+      el.addEventListener("mouseenter", () => ring.classList.add("is-active"));
+      el.addEventListener("mouseleave", () => ring.classList.remove("is-active"));
+    });
+  }
+}
