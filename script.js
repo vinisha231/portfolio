@@ -104,44 +104,27 @@ if (themeBtn) {
   fetch(`https://api.chess.com/pub/player/${CHESS_USER}/stats`, { headers: { Accept: "application/json" } })
     .then((r) => { if (!r.ok) throw new Error("stats " + r.status); return r.json(); })
     .then((d) => {
-      let totalGames = 0;
       document.querySelectorAll(".rating-card[data-mode]").forEach((card) => {
         const mode = d[card.dataset.mode];
         if (!mode) return;
-        const rec = mode.record || {};
-        const w = rec.win || 0, l = rec.loss || 0, dr = rec.draw || 0;
-        const tot = w + l + dr || 1;
-        totalGames += w + l + dr;
-        const set = (sel, v) => { const el = card.querySelector(sel); if (el) el.textContent = v; };
+        const set = (sel, v) => { const el = card.querySelector(sel); if (el && v != null) el.textContent = v; };
         if (mode.last && mode.last.rating) set("[data-rating]", mode.last.rating);
         if (mode.best && mode.best.rating) set("[data-best]", mode.best.rating);
-        set("[data-w]", w); set("[data-d]", dr); set("[data-l]", l);
-        const bar = (sel, n) => { const el = card.querySelector(sel); if (el) el.style.width = (n / tot) * 100 + "%"; };
-        bar("[data-w-bar]", w); bar("[data-d-bar]", dr); bar("[data-l-bar]", l);
       });
-
       if (d.tactics && d.tactics.highest) setText("[data-tactics]", d.tactics.highest.rating);
-      if (d.puzzle_rush && d.puzzle_rush.best) setText("[data-puzzlerush]", d.puzzle_rush.best.score);
-      setText("[data-total]", totalGames.toLocaleString());
-
-      // Daily counts too
-      ["chess_daily", "chess960_daily"].forEach((k) => {
-        if (d[k] && d[k].record) {
-          const r = d[k].record;
-          totalGames += (r.win || 0) + (r.loss || 0) + (r.draw || 0);
-        }
-      });
-      setText("[data-total]", totalGames.toLocaleString());
-      if (foot) foot.textContent = "↻ live from Chess.com · @" + CHESS_USER;
+      if (foot) foot.textContent = "live from Chess.com, @" + CHESS_USER;
     })
     .catch(() => {
-      if (foot) foot.textContent = "showing my last-known stats · see live at chess.com/member/Vinu2023";
+      if (foot) foot.textContent = "see my live profile at chess.com/member/Vinu2023";
     });
 
-  // League from profile
   fetch(`https://api.chess.com/pub/player/${CHESS_USER}`, { headers: { Accept: "application/json" } })
     .then((r) => r.ok ? r.json() : null)
-    .then((p) => { if (p && p.league) setText("[data-league]", p.league); })
+    .then((p) => {
+      if (!p) return;
+      if (p.league) setText("[data-league]", p.league);
+      if (p.joined) setText("[data-since]", new Date(p.joined * 1000).getFullYear());
+    })
     .catch(() => {});
 })();
 
