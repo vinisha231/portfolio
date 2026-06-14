@@ -112,8 +112,8 @@
     if (env) scene.environment = env;
 
     const mat = new THREE.MeshPhysicalMaterial({
-      color: 0x0c0c0c, metalness: 0.1, roughness: 0.32,
-      clearcoat: 0.9, clearcoatRoughness: 0.22, envMapIntensity: 1.1,
+      color: 0x101010, metalness: 0.15, roughness: 0.28,
+      clearcoat: 1.0, clearcoatRoughness: 0.18, envMapIntensity: 1.35,
     });
 
     let piece;
