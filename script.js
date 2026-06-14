@@ -580,3 +580,58 @@ if (hasGsap && !prefersReduced) {
     onEnter: () => gsap.from("#chessboard .piece", { y: -40, autoAlpha: 0, duration: 0.5, ease: "back.out(1.7)", stagger: { each: 0.03, from: "center" } }),
   });
 }
+
+// ===== Pointer flourishes =====
+if (finePointer) {
+  // spotlight follow
+  document.querySelectorAll(".spot").forEach((el) => {
+    el.addEventListener("mousemove", (e) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--mx", e.clientX - r.left + "px");
+      el.style.setProperty("--my", e.clientY - r.top + "px");
+    });
+  });
+
+  if (hasGsap) {
+    // magnetic buttons
+    document.querySelectorAll(".magnetic").forEach((el) => {
+      const xTo = gsap.quickTo(el, "x", { duration: 0.4, ease: "power3" });
+      const yTo = gsap.quickTo(el, "y", { duration: 0.4, ease: "power3" });
+      el.addEventListener("mousemove", (e) => {
+        const r = el.getBoundingClientRect();
+        xTo((e.clientX - (r.left + r.width / 2)) * 0.35);
+        yTo((e.clientY - (r.top + r.height / 2)) * 0.35);
+      });
+      el.addEventListener("mouseleave", () => { xTo(0); yTo(0); });
+    });
+
+    // 3D tilt
+    document.querySelectorAll(".rating-card, .edu-card, .skill-group").forEach((card) => {
+      gsap.set(card, { transformPerspective: 900 });
+      const rx = gsap.quickTo(card, "rotationX", { duration: 0.5, ease: "power3" });
+      const ry = gsap.quickTo(card, "rotationY", { duration: 0.5, ease: "power3" });
+      card.addEventListener("mousemove", (e) => {
+        const r = card.getBoundingClientRect();
+        ry(((e.clientX - r.left) / r.width - 0.5) * 7);
+        rx(-((e.clientY - r.top) / r.height - 0.5) * 7);
+      });
+      card.addEventListener("mouseleave", () => { rx(0); ry(0); });
+    });
+
+    // trailing cursor
+    const dot = document.querySelector(".cursor-dot");
+    const ring = document.querySelector(".cursor-ring");
+    if (dot && ring) {
+      document.body.classList.add("has-cursor");
+      const dx = gsap.quickTo(dot, "x", { duration: 0.1, ease: "power3" });
+      const dy = gsap.quickTo(dot, "y", { duration: 0.1, ease: "power3" });
+      const rxp = gsap.quickTo(ring, "x", { duration: 0.45, ease: "power3" });
+      const ryp = gsap.quickTo(ring, "y", { duration: 0.45, ease: "power3" });
+      window.addEventListener("mousemove", (e) => { dx(e.clientX); dy(e.clientY); rxp(e.clientX); ryp(e.clientY); });
+      document.querySelectorAll("a, button, .piece, .rating-card, .card").forEach((el) => {
+        el.addEventListener("mouseenter", () => ring.classList.add("is-active"));
+        el.addEventListener("mouseleave", () => ring.classList.remove("is-active"));
+      });
+    }
+  }
+}
