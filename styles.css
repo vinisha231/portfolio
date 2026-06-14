@@ -170,3 +170,33 @@ body.has-cursor .cursor-dot, body.has-cursor .cursor-ring { display: block; }
   .scroll-hint span, .caret { animation: none; }
   .progress-bar { display: none; }
 }
+
+/* ============ Midnight board (dark theme) ============ */
+.theme-btn {
+  font-family: var(--font-mono); font-size: 0.95rem; color: var(--ink-dim);
+  background: var(--card); border: 1px solid var(--line); border-radius: 9px;
+  padding: 6px 11px; cursor: pointer; line-height: 1.2;
+  transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.theme-btn:hover { color: var(--ink); border-color: var(--green); box-shadow: var(--shadow-soft); }
+
+html.midnight {
+  --bg: #14110c;
+  --bg-deep: #1c1812;
+  --card: #211c15;
+  --board-light: #d9c39a;
+  --board-dark: #7a5638;
+  --ink: #f1e9d8;
+  --ink-dim: #b3a488;
+  --line: rgba(255, 255, 255, 0.1);
+  --green: #81b64c;
+  --green-deep: #9ccc5e;
+  --gold: #e0b94a;
+  --shadow-soft: 0 16px 44px rgba(0, 0, 0, 0.4), 0 5px 16px rgba(0, 0, 0, 0.26);
+  --shadow-lift: 0 28px 66px rgba(0, 0, 0, 0.55), 0 10px 24px rgba(0, 0, 0, 0.34);
+}
+html.midnight .nav { background: rgba(20, 17, 12, 0.74); }
+html.midnight .board-bg {
+  background: repeating-conic-gradient(rgba(255, 255, 255, 0.045) 0% 25%, transparent 0% 50%) 50% / 120px 120px;
+}
+html.midnight .btn-outline { background: rgba(33, 28, 21, 0.7); }
