@@ -83,7 +83,7 @@
       const c = document.createElement("canvas"); c.width = 16; c.height = 64;
       const ctx = c.getContext("2d");
       const grad = ctx.createLinearGradient(0, 0, 0, 64);
-      grad.addColorStop(0, "#aab2c4"); grad.addColorStop(0.5, "#3c424e"); grad.addColorStop(1, "#0b0d12");
+      grad.addColorStop(0, "#f6f2e8"); grad.addColorStop(0.5, "#8d8676"); grad.addColorStop(1, "#2a261d");
       ctx.fillStyle = grad; ctx.fillRect(0, 0, 16, 64);
       const tex = new THREE.CanvasTexture(c);
       tex.mapping = THREE.EquirectangularReflectionMapping;
@@ -112,8 +112,8 @@
     if (env) scene.environment = env;
 
     const mat = new THREE.MeshPhysicalMaterial({
-      color: 0x101010, metalness: 0.15, roughness: 0.28,
-      clearcoat: 1.0, clearcoatRoughness: 0.18, envMapIntensity: 1.35,
+      color: 0xe9e0cb, metalness: 0.0, roughness: 0.34,
+      clearcoat: 0.7, clearcoatRoughness: 0.28, envMapIntensity: 0.8,
     });
 
     let piece;
@@ -138,10 +138,10 @@
     tilt.add(spin);
     scene.add(tilt);
 
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x202028, 0.55));
-    const key = new THREE.DirectionalLight(0xffffff, 2.1); key.position.set(3, 6, 5); scene.add(key);
-    const fill = new THREE.DirectionalLight(0x9db4ff, 0.5); fill.position.set(-5, 2, 4); scene.add(fill);
-    const rim = new THREE.DirectionalLight(0xffe2b0, 1.5); rim.position.set(-3, 4, -6); scene.add(rim);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x303038, 0.5));
+    const key = new THREE.DirectionalLight(0xffffff, 1.45); key.position.set(3, 6, 5); scene.add(key);
+    const fill = new THREE.DirectionalLight(0xbcd0ff, 0.4); fill.position.set(-5, 2, 4); scene.add(fill);
+    const rim = new THREE.DirectionalLight(0xffe6c0, 0.7); rim.position.set(-3, 4, -6); scene.add(rim);
 
     const cam = new THREE.PerspectiveCamera(32, w / h, 0.1, 100);
     const fit = Math.max(size.x, size.y);
