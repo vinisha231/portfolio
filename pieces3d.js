@@ -132,7 +132,11 @@
     piece.position.set(-center.x, -center.y, -center.z);
     const spin = new THREE.Group();
     spin.add(piece);
-    scene.add(spin);
+    // lean the whole piece back a touch so its base shows while it spins
+    const tilt = new THREE.Group();
+    tilt.rotation.x = -0.2;
+    tilt.add(spin);
+    scene.add(tilt);
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x202028, 0.55));
     const key = new THREE.DirectionalLight(0xffffff, 2.1); key.position.set(3, 6, 5); scene.add(key);
