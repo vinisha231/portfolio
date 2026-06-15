@@ -544,7 +544,7 @@ window.addEventListener("keydown", (e) => {
   SCENES.forEach((s, i) => {
     const scene = document.createElement("article");
     scene.className = "scene" + (i % 2 ? " flip" : "");
-    const art = `<div class="scene-art"><div class="scene-glow"></div><div class="piece3d" data-piece="${s.piece}" role="img" aria-label="3D ${s.piece} chess piece, drag to spin"><div class="piece-rot">${pieceSvg(s.piece)}</div></div><span class="spin-hint" aria-hidden="true">↻ drag to spin</span></div>`;
+    const art = `<div class="scene-art"><div class="scene-glow"></div><figure class="piece-photo"><img src="assets/${s.piece}.jpg" alt="${s.title}, a ${s.piece} chess piece" loading="lazy" /></figure></div>`;
     const body = `<div class="scene-body">
         <div class="scene-no">move ${String(i + 1).padStart(2, "0")}</div>
         <div class="scene-piece-name">${ROLE[s.piece]}</div>
@@ -621,4 +621,19 @@ if (finePointer) {
       el.addEventListener("mouseleave", () => ring.classList.remove("is-active"));
     });
   }
+}
+
+// ===== Mouse-tilt on framed piece photos =====
+if (finePointer) {
+  document.querySelectorAll(".piece-photo").forEach((fig) => {
+    const img = fig.querySelector("img");
+    if (!img) return;
+    fig.addEventListener("mousemove", (e) => {
+      const r = fig.getBoundingClientRect();
+      const rx = (0.5 - (e.clientY - r.top) / r.height) * 14;
+      const ry = ((e.clientX - r.left) / r.width - 0.5) * 14;
+      img.style.transform = `perspective(720px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.04)`;
+    });
+    fig.addEventListener("mouseleave", () => { img.style.transform = ""; });
+  });
 }

@@ -551,3 +551,19 @@ body.brilliant .nav-inner .logo-piece { animation: spin 0.6s linear infinite; di
   opacity: 0.6; letter-spacing: 0.04em; user-select: none;
 }
 @media (hover: none) { .spin-hint::after { content: ""; } }
+
+/* ============ Piece photos (framed real pieces) ============ */
+.piece-photo {
+  margin: 0; width: clamp(190px, 30vw, 300px); border-radius: 18px; overflow: hidden;
+  box-shadow: var(--shadow-lift); border: 1px solid var(--line);
+  animation: pieceFloat 5.5s ease-in-out infinite; will-change: transform;
+}
+.piece-photo img {
+  display: block; width: 100%; height: auto; transition: transform 0.3s ease;
+  will-change: transform; backface-visibility: hidden;
+}
+@keyframes pieceFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@media (prefers-reduced-motion: reduce) { .piece-photo { animation: none; } }
