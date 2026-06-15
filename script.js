@@ -544,7 +544,7 @@ window.addEventListener("keydown", (e) => {
   SCENES.forEach((s, i) => {
     const scene = document.createElement("article");
     scene.className = "scene" + (i % 2 ? " flip" : "");
-    const art = `<div class="scene-art"><div class="scene-glow"></div><figure class="piece-photo"><img src="assets/${s.piece}.jpg" alt="${s.title}, a ${s.piece} chess piece" loading="lazy" /></figure></div>`;
+    const art = `<div class="scene-art"><div class="scene-glow"></div><figure class="piece-photo"><img src="assets/${s.piece}.png" alt="${s.title}, a ${s.piece} chess piece" loading="lazy" /></figure></div>`;
     const body = `<div class="scene-body">
         <div class="scene-no">move ${String(i + 1).padStart(2, "0")}</div>
         <div class="scene-piece-name">${ROLE[s.piece]}</div>

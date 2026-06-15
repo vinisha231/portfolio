@@ -554,13 +554,13 @@ body.brilliant .nav-inner .logo-piece { animation: spin 0.6s linear infinite; di
 
 /* ============ Piece photos (framed real pieces) ============ */
 .piece-photo {
-  margin: 0; width: clamp(190px, 30vw, 300px); border-radius: 18px; overflow: hidden;
-  box-shadow: var(--shadow-lift); border: 1px solid var(--line);
+  margin: 0; width: clamp(170px, 26vw, 260px);
   animation: pieceFloat 5.5s ease-in-out infinite; will-change: transform;
 }
 .piece-photo img {
   display: block; width: 100%; height: auto; transition: transform 0.3s ease;
   will-change: transform; backface-visibility: hidden;
+  filter: drop-shadow(0 26px 22px rgba(60, 42, 22, 0.32));
 }
 @keyframes pieceFloat {
   0%, 100% { transform: translateY(0); }
