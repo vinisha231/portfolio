@@ -799,3 +799,66 @@ if (finePointer) {
   let rt;
   window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => render(last), 150); });
 })();
+
+// ===== Finale: grow flowers, then zoom into the podium to reveal contact =====
+(function buildFinale() {
+  const garden = document.getElementById("finale-garden");
+  const reveal = document.getElementById("finale-reveal");
+  if (!garden || !reveal) return;
+
+  const FLOWERS = [
+    { left: 16, h: 116, size: 1.05, c: "cream" },
+    { left: 29, h: 84, size: 0.82, c: "pink" },
+    { left: 41, h: 138, size: 1.15, c: "" },
+    { left: 59, h: 96, size: 0.92, c: "pink" },
+    { left: 71, h: 124, size: 1.08, c: "cream" },
+    { left: 84, h: 80, size: 0.8, c: "" },
+  ];
+
+  FLOWERS.forEach((fl) => {
+    const bloom = document.createElement("div");
+    bloom.className = "bloom";
+    bloom.style.left = fl.left + "%";
+
+    const stem = document.createElement("div");
+    stem.className = "stem";
+    stem.style.height = fl.h + "px";
+    const leaf = document.createElement("div");
+    leaf.className = "leaf";
+    leaf.style.top = Math.round(fl.h * 0.45) + "px";
+    stem.appendChild(leaf);
+
+    const flower = document.createElement("div");
+    flower.className = "flower" + (fl.c ? " " + fl.c : "");
+    flower.style.bottom = fl.h + "px";
+    for (let i = 0; i < 6; i++) {
+      const petal = document.createElement("div");
+      petal.className = "petal";
+      petal.style.transform = `rotate(${i * 60}deg)`;
+      flower.appendChild(petal);
+    }
+    const core = document.createElement("div");
+    core.className = "flower-core";
+    flower.appendChild(core);
+
+    bloom.appendChild(stem);
+    bloom.appendChild(flower);
+    garden.appendChild(bloom);
+  });
+
+  if (!(hasGsap && !prefersReduced)) { reveal.style.opacity = "1"; return; }
+
+  const tl = gsap.timeline({ defaults: { ease: "none" } });
+  tl.fromTo(".bloom .stem", { scaleY: 0 }, { scaleY: 1, transformOrigin: "50% 100%", duration: 0.4, stagger: 0.05 }, 0);
+  tl.fromTo(".bloom .flower", { scale: 0, autoAlpha: 0, rotation: -60 }, { scale: 1, autoAlpha: 1, rotation: 0, transformOrigin: "50% 100%", duration: 0.45, stagger: 0.06 }, 0.08);
+  tl.to("#finale-hint", { autoAlpha: 0, duration: 0.15 }, 0.12);
+  tl.to("#finale-scene", { scale: 1.5, yPercent: -8, duration: 0.4, ease: "power1.in" }, 0.45);
+  tl.to(["#finale-garden", ".podium"], { autoAlpha: 0.35, duration: 0.3 }, 0.6);
+  tl.fromTo("#finale-reveal", { autoAlpha: 0, scale: 0.7, yPercent: 24 }, { autoAlpha: 1, scale: 1, yPercent: 0, duration: 0.4, ease: "power2.out" }, 0.62);
+
+  ScrollTrigger.create({
+    trigger: "#contact", start: "top top", end: "+=1700",
+    pin: ".finale-stage", scrub: 0.6, id: "finale", animation: tl, invalidateOnRefresh: true,
+  });
+  ScrollTrigger.refresh();
+})();
