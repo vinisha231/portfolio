@@ -139,6 +139,7 @@ if (themeBtn) {
 
   const items = [
     { icon: "♟", label: "On the board (chess stats)", hint: "01", action: () => goTo("#chess") },
+    { icon: "♟", label: "Play the game (scroll demo)", hint: "scroll", action: () => goTo("#game") },
     { icon: "♜", label: "The board (projects)", hint: "02", action: () => goTo("#projects") },
     { icon: "♚", label: "The player (about)", hint: "03", action: () => goTo("#about") },
     { icon: "⏱", label: "The moves (experience)", hint: "04", action: () => goTo("#experience") },
@@ -673,3 +674,128 @@ if (finePointer) {
     fig.addEventListener("pointercancel", release);
   });
 }
+
+// ===== Self-playing game: a miniature that plays as you scroll =====
+(function buildGame() {
+  const board = document.getElementById("game-board");
+  if (!board) return;
+  const moveEl = document.getElementById("game-move");
+  const noteEl = document.getElementById("game-note");
+  const fillEl = document.getElementById("game-progress-fill");
+
+  const GLYPH = { K: "♚", Q: "♛", R: "♜", B: "♝", N: "♞", P: "♟" };
+  const back = ["R", "N", "B", "Q", "K", "B", "N", "R"];
+  const START = [];
+  for (let f = 0; f < 8; f++) {
+    const file = String.fromCharCode(97 + f);
+    START.push({ type: back[f], color: "w", sq: file + "1" });
+    START.push({ type: "P", color: "w", sq: file + "2" });
+    START.push({ type: "P", color: "b", sq: file + "7" });
+    START.push({ type: back[f], color: "b", sq: file + "8" });
+  }
+  const MOVES = [
+    ["e2","e4"],["e7","e5"],["g1","f3"],["d7","d6"],["f1","c4"],["c8","g4"],
+    ["b1","c3"],["g7","g6"],["f3","e5"],["g4","d1"],["c4","f7"],["e8","e7"],["c3","d5"],
+  ];
+  const NOTES = [
+    ['1. e4', 'King’s pawn, the classic opening.'],
+    ['1… e5', 'Black answers symmetrically.'],
+    ['2. Nf3', 'Developing and eyeing e5.'],
+    ['2… d6', 'A solid but passive defense.'],
+    ['3. Bc4', 'The bishop aims at f7, the weak point.'],
+    ['3… Bg4', 'Pinning the knight to the queen.'],
+    ['4. Nc3', 'Calmly developing.'],
+    ['4… g6', 'A slip that loosens the king.'],
+    ['5. Nxe5<span class="bang">!</span>', 'The sacrifice. The knight grabs the pawn and defies the pin.'],
+    ['5… Bxd1<span class="blunder">??</span>', 'Black snatches the queen, and walks right into it.'],
+    ['6. Bxf7<span class="bang">+</span>', 'Check. The trap snaps shut.'],
+    ['6… Ke7', 'The only move, into the corner of the net.'],
+    ['7. Nd5<span class="bang">#</span>', 'Checkmate, with a queen still down. Légal’s immortal trap.'],
+  ];
+  const N = MOVES.length;
+
+  const pieces = START.map((p, i) => ({ id: i, type: p.type, color: p.color }));
+  const cur = {};
+  START.forEach((p, i) => { cur[p.sq] = i; });
+  const snap = () => { const m = {}; pieces.forEach((p) => { m[p.id] = null; }); for (const sq in cur) m[cur[sq]] = sq; return m; };
+  const stateSq = [snap()];
+  const plies = [];
+  MOVES.forEach(([from, to]) => {
+    const moverId = cur[from];
+    const capturedId = cur[to] != null ? cur[to] : null;
+    plies.push({ moverId, from, to, capturedId });
+    delete cur[from];
+    cur[to] = moverId;
+    stateSq.push(snap());
+  });
+
+  for (let r = 0; r < 8; r++) for (let f = 0; f < 8; f++) {
+    const s = document.createElement("div");
+    s.className = "game-sq" + ((r + f) % 2 === 1 ? " dark" : "");
+    s.style.left = f * 12.5 + "%";
+    s.style.top = r * 12.5 + "%";
+    board.appendChild(s);
+  }
+  const els = pieces.map((p) => {
+    const el = document.createElement("div");
+    el.className = "gp " + p.color;
+    el.textContent = GLYPH[p.type];
+    board.appendChild(el);
+    return el;
+  });
+
+  const fileOf = (sq) => sq.charCodeAt(0) - 97;
+  const rankOf = (sq) => +sq[1];
+  const cell = () => board.clientWidth / 8;
+  const xy = (sq) => { const c = cell(); return [fileOf(sq) * c, (8 - rankOf(sq)) * c]; };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  let last = 0;
+  function render(progress) {
+    last = progress;
+    const pp = clamp(progress, 0, 1) * N;
+    let seg = Math.floor(pp), f = pp - seg;
+    if (seg >= N) { seg = N - 1; f = 1; }
+    const base = stateSq[seg];
+    const ply = plies[seg];
+    pieces.forEach((p) => {
+      const el = els[p.id];
+      if (p.id === ply.moverId) {
+        const a = xy(ply.from), b = xy(ply.to);
+        el.style.transform = `translate(${lerp(a[0], b[0], f)}px, ${lerp(a[1], b[1], f)}px)`;
+        el.style.opacity = "1"; el.style.zIndex = "3";
+      } else if (p.id === ply.capturedId) {
+        const b = xy(ply.to);
+        el.style.transform = `translate(${b[0]}px, ${b[1]}px) scale(${lerp(1, 0.4, f)})`;
+        el.style.opacity = String(1 - f); el.style.zIndex = "1";
+      } else {
+        const sq = base[p.id];
+        if (!sq) { el.style.opacity = "0"; return; }
+        const c = xy(sq);
+        el.style.transform = `translate(${c[0]}px, ${c[1]}px)`;
+        el.style.opacity = "1"; el.style.zIndex = "2";
+      }
+    });
+    const idx = Math.min(seg, N - 1);
+    if (moveEl) moveEl.innerHTML = NOTES[idx][0];
+    if (noteEl) noteEl.textContent = NOTES[idx][1] || "";
+    if (fillEl) fillEl.style.width = clamp(progress, 0, 1) * 100 + "%";
+  }
+
+  render(0);
+
+  if (hasGsap && !prefersReduced) {
+    ScrollTrigger.create({
+      trigger: "#game", start: "top top", end: "+=" + N * 150,
+      pin: ".game-inner", scrub: 0.6, invalidateOnRefresh: true,
+      onUpdate: (self) => render(self.progress),
+    });
+    ScrollTrigger.refresh();
+  } else {
+    render(1);
+  }
+
+  let rt;
+  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => render(last), 150); });
+})();

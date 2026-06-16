@@ -38,6 +38,7 @@
       <ul class="nav-links">
         <li><a href="#about">About</a></li>
         <li><a href="#chess">Chess</a></li>
+        <li><a href="#game">Game</a></li>
         <li><a href="#projects">Board</a></li>
         <li><a href="#experience">Moves</a></li>
         <li><a href="#skills">Arsenal</a></li>
@@ -115,6 +116,23 @@
         <div class="mini-stat spot" data-reveal><span class="mini-piece">♟</span><span class="mini-num" data-since>2023</span><span class="mini-label">Playing since</span></div>
       </div>
       <p class="chess-foot" data-reveal id="chess-foot">↻ refreshing from Chess.com…</p>
+    </section>
+
+    <!-- ===== Self-playing game (scroll to play) ===== -->
+    <section id="game" class="game" aria-label="A chess game that plays as you scroll">
+      <div class="game-inner">
+        <div class="game-stage">
+          <div class="game-board" id="game-board"></div>
+        </div>
+        <div class="game-caption">
+          <span class="giant">play</span>
+          <p class="game-eyebrow">♟ scroll to play the game</p>
+          <h2 class="game-title">Légal's Mate</h2>
+          <p class="game-move" id="game-move">Ready to begin</p>
+          <p class="game-note" id="game-note">A famous 13-move miniature: a daring queen sacrifice, then a knight delivers checkmate. Scroll down to watch it unfold, scroll up to rewind.</p>
+          <div class="game-progress"><span id="game-progress-fill"></span></div>
+        </div>
+      </div>
     </section>
     <!-- ===== Projects as pieces ===== -->
     <section id="projects" class="play">
