@@ -561,7 +561,7 @@ window.addEventListener("keydown", (e) => {
   // lab pawns -> modal
   const modal = document.getElementById("piece-modal");
   function openLab(p) {
-    document.getElementById("piece-card-glyph").innerHTML = pieceSvg("pawn", "piece-svg");
+    document.getElementById("piece-card-glyph").innerHTML = `<img src="assets/pawn.png" alt="" style="width:46px;height:auto" />`;
     document.getElementById("piece-card-role").textContent = "Pawn, side quest";
     document.getElementById("piece-card-title").textContent = p.title;
     const award = document.getElementById("piece-card-award");
@@ -580,7 +580,7 @@ window.addEventListener("keydown", (e) => {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "lab-pawn";
-    card.innerHTML = `${pieceSvg("pawn")}<span class="lab-pawn-title">${p.title}</span><span class="lab-pawn-tag">${p.tag}</span>`;
+    card.innerHTML = `<img class="lab-pawn-img" src="assets/pawn.png" alt="" loading="lazy" /><span class="lab-pawn-title">${p.title}</span><span class="lab-pawn-tag">${p.tag}</span>`;
     card.addEventListener("click", () => openLab(p));
     labEl.appendChild(card);
   });
@@ -623,17 +623,53 @@ if (finePointer) {
   }
 }
 
-// ===== Mouse-tilt on framed piece photos =====
+// ===== Pieces: tilt on hover, grab and toss on drag =====
 if (finePointer) {
+  const clamp = (min, max, v) => Math.max(min, Math.min(max, v));
   document.querySelectorAll(".piece-photo").forEach((fig) => {
     const img = fig.querySelector("img");
     if (!img) return;
-    fig.addEventListener("mousemove", (e) => {
+    let dragging = false, dx = 0, dy = 0, sx = 0, sy = 0, vx = 0, vy = 0, lx = 0, ly = 0, lt = 0;
+
+    fig.addEventListener("pointermove", (e) => {
       const r = fig.getBoundingClientRect();
-      const rx = (0.5 - (e.clientY - r.top) / r.height) * 14;
-      const ry = ((e.clientX - r.left) / r.width - 0.5) * 14;
-      img.style.transform = `perspective(720px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.04)`;
+      if (dragging) {
+        const now = performance.now(), dt = Math.max(now - lt, 1);
+        vx = ((e.clientX - lx) / dt) * 1000; vy = ((e.clientY - ly) / dt) * 1000;
+        lx = e.clientX; ly = e.clientY; lt = now;
+        dx = e.clientX - sx; dy = e.clientY - sy;
+        img.style.transform = `translate(${dx}px, ${dy}px) rotate(${clamp(-22, 22, vx / 45)}deg) scale(1.06)`;
+      } else {
+        const rx = (0.5 - (e.clientY - r.top) / r.height) * 14;
+        const ry = ((e.clientX - r.left) / r.width - 0.5) * 14;
+        img.style.transform = `perspective(720px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.04)`;
+      }
     });
-    fig.addEventListener("mouseleave", () => { img.style.transform = ""; });
+    fig.addEventListener("pointerleave", () => { if (!dragging) img.style.transform = ""; });
+
+    fig.addEventListener("pointerdown", (e) => {
+      dragging = true; fig.classList.add("grabbing");
+      sx = e.clientX - dx; sy = e.clientY - dy;
+      lx = e.clientX; ly = e.clientY; lt = performance.now(); vx = vy = 0;
+      try { fig.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    const release = () => {
+      if (!dragging) return;
+      dragging = false; fig.classList.remove("grabbing");
+      if (Math.hypot(vx, vy) > 700 && typeof pieceBurst === "function") {
+        const r = img.getBoundingClientRect();
+        pieceBurst(r.left + r.width / 2, r.top + r.height / 2, 6);
+      }
+      if (hasGsap) {
+        const o = { dx, dy };
+        gsap.to(o, {
+          dx: 0, dy: 0, duration: 1, ease: "elastic.out(1, 0.4)",
+          onUpdate() { img.style.transform = `translate(${o.dx}px, ${o.dy}px) scale(1)`; },
+          onComplete() { dx = dy = 0; img.style.transform = ""; },
+        });
+      } else { dx = dy = 0; img.style.transform = ""; }
+    };
+    fig.addEventListener("pointerup", release);
+    fig.addEventListener("pointercancel", release);
   });
 }
