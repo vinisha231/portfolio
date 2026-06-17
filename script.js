@@ -562,8 +562,8 @@ window.addEventListener("keydown", (e) => {
   // lab pawns -> modal
   const modal = document.getElementById("piece-modal");
   function openLab(p) {
-    document.getElementById("piece-card-glyph").innerHTML = `<img src="assets/pawn.png" alt="" style="width:46px;height:auto" />`;
-    document.getElementById("piece-card-role").textContent = "Pawn, side quest";
+    document.getElementById("piece-card-glyph").innerHTML = `<img src="assets/black-${p.piece}.png" alt="" style="width:42px;height:auto" />`;
+    document.getElementById("piece-card-role").textContent = `${ROLE[p.piece]} · side quest`;
     document.getElementById("piece-card-title").textContent = p.title;
     const award = document.getElementById("piece-card-award");
     award.hidden = true;
@@ -577,11 +577,13 @@ window.addEventListener("keydown", (e) => {
   }
   function closeLab() { modal.hidden = true; document.body.classList.remove("modal-open"); if (lenis) lenis.start(); }
 
-  LAB.forEach((p) => {
+  const LAB_PIECES = ["queen", "knight", "rook", "bishop", "king", "queen", "bishop", "knight"];
+  LAB.forEach((p, i) => {
+    p.piece = LAB_PIECES[i % LAB_PIECES.length];
     const card = document.createElement("button");
     card.type = "button";
     card.className = "lab-pawn";
-    card.innerHTML = `<img class="lab-pawn-img" src="assets/pawn.png" alt="" loading="lazy" /><span class="lab-pawn-title">${p.title}</span><span class="lab-pawn-tag">${p.tag}</span>`;
+    card.innerHTML = `<img class="lab-pawn-img" src="assets/black-${p.piece}.png" alt="" loading="lazy" /><span class="lab-pawn-title">${p.title}</span><span class="lab-pawn-tag">${p.tag}</span>`;
     card.addEventListener("click", () => openLab(p));
     labEl.appendChild(card);
   });
