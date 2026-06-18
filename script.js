@@ -513,15 +513,15 @@ window.addEventListener("keydown", (e) => {
       desc: "Knights move in ways you do not expect, and so might your companion. An asymmetric AI co op adventure in Unity 6 where your party member has a hidden trust system and may be quietly plotting against you.",
       chips: ["Unity 6", "C#", "Companion AI"],
       links: [["view code", "https://github.com/vinisha231/The-Hollow-Pact-v2"]] },
-    { piece: "bishop", title: "Atma Milan", award: null,
+    { piece: "bishop", black: true, title: "Atma Milan", award: null,
       desc: "The bishop moves on faith. A Vedic soul compatibility checker inspired by Hindu Jyotish astrology, bringing kundali matching to TypeScript.",
       chips: ["TypeScript", "Jyotish"],
       links: [["view code", "https://github.com/vinisha231/atma-milan"]] },
-    { piece: "rook", title: "AML Detection System", award: null,
+    { piece: "rook", black: true, title: "AML Detection System", award: null,
       desc: "Another rook on the board, built to defend. An anti money laundering toolkit with a synthetic typology generator, a rules engine, graph based scoring, and an analyst dashboard.",
       chips: ["Python", "Graph Analysis"],
       links: [["view code", "https://github.com/vinisha231/aml-detection"]] },
-    { piece: "knight", title: "BridgeTales AI", award: null,
+    { piece: "knight", black: true, title: "BridgeTales AI", award: null,
       desc: "Knights leap where others cannot. An interactive AI storybook with branching narratives, AI generated images, and speech, plus a Visa API integration for local business donations.",
       chips: ["AWS Bedrock", "React", "Node.js", "PostgreSQL"],
       links: [["view code", "https://github.com/HarshitaRag/BridgeTales-AI"]] },
@@ -545,7 +545,8 @@ window.addEventListener("keydown", (e) => {
   SCENES.forEach((s, i) => {
     const scene = document.createElement("article");
     scene.className = "scene" + (i % 2 ? " flip" : "");
-    const art = `<div class="scene-art"><div class="scene-glow"></div><figure class="piece-photo"><img src="assets/${s.piece}.png" alt="${s.title}, a ${s.piece} chess piece" loading="lazy" /></figure></div>`;
+    const pieceSrc = `assets/${s.black ? "black-" : ""}${s.piece}.png`;
+    const art = `<div class="scene-art"><div class="scene-glow"></div><figure class="piece-photo"><img src="${pieceSrc}" alt="${s.title}, a ${s.black ? "black" : "white"} ${s.piece} chess piece" loading="lazy" /></figure></div>`;
     const body = `<div class="scene-body">
         <div class="scene-no">move ${String(i + 1).padStart(2, "0")}</div>
         <div class="scene-piece-name">${ROLE[s.piece]}</div>
