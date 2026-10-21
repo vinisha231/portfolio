@@ -84,13 +84,13 @@ function showToast(msg) {
   toastTimer = setTimeout(() => { toastEl.hidden = true; }, 2400);
 }
 
-// ===== Theme: flip the board (ivory <-> midnight) =====
+// ===== Theme: flip the board (blush <-> midnight) =====
 const themeBtn = document.getElementById("theme-btn");
 function setTheme(midnight, announce = false) {
   document.documentElement.classList.toggle("midnight", midnight);
   if (themeBtn) themeBtn.textContent = midnight ? "☀" : "⛶";
-  try { localStorage.setItem("ctheme", midnight ? "midnight" : "ivory"); } catch (e) {}
-  if (announce) showToast(midnight ? "♚ midnight board" : "♔ ivory board");
+  try { localStorage.setItem("ctheme", midnight ? "midnight" : "blush"); } catch (e) {}
+  if (announce) showToast(midnight ? "♚ midnight board" : "♔ blush board");
 }
 if (themeBtn) {
   themeBtn.textContent = document.documentElement.classList.contains("midnight") ? "☀" : "⛶";
@@ -139,11 +139,11 @@ if (themeBtn) {
   if (!palette) return;
 
   const items = [
-    { icon: "♟", label: "On the board (chess stats)", hint: "01", action: () => goTo("#chess") },
+    { icon: "⏱", label: "The moves (experience)", hint: "01", action: () => goTo("#experience") },
+    { icon: "♟", label: "On the board (chess stats)", hint: "02", action: () => goTo("#chess") },
+    { icon: "♜", label: "The board (projects)", hint: "03", action: () => goTo("#projects") },
+    { icon: "♚", label: "The player (about)", hint: "04", action: () => goTo("#about") },
     { icon: "♟", label: "Play the game (scroll demo)", hint: "scroll", action: () => goTo("#game") },
-    { icon: "♜", label: "The board (projects)", hint: "02", action: () => goTo("#projects") },
-    { icon: "♚", label: "The player (about)", hint: "03", action: () => goTo("#about") },
-    { icon: "⏱", label: "The moves (experience)", hint: "04", action: () => goTo("#experience") },
     { icon: "⚔", label: "The arsenal (skills)", hint: "05", action: () => goTo("#skills") },
     { icon: "🎓", label: "Education", hint: "06", action: () => goTo("#education") },
     { icon: "♞", label: "Flip the board (theme)", hint: "theme", action: () => themeBtn && themeBtn.click() },
@@ -249,7 +249,7 @@ if (themeBtn) {
         .catch(() => print("chess.com api unreachable, try again later"));
     },
     gh: () => { print("opening github.com/vinisha231 …"); window.open("https://github.com/vinisha231", "_blank"); },
-    theme: () => { if (themeBtn) themeBtn.click(); print(document.documentElement.classList.contains("midnight") ? "♚ midnight board" : "♔ ivory board"); },
+    theme: () => { if (themeBtn) themeBtn.click(); print(document.documentElement.classList.contains("midnight") ? "♚ midnight board" : "♔ blush board"); },
     clear: () => { termOut.innerHTML = ""; },
     "sudo hire-me": () => { print("permission granted ♟ opening inbox…"); setTimeout(() => { window.location.href = "mailto:viba2022@gmail.com"; }, 600); },
   };
@@ -275,7 +275,7 @@ function makePiece(x, y) {
   el.textContent = PIECE_GLYPHS[(Math.random() * PIECE_GLYPHS.length) | 0];
   el.style.left = x + "px";
   el.style.top = y + "px";
-  el.style.color = Math.random() < 0.5 ? "var(--green-deep)" : "var(--gold)";
+  el.style.color = Math.random() < 0.5 ? "var(--purple-deep)" : "var(--pink)";
   document.body.appendChild(el);
   return el;
 }
