@@ -28,6 +28,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
 // ===== Typing effect =====
 const roles = [
   "software engineer.",
+  "ai agent builder.",
   "ml researcher.",
   "full-stack developer.",
   "hackathon winner.",
@@ -229,10 +230,10 @@ if (themeBtn) {
 
   const commands = {
     help: () => print("commands: whoami · rating · projects · skills · fen · stats · gh · theme · clear · sudo hire-me"),
-    whoami: () => print("vinisha · engineer · researcher · chess player (Legend league)"),
+    whoami: () => print("vinisha · software dev @ eat together seattle · researcher · chess player (Legend league)"),
     rating: () => print("Chess.com · rapid ~1074 · blitz ~914 · bullet ~1208 · tactics peak 1603"),
     projects: () => { print("16 projects on the board above. king = Rta, queen = Big Back Bites, pawns = lab experiments."); print("↳ click any piece to read its story"); },
-    skills: () => print("python · c/c++/c# · java · sql · js/ts · react · fastapi · tensorflow · aws · azure · docker"),
+    skills: () => print("python · c/c++/c# · java · sql · js/ts · react · fastapi · tensorflow · aws · azure · copilot studio · power automate · docker"),
     fen: () => print(FENS[Math.floor(Math.random() * FENS.length)]),
     stats: () => {
       print("fetching live from chess.com…");

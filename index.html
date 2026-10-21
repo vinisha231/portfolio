@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=6" />
   <script>try { if (localStorage.getItem("ctheme") === "midnight") document.documentElement.classList.add("midnight"); } catch (e) {}</script>
 </head>
 <body>
@@ -61,9 +61,10 @@
       </h1>
       <h2 class="hero-roles">a <span id="typed" class="typed"></span><span class="caret">|</span></h2>
       <p class="hero-blurb">
-        CS &amp; Math student at the University of Washington, ML researcher, and award-winning
-        builder. I think a few moves ahead, shipping full-stack products that are fast,
-        accessible, and actually useful. Off the clock, you'll find me playing chess.
+        Software developer at Eat Together Seattle, Computational Linguistics grad student at the
+        University of Washington, ML researcher, and award-winning builder. I think a few moves
+        ahead, shipping AI agents and full-stack products that are fast, accessible, and actually
+        useful. Off the clock, you'll find me playing chess.
       </p>
       <div class="hero-actions">
         <a href="#projects" class="btn btn-primary magnetic">See the board ↓</a>
@@ -71,7 +72,7 @@
         <a href="https://www.chess.com/member/Vinu2023" target="_blank" rel="noopener" class="btn btn-outline">♟ Chess.com</a>
       </div>
       <div class="hero-stats">
-        <div class="stat"><span class="stat-num"><span data-count="3.88" data-decimals="2">3.88</span></span><span class="stat-label">GPA · double major</span></div>
+        <div class="stat"><span class="stat-num"><span data-count="3.87" data-decimals="2">3.87</span></span><span class="stat-label">GPA · double major</span></div>
         <div class="stat"><span class="stat-num">🥇 1st</span><span class="stat-label">IxDA Designathon ’26</span></div>
         <div class="stat"><span class="stat-num">🥈 2nd</span><span class="stat-label">AWS Hacks ’26</span></div>
         <div class="stat"><span class="stat-num">♟ Legend</span><span class="stat-label">Chess.com league</span></div>
@@ -153,14 +154,16 @@
       <div class="about-grid">
         <div class="about-text" data-reveal>
           <p>
-            I'm a senior at <strong>UW Bothell</strong> double-majoring in Computer Science &amp;
-            Software Engineering and Mathematics, heading to <strong>UW Seattle</strong> next for a
-            Master's in Computational Linguistics.
+            I'm a Master's student in Computational Linguistics at <strong>UW Seattle</strong>, after
+            graduating from <strong>UW Bothell</strong> with a double major in Computer Science &amp;
+            Software Engineering and Mathematics.
           </p>
           <p>
-            By day I research <strong>sparse-view CT reconstruction</strong>, training CNNs that cut
-            patient radiation exposure. By night I build full-stack products: serverless AI apps on
-            AWS, interview-prep platforms, and whatever a 48-hour hackathon throws at me.
+            These days I'm the <strong>software developer at Eat Together Seattle</strong>. Before
+            that I built multi-agent AI systems at <strong>Avanade</strong> and spent two years
+            researching <strong>sparse-view CT reconstruction</strong>, training CNNs that cut
+            patient radiation exposure. On the side I build full-stack products: serverless AI apps
+            on AWS, interview-prep platforms, and whatever a 48-hour hackathon throws at me.
           </p>
           <p>
             Chess taught me to plan several moves ahead and to stay calm when the position gets
@@ -173,7 +176,7 @@
             <div class="terminal-body" id="term-body">
               <div id="term-out">
                 <div><span class="t-prompt">$</span> whoami</div>
-                <div class="t-out">vinisha · engineer · researcher · chess player</div>
+                <div class="t-out">vinisha · software dev @ eat together seattle · chess player</div>
                 <div><span class="t-prompt">$</span> rating --rapid</div>
                 <div class="t-out">Chess.com rapid ≈ 1074 ✦ league: Legend</div>
                 <div class="t-out t-hint"># try: help · projects · rating · fen · sudo hire-me</div>
@@ -195,31 +198,54 @@
         <div class="move" data-reveal>
           <div class="move-no">1.</div>
           <div class="card spot">
-            <div class="card-head"><h3>Student Researcher <span class="at">· UW Bothell</span></h3><span class="date">Jun 2024 to Present</span></div>
+            <div class="card-head"><h3>Software Developer <span class="at">· Eat Together Seattle</span></h3><span class="date">2026 to Present</span></div>
+            <p class="card-sub">Seattle, WA</p>
+            <ul>
+              <li>Building and maintaining the software behind <strong>Eat Together Seattle</strong>.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="move" data-reveal>
+          <div class="move-no">2.</div>
+          <div class="card spot">
+            <div class="card-head"><h3>AI Workspace Engineering Intern <span class="at">· Avanade</span></h3><span class="date">Jul 2026 to Aug 2026</span></div>
+            <p class="card-sub">Seattle, WA</p>
+            <ul>
+              <li>Architected a <strong>multi-agent AI orchestration system</strong> in Microsoft Copilot Studio: a central Interact Agent routes intents to specialized ticket-creation and colleague-lookup subagents.</li>
+              <li>Independently built a ServiceNow support subagent that searches TechConnect/SharePoint articles, checks ServiceNow for duplicate tickets, and emails new IT tickets to the client's IT team.</li>
+              <li>Built tool-calling workflows connecting the agents to <strong>4 data sources</strong> (ServiceNow, Microsoft Graph/Entra ID, SharePoint, Dataverse) with Power Automate and Power Apps, including a manager-lookup pipeline over M365.</li>
+            </ul>
+            <div class="chips"><span>Copilot Studio</span><span>Power Automate</span><span>Power Apps</span><span>Dataverse</span><span>ServiceNow</span><span>Microsoft Graph</span></div>
+          </div>
+        </div>
+        <div class="move" data-reveal>
+          <div class="move-no">3.</div>
+          <div class="card spot">
+            <div class="card-head"><h3>Student Researcher <span class="at">· UW Bothell</span></h3><span class="date">Jun 2024 to Jun 2026</span></div>
             <p class="card-sub">Computed Tomography Reconstruction Lab</p>
             <ul>
               <li>Improved CT image quality from sparse 144- and 360-projection scans to match full-scan output, <strong>reducing patient radiation exposure</strong>.</li>
-              <li>Implemented CNNs with the Simultaneous Algebraic Reconstruction Technique (SART) for sparse-view and limited-angle reconstruction.</li>
+              <li>Implemented CNNs with the Simultaneous Algebraic Reconstruction Technique (SART) for sparse-view CT reconstruction.</li>
               <li>Validated with <strong>PSNR 36.5 to 39.9 dB</strong> and <strong>SSIM 0.95 to 0.97</strong>; preparing findings for publication.</li>
             </ul>
             <div class="chips"><span>Python</span><span>TensorFlow</span><span>CNNs</span><span>OpenCV</span><span>NumPy</span></div>
           </div>
         </div>
         <div class="move" data-reveal>
-          <div class="move-no">2.</div>
+          <div class="move-no">4.</div>
           <div class="card spot">
             <div class="card-head"><h3>Software Engineer Intern <span class="at">· Quadrant Technologies</span></h3><span class="date">Jul 2025 to Aug 2025</span></div>
             <p class="card-sub">Redmond, WA</p>
             <ul>
-              <li>Built and deployed <strong>four full-stack portals</strong> (Admin, HR, Employee, IT), improving cross-team efficiency by <strong>35%</strong>.</li>
-              <li>Built modular REST APIs and React components for auth, role-based access control, and real-time analytics dashboards.</li>
-              <li>Cut deployment time by <strong>30%</strong> via Azure App Service, Container Registry, and Azure DevOps CI/CD.</li>
+              <li>Built and deployed <strong>four full-stack portals</strong> (Admin, HR, Employee, IT).</li>
+              <li>Built modular REST APIs and React components across the portals for authentication, role-based access control, and real-time analytics dashboards.</li>
+              <li>Wrote and ran unit tests for the REST API endpoints, validating authentication and RBAC logic before deployment.</li>
             </ul>
-            <div class="chips"><span>React</span><span>REST APIs</span><span>Azure</span><span>CI/CD</span><span>Docker</span></div>
+            <div class="chips"><span>React</span><span>REST APIs</span><span>RBAC</span><span>Unit Testing</span><span>Azure</span></div>
           </div>
         </div>
         <div class="move" data-reveal>
-          <div class="move-no">3.</div>
+          <div class="move-no">5.</div>
           <div class="card spot">
             <div class="card-head"><h3>Coding Instructor <span class="at">· Edmonds</span></h3><span class="date">2024</span></div>
             <p class="card-sub">Intro Programming Instruction</p>
@@ -250,8 +276,16 @@
           <div class="chips lg"><span>AWS</span><span>Bedrock</span><span>Lambda</span><span>API Gateway</span><span>Aurora</span><span>RDS</span><span>Amplify</span><span>Elastic Beanstalk</span><span>Translate</span><span>Polly</span><span>Transcribe</span><span>SNS</span><span>S3</span><span>Azure</span><span>Docker</span><span>Vercel</span><span>CI/CD</span></div>
         </div>
         <div class="skill-group spot" data-reveal>
+          <h3>♛ AI Agents &amp; Automation</h3>
+          <div class="chips lg"><span>Copilot Studio</span><span>Power Automate</span><span>Power Apps</span><span>Dataverse</span><span>ServiceNow</span><span>Microsoft Graph</span><span>Entra ID</span><span>SharePoint</span></div>
+        </div>
+        <div class="skill-group spot" data-reveal>
+          <h3>♚ AI Dev Tools</h3>
+          <div class="chips lg"><span>Claude</span><span>Cursor</span><span>ChatGPT</span><span>Codex</span></div>
+        </div>
+        <div class="skill-group spot" data-reveal>
           <h3>♝ Libraries &amp; Tools</h3>
-          <div class="chips lg"><span>NumPy</span><span>pandas</span><span>Matplotlib</span><span>OpenCV</span><span>Git</span><span>Postman</span><span>Figma</span><span>VS Code</span></div>
+          <div class="chips lg"><span>NumPy</span><span>pandas</span><span>Matplotlib</span><span>OpenCV</span><span>uvicorn</span><span>dotenv</span><span>Git</span><span>Postman</span><span>Figma</span><span>VS Code</span></div>
         </div>
       </div>
     </section>
@@ -262,7 +296,7 @@
       <h2 class="section-title" data-reveal><span class="section-num">06</span> <span class="st-text">Education</span></h2>
       <div class="edu-grid">
         <div class="card edu-card spot" data-reveal>
-          <p class="edu-when">Sep 2026 to Jun 2028</p>
+          <p class="edu-when">Jul 2026 to Jun 2028</p>
           <h3>University of Washington, Seattle</h3>
           <p class="edu-degree">M.S. in Computational Linguistics</p>
         </div>
@@ -270,7 +304,7 @@
           <p class="edu-when">Sep 2022 to Jun 2026</p>
           <h3>University of Washington, Bothell</h3>
           <p class="edu-degree">B.S. in Computer Science &amp; Software Engineering<br />B.S. in Mathematics</p>
-          <p class="edu-gpa">GPA 3.88</p>
+          <p class="edu-gpa">GPA 3.87</p>
         </div>
       </div>
     </section>
@@ -343,6 +377,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js" defer></script>
-  <script src="script.js?v=5" defer></script>
+  <script src="script.js?v=6" defer></script>
 </body>
 </html>
