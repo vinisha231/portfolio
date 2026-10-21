@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=6" />
+  <link rel="stylesheet" href="styles.css?v=7" />
   <script>try { if (localStorage.getItem("ctheme") === "midnight") document.documentElement.classList.add("midnight"); } catch (e) {}</script>
 </head>
 <body>
@@ -36,12 +36,12 @@
     <div class="nav-inner">
       <a href="#top" class="logo"><span class="logo-piece">♞</span> Vinisha</a>
       <ul class="nav-links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#chess">Chess</a></li>
-        <li><a href="#game">Game</a></li>
-        <li><a href="#projects">Board</a></li>
         <li><a href="#experience">Moves</a></li>
+        <li><a href="#chess">Chess</a></li>
+        <li><a href="#projects">Board</a></li>
+        <li><a href="#about">About</a></li>
         <li><a href="#skills">Arsenal</a></li>
+        <li><a href="#game">Game</a></li>
       </ul>
       <div class="nav-right">
         <button class="theme-btn" id="theme-btn" aria-label="Flip the board (toggle theme)">⛶</button>
@@ -67,7 +67,8 @@
         useful. Off the clock, you'll find me playing chess.
       </p>
       <div class="hero-actions">
-        <a href="#projects" class="btn btn-primary magnetic">See the board ↓</a>
+        <a href="#experience" class="btn btn-primary magnetic">See my moves ↓</a>
+        <a href="#projects" class="btn btn-outline">The board</a>
         <a href="https://github.com/vinisha231" target="_blank" rel="noopener" class="btn btn-outline">GitHub</a>
         <a href="https://www.chess.com/member/Vinu2023" target="_blank" rel="noopener" class="btn btn-outline">♟ Chess.com</a>
       </div>
@@ -82,118 +83,10 @@
   </header>
 
   <main>
-    <!-- ===== Chess stats ===== -->
-    <section id="chess" class="section">
-      <span class="giant">check</span>
-      <h2 class="section-title" data-reveal><span class="section-num">01</span> <span class="st-text">On the board</span></h2>
-      <p class="section-lead" data-reveal>
-        Live from my <a href="https://www.chess.com/member/Vinu2023" target="_blank" rel="noopener">Chess.com profile</a>.
-        because thinking ahead is the whole job, on and off the clock.
-      </p>
-
-      <div class="rating-grid">
-        <div class="rating-card spot" data-reveal data-mode="chess_rapid">
-          <div class="rating-top"><span class="rating-piece">♜</span><span class="rating-mode">Rapid</span></div>
-          <div class="rating-num" data-rating>1074</div>
-          <div class="rating-best">peak <span data-best>1094</span></div>
-        </div>
-
-        <div class="rating-card spot" data-reveal data-mode="chess_blitz">
-          <div class="rating-top"><span class="rating-piece">♞</span><span class="rating-mode">Blitz</span></div>
-          <div class="rating-num" data-rating>914</div>
-          <div class="rating-best">peak <span data-best>926</span></div>
-        </div>
-
-        <div class="rating-card spot" data-reveal data-mode="chess_bullet">
-          <div class="rating-top"><span class="rating-piece">♝</span><span class="rating-mode">Bullet</span></div>
-          <div class="rating-num" data-rating>1208</div>
-          <div class="rating-best">peak <span data-best>1208</span></div>
-        </div>
-      </div>
-
-      <div class="mini-grid">
-        <div class="mini-stat spot" data-reveal><span class="mini-piece">♛</span><span class="mini-num" data-tactics>1603</span><span class="mini-label">Tactics peak</span></div>
-        <div class="mini-stat spot" data-reveal><span class="mini-piece">🏅</span><span class="mini-num" data-league>Legend</span><span class="mini-label">League</span></div>
-        <div class="mini-stat spot" data-reveal><span class="mini-piece">♟</span><span class="mini-num" data-since>2023</span><span class="mini-label">Playing since</span></div>
-      </div>
-      <p class="chess-foot" data-reveal id="chess-foot">↻ refreshing from Chess.com…</p>
-    </section>
-
-    <!-- ===== Projects as pieces ===== -->
-    <section id="projects" class="play">
-      <div class="play-intro section">
-        <span class="giant">board</span>
-        <h2 class="section-title" data-reveal><span class="section-num">02</span> <span class="st-text">The board</span></h2>
-        <p class="section-lead" data-reveal>
-          My work, set up like the opening. Scroll through the headline pieces, then dig into the
-          pawns below. <strong>Each piece turns as you scroll.</strong>
-        </p>
-      </div>
-      <div class="scenes" id="scenes"></div>
-      <div class="section lab-wrap">
-        <h3 class="lab-title" data-reveal>The pawns <span>side quests and experiments, tap to read</span></h3>
-        <div class="lab-grid" id="lab-grid"></div>
-        <p class="more-projects" data-reveal>the full archive lives on <a href="https://github.com/vinisha231?tab=repositories" target="_blank" rel="noopener">github.com/vinisha231</a></p>
-      </div>
-      <noscript>
-        <ul class="noscript-list">
-          <li><a href="https://github.com/vinisha231/AWS-Hacks-2026">Rta, AI Benefits Navigator (2nd, AWS Hacks 2026)</a></li>
-          <li><a href="https://github.com/vinisha231/Big-Back-Bites">Big Back Bites (1st, IxDA Designathon 2026)</a></li>
-          <li><a href="https://vdhaya-interview-simulator.com">Interview Simulator Platform</a></li>
-          <li><a href="https://github.com/vinisha231/Computed_Tomography_Reconstruction_using_Convolutional_Neural_Networks">CT Reconstruction with CNNs</a></li>
-          <li><a href="https://github.com/vinisha231/aml-detection">AML Detection System</a></li>
-          <li><a href="https://github.com/HarshitaRag/BridgeTales-AI">BridgeTales AI</a></li>
-          <li><a href="https://github.com/vinisha231?tab=repositories">and more on GitHub</a></li>
-        </ul>
-      </noscript>
-    </section>
-    <!-- ===== About ===== -->
-    <section id="about" class="section">
-      <span class="giant">player</span>
-      <h2 class="section-title" data-reveal><span class="section-num">03</span> <span class="st-text">The player</span></h2>
-      <div class="about-grid">
-        <div class="about-text" data-reveal>
-          <p>
-            I'm a Master's student in Computational Linguistics at <strong>UW Seattle</strong>, after
-            graduating from <strong>UW Bothell</strong> with a double major in Computer Science &amp;
-            Software Engineering and Mathematics.
-          </p>
-          <p>
-            These days I'm the <strong>software developer at Eat Together Seattle</strong>. Before
-            that I built multi-agent AI systems at <strong>Avanade</strong> and spent two years
-            researching <strong>sparse-view CT reconstruction</strong>, training CNNs that cut
-            patient radiation exposure. On the side I build full-stack products: serverless AI apps
-            on AWS, interview-prep platforms, and whatever a 48-hour hackathon throws at me.
-          </p>
-          <p>
-            Chess taught me to plan several moves ahead and to stay calm when the position gets
-            sharp, the same instincts I bring to shipping software that meets people where they are.
-          </p>
-        </div>
-        <div class="about-card" data-reveal>
-          <div class="terminal" id="terminal">
-            <div class="terminal-bar"><span></span><span></span><span></span><p>vinisha@board ~ % type `help`</p></div>
-            <div class="terminal-body" id="term-body">
-              <div id="term-out">
-                <div><span class="t-prompt">$</span> whoami</div>
-                <div class="t-out">vinisha · software dev @ eat together seattle · chess player</div>
-                <div><span class="t-prompt">$</span> rating --rapid</div>
-                <div class="t-out">Chess.com rapid ≈ 1074 ✦ league: Legend</div>
-                <div class="t-out t-hint"># try: help · projects · rating · fen · sudo hire-me</div>
-              </div>
-              <div class="term-input-row">
-                <span class="t-prompt">$</span>
-                <input id="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal input" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
     <!-- ===== Experience (moves) ===== -->
     <section id="experience" class="section">
       <span class="giant">moves</span>
-      <h2 class="section-title" data-reveal><span class="section-num">04</span> <span class="st-text">The moves so far</span></h2>
+      <h2 class="section-title" data-reveal><span class="section-num">01</span> <span class="st-text">The moves so far</span></h2>
       <div class="moves">
         <div class="move" data-reveal>
           <div class="move-no">1.</div>
@@ -254,6 +147,114 @@
               <li>Built reusable lesson templates and used data-driven adjustments to lift outcomes across the cohort.</li>
             </ul>
             <div class="chips"><span>Teaching</span><span>Curriculum Design</span><span>Scratch</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ===== Chess stats ===== -->
+    <section id="chess" class="section">
+      <span class="giant">check</span>
+      <h2 class="section-title" data-reveal><span class="section-num">02</span> <span class="st-text">On the board</span></h2>
+      <p class="section-lead" data-reveal>
+        Live from my <a href="https://www.chess.com/member/Vinu2023" target="_blank" rel="noopener">Chess.com profile</a>.
+        because thinking ahead is the whole job, on and off the clock.
+      </p>
+
+      <div class="rating-grid">
+        <div class="rating-card spot" data-reveal data-mode="chess_rapid">
+          <div class="rating-top"><span class="rating-piece">♜</span><span class="rating-mode">Rapid</span></div>
+          <div class="rating-num" data-rating>1074</div>
+          <div class="rating-best">peak <span data-best>1094</span></div>
+        </div>
+
+        <div class="rating-card spot" data-reveal data-mode="chess_blitz">
+          <div class="rating-top"><span class="rating-piece">♞</span><span class="rating-mode">Blitz</span></div>
+          <div class="rating-num" data-rating>914</div>
+          <div class="rating-best">peak <span data-best>926</span></div>
+        </div>
+
+        <div class="rating-card spot" data-reveal data-mode="chess_bullet">
+          <div class="rating-top"><span class="rating-piece">♝</span><span class="rating-mode">Bullet</span></div>
+          <div class="rating-num" data-rating>1208</div>
+          <div class="rating-best">peak <span data-best>1208</span></div>
+        </div>
+      </div>
+
+      <div class="mini-grid">
+        <div class="mini-stat spot" data-reveal><span class="mini-piece">♛</span><span class="mini-num" data-tactics>1603</span><span class="mini-label">Tactics peak</span></div>
+        <div class="mini-stat spot" data-reveal><span class="mini-piece">🏅</span><span class="mini-num" data-league>Legend</span><span class="mini-label">League</span></div>
+        <div class="mini-stat spot" data-reveal><span class="mini-piece">♟</span><span class="mini-num" data-since>2023</span><span class="mini-label">Playing since</span></div>
+      </div>
+      <p class="chess-foot" data-reveal id="chess-foot">↻ refreshing from Chess.com…</p>
+    </section>
+
+    <!-- ===== Projects as pieces ===== -->
+    <section id="projects" class="play">
+      <div class="play-intro section">
+        <span class="giant">board</span>
+        <h2 class="section-title" data-reveal><span class="section-num">03</span> <span class="st-text">The board</span></h2>
+        <p class="section-lead" data-reveal>
+          My work, set up like the opening. Scroll through the headline pieces, then dig into the
+          pawns below. <strong>Each piece turns as you scroll.</strong>
+        </p>
+      </div>
+      <div class="scenes" id="scenes"></div>
+      <div class="section lab-wrap">
+        <h3 class="lab-title" data-reveal>The pawns <span>side quests and experiments, tap to read</span></h3>
+        <div class="lab-grid" id="lab-grid"></div>
+        <p class="more-projects" data-reveal>the full archive lives on <a href="https://github.com/vinisha231?tab=repositories" target="_blank" rel="noopener">github.com/vinisha231</a></p>
+      </div>
+      <noscript>
+        <ul class="noscript-list">
+          <li><a href="https://github.com/vinisha231/AWS-Hacks-2026">Rta, AI Benefits Navigator (2nd, AWS Hacks 2026)</a></li>
+          <li><a href="https://github.com/vinisha231/Big-Back-Bites">Big Back Bites (1st, IxDA Designathon 2026)</a></li>
+          <li><a href="https://vdhaya-interview-simulator.com">Interview Simulator Platform</a></li>
+          <li><a href="https://github.com/vinisha231/Computed_Tomography_Reconstruction_using_Convolutional_Neural_Networks">CT Reconstruction with CNNs</a></li>
+          <li><a href="https://github.com/vinisha231/aml-detection">AML Detection System</a></li>
+          <li><a href="https://github.com/HarshitaRag/BridgeTales-AI">BridgeTales AI</a></li>
+          <li><a href="https://github.com/vinisha231?tab=repositories">and more on GitHub</a></li>
+        </ul>
+      </noscript>
+    </section>
+    <!-- ===== About ===== -->
+    <section id="about" class="section">
+      <span class="giant">player</span>
+      <h2 class="section-title" data-reveal><span class="section-num">04</span> <span class="st-text">The player</span></h2>
+      <div class="about-grid">
+        <div class="about-text" data-reveal>
+          <p>
+            I'm a Master's student in Computational Linguistics at <strong>UW Seattle</strong>, after
+            graduating from <strong>UW Bothell</strong> with a double major in Computer Science &amp;
+            Software Engineering and Mathematics.
+          </p>
+          <p>
+            These days I'm the <strong>software developer at Eat Together Seattle</strong>. Before
+            that I built multi-agent AI systems at <strong>Avanade</strong> and spent two years
+            researching <strong>sparse-view CT reconstruction</strong>, training CNNs that cut
+            patient radiation exposure. On the side I build full-stack products: serverless AI apps
+            on AWS, interview-prep platforms, and whatever a 48-hour hackathon throws at me.
+          </p>
+          <p>
+            Chess taught me to plan several moves ahead and to stay calm when the position gets
+            sharp, the same instincts I bring to shipping software that meets people where they are.
+          </p>
+        </div>
+        <div class="about-card" data-reveal>
+          <div class="terminal" id="terminal">
+            <div class="terminal-bar"><span></span><span></span><span></span><p>vinisha@board ~ % type `help`</p></div>
+            <div class="terminal-body" id="term-body">
+              <div id="term-out">
+                <div><span class="t-prompt">$</span> whoami</div>
+                <div class="t-out">vinisha · software dev @ eat together seattle · chess player</div>
+                <div><span class="t-prompt">$</span> rating --rapid</div>
+                <div class="t-out">Chess.com rapid ≈ 1074 ✦ league: Legend</div>
+                <div class="t-out t-hint"># try: help · projects · rating · fen · sudo hire-me</div>
+              </div>
+              <div class="term-input-row">
+                <span class="t-prompt">$</span>
+                <input id="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal input" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -377,6 +378,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js" defer></script>
-  <script src="script.js?v=6" defer></script>
+  <script src="script.js?v=7" defer></script>
 </body>
 </html>
