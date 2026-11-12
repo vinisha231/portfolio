@@ -145,8 +145,9 @@ if (themeBtn) {
     { icon: "♜", label: "The board (projects)", hint: "03", action: () => goTo("#projects") },
     { icon: "♚", label: "The player (about)", hint: "04", action: () => goTo("#about") },
     { icon: "♟", label: "Play the game (scroll demo)", hint: "scroll", action: () => goTo("#game") },
-    { icon: "⚔", label: "The arsenal (skills)", hint: "05", action: () => goTo("#skills") },
-    { icon: "🎓", label: "Education", hint: "06", action: () => goTo("#education") },
+    { icon: "☾", label: "Off the board (sky, books, trips)", hint: "05", action: () => goTo("#hobbies") },
+    { icon: "⚔", label: "The arsenal (skills)", hint: "06", action: () => goTo("#skills") },
+    { icon: "🎓", label: "Education", hint: "07", action: () => goTo("#education") },
     { icon: "♞", label: "Flip the board (theme)", hint: "theme", action: () => themeBtn && themeBtn.click() },
     { icon: "🐙", label: "GitHub", hint: "↗", action: () => window.open("https://github.com/vinisha231", "_blank") },
     { icon: "💼", label: "LinkedIn", hint: "↗", action: () => window.open("https://linkedin.com/in/vinishab", "_blank") },
@@ -230,7 +231,7 @@ if (themeBtn) {
   ];
 
   const commands = {
-    help: () => print("commands: whoami · experience · school · puzzle · rating · projects · skills · fen · stats · gh · theme · clear · sudo hire-me"),
+    help: () => print("commands: whoami · experience · school · hobbies · sky · lumos · nox · puzzle · rating · projects · skills · fen · stats · gh · theme · clear · sudo hire-me"),
     whoami: () => print("vinisha · software dev @ eat together seattle · researcher · chess player (Legend league)"),
     experience: () => {
       document.querySelectorAll("#experience .move").forEach((m) => {
@@ -239,6 +240,10 @@ if (themeBtn) {
       });
     },
     school: () => print("M.S. Computational Linguistics @ UW Seattle (NLP + ML + AI) · B.S. CSSE + B.S. Math @ UW Bothell"),
+    hobbies: () => print("chess · rereading harry potter · hiking rattlesnake ledge · road trips to bellingham + anacortes · watching the sky"),
+    sky: () => { print("opening the live sky over seattle ☾"); goTo("#hobbies"); },
+    lumos: () => { setTheme(false); print("✦ lumos. lights on."); },
+    nox: () => { setTheme(true); print("☾ nox. lights out."); },
     puzzle: () => { print("white to play, mate in one ♟ scrolling to the board…"); goTo("#puzzle"); },
     rating: () => print("Chess.com · rapid ~1074 · blitz ~914 · bullet ~1208 · tactics peak 1603"),
     projects: () => { print("16 projects on the board above. king = Rta, queen = Big Back Bites, pawns = lab experiments."); print("↳ click any piece to read its story"); },
@@ -1030,8 +1035,389 @@ if (finePointer) {
 window.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.target.closest && e.target.closest("input, textarea, [role=button]")) return;
-  if (e.key === "?") showToast("⌨ e moves · p puzzle · t flip board · ⌘K menu");
+  if (e.key === "?") showToast("⌨ e moves · p puzzle · s sky · t flip board · ⌘K menu");
   else if (e.key === "t") { if (themeBtn) themeBtn.click(); }
   else if (e.key === "p") goTo("#puzzle");
   else if (e.key === "e") goTo("#experience");
+  else if (e.key === "s") goTo("#hobbies");
 });
+
+// ===== Live sky over Seattle: real sun, moon and star positions =====
+(function skyInit() {
+  const cv = document.getElementById("sky-canvas");
+  if (!cv || !cv.getContext) return;
+  const ctx = cv.getContext("2d");
+  const $ = (id) => document.getElementById(id);
+  const slider = $("sky-time"), nowBtn = $("sky-now"), tip = $("sky-tip");
+
+  // <astro>
+  const LAT = 47.6062, LNG = -122.3321, RAD = Math.PI / 180, OBL = RAD * 23.4397;
+  const toDays = (ms) => ms / 86400000 - 10957.5; // days since J2000
+  const eclToEq = (lon, lat) => ({
+    ra: Math.atan2(Math.sin(lon) * Math.cos(OBL) - Math.tan(lat) * Math.sin(OBL), Math.cos(lon)),
+    dec: Math.asin(Math.sin(lat) * Math.cos(OBL) + Math.cos(lat) * Math.sin(OBL) * Math.sin(lon)),
+  });
+  function horizon(d, ra, dec) {
+    const H = RAD * (280.16 + 360.9856235 * d) + RAD * LNG - ra, phi = RAD * LAT;
+    const alt = Math.asin(Math.sin(phi) * Math.sin(dec) + Math.cos(phi) * Math.cos(dec) * Math.cos(H));
+    const az = Math.atan2(Math.sin(H), Math.cos(H) * Math.sin(phi) - Math.tan(dec) * Math.cos(phi));
+    return { alt: alt / RAD, az: ((az / RAD + 180) % 360 + 360) % 360 }; // azimuth clockwise from north
+  }
+  function sunEq(d) {
+    const M = RAD * (357.5291 + 0.98560028 * d);
+    const C = RAD * (1.9148 * Math.sin(M) + 0.02 * Math.sin(2 * M) + 0.0003 * Math.sin(3 * M));
+    return eclToEq(M + C + RAD * 102.9372 + Math.PI, 0);
+  }
+  function moonEq(d) {
+    const L = RAD * (218.316 + 13.176396 * d), M = RAD * (134.963 + 13.064993 * d), F = RAD * (93.272 + 13.22935 * d);
+    const eq = eclToEq(L + RAD * 6.289 * Math.sin(M), RAD * 5.128 * Math.sin(F));
+    eq.dist = 385001 - 20905 * Math.cos(M);
+    return eq;
+  }
+  function moonPhase(d) {
+    const s = sunEq(d), m = moonEq(d), sd = 149598000;
+    const phi = Math.acos(Math.sin(s.dec) * Math.sin(m.dec) + Math.cos(s.dec) * Math.cos(m.dec) * Math.cos(s.ra - m.ra));
+    const inc = Math.atan2(sd * Math.sin(phi), m.dist - sd * Math.cos(phi));
+    const angle = Math.atan2(Math.cos(s.dec) * Math.sin(s.ra - m.ra), Math.sin(s.dec) * Math.cos(m.dec) - Math.cos(s.dec) * Math.sin(m.dec) * Math.cos(s.ra - m.ra));
+    return { fraction: (1 + Math.cos(inc)) / 2, phase: 0.5 + (0.5 * inc * (angle < 0 ? -1 : 1)) / Math.PI };
+  }
+  const phaseName = (p) => ["New moon", "Waxing crescent", "First quarter", "Waxing gibbous", "Full moon", "Waning gibbous", "Last quarter", "Waning crescent"][
+    p < 0.02 || p > 0.98 ? 0 : p < 0.23 ? 1 : p < 0.27 ? 2 : p < 0.48 ? 3 : p < 0.52 ? 4 : p < 0.73 ? 5 : p < 0.77 ? 6 : 7];
+  const sunAlt = (ms) => { const d = toDays(ms), s = sunEq(d); return horizon(d, s.ra, s.dec).alt; };
+  // first sunrise and sunset in the 24h after `start`
+  function riseSet(start) {
+    let rise = null, set = null, prev = sunAlt(start) + 0.833;
+    for (let m = 1; m <= 1440; m++) {
+      const cur = sunAlt(start + m * 60000) + 0.833;
+      if (prev < 0 && cur >= 0 && rise == null) rise = start + m * 60000;
+      if (prev >= 0 && cur < 0 && set == null) set = start + m * 60000;
+      prev = cur;
+    }
+    return { rise, set };
+  }
+  // </astro>
+
+  // [name, RA hours, Dec degrees, magnitude]
+  const STARS = [
+    ["Sirius", 6.752, -16.716, -1.46], ["Arcturus", 14.261, 19.182, -0.05], ["Vega", 18.616, 38.784, 0.03],
+    ["Capella", 5.278, 45.998, 0.08], ["Rigel", 5.242, -8.202, 0.13], ["Procyon", 7.655, 5.225, 0.34],
+    ["Betelgeuse", 5.919, 7.407, 0.42], ["Altair", 19.846, 8.868, 0.76], ["Aldebaran", 4.599, 16.509, 0.86],
+    ["Spica", 13.42, -11.161, 0.97], ["Antares", 16.49, -26.432, 1.06], ["Pollux", 7.755, 28.026, 1.14],
+    ["Fomalhaut", 22.961, -29.622, 1.16], ["Deneb", 20.69, 45.28, 1.25], ["Regulus", 10.139, 11.967, 1.35],
+    ["Castor", 7.577, 31.888, 1.58], ["Bellatrix", 5.419, 6.35, 1.64], ["Alnilam", 5.604, -1.202, 1.69],
+    ["Alnitak", 5.679, -1.943, 1.77], ["Mintaka", 5.533, -0.299, 2.23], ["Saiph", 5.796, -9.67, 2.06],
+    ["Polaris", 2.53, 89.264, 1.98], ["Dubhe", 11.062, 61.751, 1.79], ["Merak", 11.031, 56.382, 2.37],
+    ["Phecda", 11.897, 53.695, 2.44], ["Megrez", 12.257, 57.033, 3.31], ["Alioth", 12.9, 55.96, 1.77],
+    ["Mizar", 13.399, 54.925, 2.27], ["Alkaid", 13.792, 49.313, 1.86], ["Caph", 0.153, 59.15, 2.27],
+    ["Schedar", 0.675, 56.537, 2.23], ["Navi", 0.945, 60.717, 2.47], ["Ruchbah", 1.43, 60.235, 2.68], ["Segin", 1.907, 63.67, 3.37],
+  ];
+  const FIGURES = [
+    ["Orion", ["Betelgeuse", "Bellatrix", "Mintaka", "Alnilam", "Alnitak", "Saiph", "Rigel", "Mintaka"], ["Betelgeuse", "Alnitak"]],
+    ["Big Dipper", ["Alkaid", "Mizar", "Alioth", "Megrez", "Dubhe", "Merak", "Phecda", "Megrez"]],
+    ["Cassiopeia", ["Caph", "Schedar", "Navi", "Ruchbah", "Segin"]],
+    ["Summer Triangle", ["Vega", "Deneb", "Altair", "Vega"]],
+    ["Gemini twins", ["Castor", "Pollux"]],
+  ];
+  const BELONGS = {};
+  FIGURES.forEach(([name, ...chains]) => chains.forEach((c) => c.forEach((s) => { BELONGS[s] = BELONGS[s] || name; })));
+
+  // faint backdrop stars, fixed on the celestial sphere so they rise and set with the named ones
+  let seed = 7;
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const DUST = Array.from({ length: 520 }, () => ({ ra: rnd() * 2 * Math.PI, dec: Math.asin(rnd() * 2 - 1), r: 0.5 + rnd() * 1.2, tw: rnd() * 6.28 }));
+
+  const SKY = [ // sun altitude -> [top, bottom] colors
+    [-18, [5, 7, 26], [20, 20, 51]], [-12, [11, 16, 48], [44, 36, 84]], [-6, [31, 36, 84], [128, 92, 142]],
+    [0, [92, 110, 178], [247, 178, 160]], [6, [96, 152, 216], [226, 214, 226]], [14, [74, 144, 217], [191, 224, 245]],
+  ];
+  const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+  function skyColors(alt) {
+    if (alt <= SKY[0][0]) return [SKY[0][1], SKY[0][2]];
+    for (let i = 1; i < SKY.length; i++) if (alt <= SKY[i][0]) {
+      const t = (alt - SKY[i - 1][0]) / (SKY[i][0] - SKY[i - 1][0]);
+      return [mix(SKY[i - 1][1], SKY[i][1], t), mix(SKY[i - 1][2], SKY[i][2], t)];
+    }
+    return [SKY[SKY.length - 1][1], SKY[SKY.length - 1][2]];
+  }
+  const rgb = (c, a = 1) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+
+  const TZ = "America/Los_Angeles", FOV = 190;
+  const fmtTime = (ms) => new Date(ms).toLocaleTimeString("en-US", { timeZone: TZ, hour: "numeric", minute: "2-digit" });
+  let offset = 0, look = 180, W = 0, H = 0, dpr = 1, hover = null, pinned = null, meteors = [], spots = [], inView = false, facts = { key: null };
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  const horizonY = () => H * 0.8;
+  function place(p) { // alt/az -> canvas x,y (null when off screen)
+    const dx = ((p.az - look + 540) % 360) - 180;
+    if (Math.abs(dx) > FOV / 2 + 6) return null;
+    return { x: W / 2 + (dx / FOV) * W, y: horizonY() - (p.alt / 90) * (horizonY() - 14) };
+  }
+  const ridge = (x, amp, f, ph) => amp * (0.55 + 0.25 * Math.sin(x * f + ph) + 0.14 * Math.sin(x * f * 2.3 + ph * 1.7) + 0.06 * Math.sin(x * f * 5.1 + ph));
+
+  function drawMoon(x, y, r, p, dim) {
+    ctx.save();
+    const g = ctx.createRadialGradient(x, y, r, x, y, r * 4);
+    g.addColorStop(0, `rgba(255,244,214,${0.28 * dim})`); g.addColorStop(1, "rgba(255,244,214,0)");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 4, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = "rgba(58,56,84,0.95)"; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
+    const k = Math.cos(2 * Math.PI * p), wax = p < 0.5;
+    ctx.fillStyle = "#fbf3dc"; ctx.beginPath();
+    if (wax) { ctx.arc(x, y, r, -Math.PI / 2, Math.PI / 2); ctx.ellipse(x, y, r * Math.abs(k), r, 0, Math.PI / 2, 1.5 * Math.PI, k > 0); }
+    else { ctx.arc(x, y, r, Math.PI / 2, 1.5 * Math.PI); ctx.ellipse(x, y, r * Math.abs(k), r, 0, -Math.PI / 2, Math.PI / 2, k > 0); }
+    ctx.fill(); ctx.restore();
+  }
+
+  function draw(now) {
+    const ms = Date.now() + offset * 60000, d = toDays(ms);
+    const sEq = sunEq(d), sun = horizon(d, sEq.ra, sEq.dec);
+    const mEq = moonEq(d), moon = horizon(d, mEq.ra, mEq.dec), mp = moonPhase(d);
+    const [top, bot] = skyColors(sun.alt), hy = horizonY();
+    const night = Math.max(0, Math.min(1, (-sun.alt - 3) / 9)); // 0 by day, 1 once it is properly dark
+
+    const g = ctx.createLinearGradient(0, 0, 0, hy);
+    g.addColorStop(0, rgb(top)); g.addColorStop(1, rgb(bot));
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    spots = [];
+    if (night > 0) {
+      DUST.forEach((s) => {
+        const p = horizon(d, s.ra, s.dec); if (p.alt < 1) return;
+        const q = place(p); if (!q) return;
+        const tw = prefersReduced ? 1 : 0.75 + 0.25 * Math.sin(now / 700 + s.tw);
+        ctx.fillStyle = `rgba(255,255,255,${0.7 * night * tw})`;
+        ctx.fillRect(q.x, q.y, s.r, s.r);
+      });
+      const pos = {};
+      STARS.forEach(([name, ra, dec, mag]) => {
+        const p = horizon(d, ra * 15 * RAD, dec * RAD); if (p.alt < 0.5) return;
+        const q = place(p); if (q) pos[name] = Object.assign(q, { mag, alt: p.alt });
+      });
+      ctx.lineWidth = 1; ctx.strokeStyle = `rgba(214,190,255,${0.42 * night})`;
+      FIGURES.forEach(([, ...chains]) => chains.forEach((c) => {
+        for (let i = 1; i < c.length; i++) {
+          const a = pos[c[i - 1]], b = pos[c[i]];
+          if (!a || !b || Math.abs(a.x - b.x) > W / 2) continue;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
+      }));
+      for (const name in pos) {
+        const q = pos[name], r = Math.max(1.1, 3.4 - q.mag * 0.75);
+        const tw = prefersReduced ? 1 : 0.85 + 0.15 * Math.sin(now / 500 + q.x);
+        ctx.fillStyle = `rgba(255,250,240,${night * tw})`;
+        ctx.beginPath(); ctx.arc(q.x, q.y, r, 0, 6.2832); ctx.fill();
+        spots.push({ x: q.x, y: q.y, label: BELONGS[name] ? `${name} · ${BELONGS[name]}` : name });
+      }
+    }
+    const sp = place(sun);
+    if (sp && sun.alt > -3) {
+      const sg = ctx.createRadialGradient(sp.x, sp.y, 4, sp.x, sp.y, 90);
+      sg.addColorStop(0, "rgba(255,246,214,1)"); sg.addColorStop(0.16, "rgba(255,226,160,0.9)"); sg.addColorStop(1, "rgba(255,200,150,0)");
+      ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(sp.x, sp.y, 90, 0, 6.2832); ctx.fill();
+      spots.push({ x: sp.x, y: sp.y, label: `Sun · ${sun.alt.toFixed(0)}° up` });
+    }
+    const mq = place(moon);
+    if (mq && moon.alt > 0) {
+      drawMoon(mq.x, mq.y, 13, mp.phase, 0.4 + 0.6 * night);
+      spots.push({ x: mq.x, y: mq.y, label: `Moon · ${phaseName(mp.phase).toLowerCase()}, ${Math.round(mp.fraction * 100)}% lit` });
+    }
+
+    meteors = meteors.filter((m) => now - m.t < 700);
+    meteors.forEach((m) => {
+      const t = (now - m.t) / 700, x = m.x + m.dx * t, y = m.y + m.dy * t;
+      const lg = ctx.createLinearGradient(x, y, x - m.dx * 0.25, y - m.dy * 0.25);
+      lg.addColorStop(0, `rgba(255,255,255,${1 - t})`); lg.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.strokeStyle = lg; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - m.dx * 0.25, y - m.dy * 0.25); ctx.stroke();
+    });
+
+    // Cascades-style ridgelines, lit by the time of day
+    const day = 1 - night;
+    [[0.012, 1.3, 0.2, mix([34, 26, 58], [112, 122, 164], day)], [0.021, 4.1, 0.13, mix([18, 13, 34], [58, 72, 98], day)]].forEach(([f, ph, amp, col]) => {
+      ctx.fillStyle = rgb(col); ctx.beginPath(); ctx.moveTo(0, H);
+      for (let x = 0; x <= W; x += 6) ctx.lineTo(x, hy + H * 0.06 - ridge(x + look * (f * 90), H * amp, f, ph));
+      ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+    });
+    ctx.font = "500 11px 'JetBrains Mono', monospace"; ctx.textAlign = "center"; ctx.fillStyle = "rgba(255,255,255,0.72)";
+    ["N", "NE", "E", "SE", "S", "SW", "W", "NW"].forEach((c, i) => { const q = place({ az: i * 45, alt: 0 }); if (q) ctx.fillText(c, q.x, H - 10); });
+
+    const lab = hover || pinned;
+    if (lab) {
+      ctx.font = "500 12px Inter, sans-serif";
+      const w = ctx.measureText(lab.label).width + 16, x = Math.max(6, Math.min(W - w - 6, lab.x - w / 2)), y = Math.max(8, lab.y - 36);
+      ctx.fillStyle = "rgba(20,14,34,0.86)"; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, 24, 8) : ctx.rect(x, y, w, 24); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.textAlign = "left"; ctx.fillText(lab.label, x + 8, y + 16);
+      ctx.strokeStyle = "rgba(244,166,202,0.95)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(lab.x, lab.y, 9, 0, 6.2832); ctx.stroke();
+    }
+
+    // readouts (recomputed when the minute or the sky changes)
+    const key = Math.floor(ms / 60000);
+    if (facts.key !== key) {
+      facts.key = key;
+      const parts = new Intl.DateTimeFormat("en-US", { timeZone: TZ, hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" }).formatToParts(ms);
+      const n = (t) => +parts.find((p) => p.type === t).value;
+      const midnight = ms - (((n("hour") % 24) * 60 + n("minute")) * 60 + n("second")) * 1000;
+      if (facts.midnight == null || Math.abs(facts.midnight - midnight) > 60000) { facts.midnight = midnight; facts.rs = riseSet(midnight); }
+      $("sky-clock").textContent = new Date(ms).toLocaleString("en-US", { timeZone: TZ, weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + (offset ? "" : " · live");
+      $("sky-title").textContent = offset ? (offset > 0 ? "The sky later" : "The sky earlier") : "The sky right now";
+      $("sky-sun").textContent = sun.alt > 6 ? `Up, ${sun.alt.toFixed(0)}° high` : sun.alt > -0.833 ? "Golden hour" : sun.alt > -6 ? "Twilight" : sun.alt > -18 ? "Dusk glow" : "Down, fully dark";
+      $("sky-rise").textContent = facts.rs.rise ? fmtTime(facts.rs.rise) : "—";
+      $("sky-set").textContent = facts.rs.set ? fmtTime(facts.rs.set) : "—";
+      $("sky-moon").textContent = `${phaseName(mp.phase)}, ${Math.round(mp.fraction * 100)}% lit${moon.alt > 0 ? "" : " (below horizon)"}`;
+      const up = FIGURES.map(([name, c]) => { const st = STARS.find((s) => s[0] === c[0]); return [name, horizon(d, st[1] * 15 * RAD, st[2] * RAD).alt]; }).filter((f) => f[1] > 12).sort((a, b) => b[1] - a[1]);
+      $("sky-look").textContent = night < 0.5 ? "Stars come out after dusk" : up.length ? up.slice(0, 2).map((f) => f[0]).join(" and ") : "Polaris, due north";
+    }
+  }
+
+  let raf = 0;
+  function loop(now) { draw(now); raf = inView && !prefersReduced ? requestAnimationFrame(loop) : 0; }
+  const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
+  const redraw = () => { facts.key = null; if (prefersReduced || !inView) draw(performance.now()); else kick(); };
+
+  const nearest = (x, y) => { let best = null, bd = 16; spots.forEach((s) => { const dd = Math.hypot(s.x - x, s.y - y); if (dd < bd) { bd = dd; best = s; } }); return best; };
+  let drag = null;
+  cv.addEventListener("pointerdown", (e) => { drag = { x: e.clientX, look, moved: false }; try { cv.setPointerCapture(e.pointerId); } catch (err) {} });
+  cv.addEventListener("pointermove", (e) => {
+    const r = cv.getBoundingClientRect();
+    if (drag) {
+      const dx = e.clientX - drag.x;
+      if (Math.abs(dx) > 4) drag.moved = true;
+      if (drag.moved) { look = ((drag.look - (dx / W) * FOV) % 360 + 360) % 360; pinned = null; hover = null; }
+    } else { hover = nearest(e.clientX - r.left, e.clientY - r.top); cv.style.cursor = hover ? "pointer" : "grab"; }
+    redraw();
+  });
+  cv.addEventListener("pointerup", (e) => {
+    const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    if (drag && !drag.moved) {
+      const hit = nearest(x, y);
+      if (hit) pinned = hit;
+      else { pinned = null; if (!prefersReduced && y < horizonY()) meteors.push({ x, y, dx: 150 + Math.random() * 90, dy: 60 + Math.random() * 50, t: performance.now() }); }
+    }
+    drag = null; if (tip) tip.classList.add("gone"); redraw();
+  });
+  cv.addEventListener("pointerleave", () => { hover = null; redraw(); });
+  cv.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") look = (look + 345) % 360; else if (e.key === "ArrowRight") look = (look + 15) % 360; else return;
+    e.preventDefault(); e.stopPropagation(); redraw();
+  });
+  cv.tabIndex = 0;
+  slider.addEventListener("input", () => { offset = +slider.value; pinned = null; redraw(); });
+  nowBtn.addEventListener("click", () => { offset = 0; slider.value = 0; redraw(); });
+  window.addEventListener("resize", () => { resize(); redraw(); });
+  new IntersectionObserver((en) => { inView = en[0].isIntersecting; if (inView) { resize(); redraw(); } }).observe(cv);
+  setInterval(() => { if (inView && prefersReduced) redraw(); }, 60000);
+  resize(); draw(0);
+})();
+
+// ===== Bookshelf: Harry Potter, with spells that flip the theme =====
+(function shelfInit() {
+  const shelf = document.getElementById("shelf"), detail = document.getElementById("book-detail");
+  if (!shelf || !detail) return;
+  const BOOKS = [
+    ["Sorcerer's Stone", 1997, "#8e3b46", 0.86, "Wizard's chess lives here. Ron's knight sacrifice is still the bravest move in the series."],
+    ["Chamber of Secrets", 1998, "#3d6b5c", 0.9, "A diary that writes back. The original chatbot, and a reminder to check where the answers come from."],
+    ["Prisoner of Azkaban", 1999, "#5a4a8a", 0.94, "Time travel done properly. Also a debugging lesson: go back and retrace every step."],
+    ["Goblet of Fire", 2000, "#b0703a", 1, "A tournament arc with dragons, a lake and a maze. The stakes go up for good."],
+    ["Order of the Phoenix", 2003, "#2f5d8a", 1, "The longest of the seven. Worth every page."],
+    ["Half-Blood Prince", 2005, "#4f7a45", 0.95, "Always read the notes someone left in the margins."],
+    ["Deathly Hallows", 2007, "#9c5a86", 0.98, "The endgame. Every piece set up over six books finally moves."],
+  ];
+  BOOKS.forEach(([title, year, color, h, note], i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "spine"; b.setAttribute("role", "listitem");
+    b.style.setProperty("--spine", color); b.style.height = h * 100 + "%";
+    b.innerHTML = `<span class="spine-no">${i + 1}</span><span class="spine-title">${title}</span>`;
+    b.setAttribute("aria-label", `Book ${i + 1}: Harry Potter and the ${title}`);
+    b.addEventListener("click", () => {
+      shelf.querySelectorAll(".spine").forEach((s) => s.classList.toggle("out", s === b));
+      detail.innerHTML = "";
+      const n = document.createElement("p"); n.className = "book-name"; n.textContent = `${i + 1}. Harry Potter and the ${title} · ${year}`;
+      const t = document.createElement("p"); t.className = "book-note"; t.textContent = note;
+      detail.append(n, t);
+    });
+    shelf.appendChild(b);
+  });
+  const cast = (midnight, msg) => (e) => {
+    setTheme(midnight); showToast(msg);
+    const r = e.currentTarget.getBoundingClientRect();
+    pieceBurst(r.left + r.width / 2, r.top + r.height / 2, 9);
+  };
+  document.getElementById("spell-lumos").addEventListener("click", cast(false, "✦ Lumos"));
+  document.getElementById("spell-nox").addEventListener("click", cast(true, "☾ Nox"));
+})();
+
+// ===== Trips map: drive from Seattle, then scrub the Rattlesnake Ledge climb =====
+(function tripsInit() {
+  const svg = document.getElementById("trip-map"), info = document.getElementById("trip-info");
+  if (!svg || !info) return;
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs, text) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (text) n.textContent = text; svg.appendChild(n); return n; };
+  // real coordinates, flat-projected around 48°N
+  const xy = (lon, lat) => [50 + ((lon + 123) / 1.5) * 189, 320 - ((lat - 47.3) / 1.6) * 300];
+  const SEA = xy(-122.33, 47.61), EVERETT = xy(-122.2, 47.98), BURL = xy(-122.33, 48.47);
+  const TRIPS = [
+    { id: "rattlesnake", name: "Rattlesnake Ledge", kind: "hike", at: xy(-121.77, 47.43), via: [xy(-122.03, 47.53), xy(-121.79, 47.5)],
+      stats: "about 35 mi from Seattle · 4 mi round trip · 1,160 ft of climbing", note: "My favorite. The ledge sits at 2,078 ft and the view from the top is awesome.", anchor: "middle", dx: -14, dy: 22 },
+    { id: "bellingham", name: "Bellingham", kind: "road trip", at: xy(-122.48, 48.75), via: [EVERETT, BURL],
+      stats: "about 90 mi north on I-5 · roughly 1.5 hours", note: "Straight up the coast, almost to the Canadian border.", anchor: "start", dx: 9 },
+    { id: "anacortes", name: "Anacortes", kind: "road trip", at: xy(-122.61, 48.51), via: [EVERETT, BURL],
+      stats: "about 80 mi · I-5, then west on Highway 20 · roughly 1.5 hours", note: "Out onto Fidalgo Island, where the ferries leave for the San Juans.", anchor: "end", dx: -9 },
+  ];
+  el("text", { x: 20, y: 205, class: "tm-region" }, "Puget Sound");
+  el("text", { x: 228, y: 150, class: "tm-region" }, "Cascades");
+  TRIPS.forEach((t) => { t.path = el("path", { d: "M" + [SEA, ...t.via, t.at].map((p) => p.map((v) => v.toFixed(1)).join(",")).join(" L"), class: "tm-route" }); });
+  el("circle", { cx: SEA[0], cy: SEA[1], r: 5, class: "tm-home" });
+  el("text", { x: SEA[0] - 9, y: SEA[1] + 4, class: "tm-label", "text-anchor": "end" }, "Seattle");
+  TRIPS.forEach((t) => {
+    t.pin = el("circle", { cx: t.at[0], cy: t.at[1], r: 7, class: "tm-pin", tabindex: 0, role: "button", "aria-label": `${t.name}, ${t.kind}` });
+    el("text", { x: t.at[0] + t.dx, y: t.at[1] + (t.dy || 4), class: "tm-label", "text-anchor": t.anchor }, t.name);
+    const go = () => select(t);
+    t.pin.addEventListener("click", go);
+    t.pin.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+  });
+  const car = el("circle", { r: 4.5, class: "tm-car", cx: SEA[0], cy: SEA[1] });
+
+  let anim = 0;
+  function drive(path) {
+    cancelAnimationFrame(anim);
+    const len = path.getTotalLength(), t0 = performance.now();
+    const put = (f) => { const p = path.getPointAtLength(len * f); car.setAttribute("cx", p.x); car.setAttribute("cy", p.y); };
+    if (prefersReduced) return put(1);
+    const step = (now) => { const f = Math.min(1, (now - t0) / 1500); put(1 - Math.pow(1 - f, 3)); if (f < 1) anim = requestAnimationFrame(step); };
+    anim = requestAnimationFrame(step);
+  }
+
+  // approximate shape of the climb: 920 ft at the lake to 2,078 ft at the ledge, 2 miles one way
+  const elev = (mi) => { const t = mi / 2; return 920 + 1158 * (0.25 * t + 0.75 * (t * t * (3 - 2 * t))); };
+  function climbHtml() {
+    const pts = []; for (let i = 0; i <= 40; i++) { const mi = i / 20; pts.push(`${(10 + mi * 140).toFixed(1)},${(84 - ((elev(mi) - 920) / 1158) * 64).toFixed(1)}`); }
+    return `<div class="climb"><svg viewBox="0 0 300 96" aria-hidden="true"><path class="climb-fill" d="M10,84 L${pts.join(" L")} L290,84 Z"/><path class="climb-line" d="M${pts.join(" L")}"/><circle class="climb-dot" id="climb-dot" r="5" cx="10" cy="84"/></svg>
+      <input type="range" id="climb-range" min="0" max="2" step="0.05" value="0" aria-label="Walk up the trail" />
+      <p class="climb-read" id="climb-read"></p></div>`;
+  }
+  function wireClimb() {
+    const range = document.getElementById("climb-range"), dot = document.getElementById("climb-dot"), read = document.getElementById("climb-read");
+    const upd = () => {
+      const mi = +range.value, ft = Math.round(elev(mi) / 10) * 10;
+      dot.setAttribute("cx", 10 + mi * 140); dot.setAttribute("cy", 84 - ((elev(mi) - 920) / 1158) * 64);
+      read.textContent = mi === 0 ? "Trailhead at Rattlesnake Lake. Drag to start climbing." : mi >= 2 ? "The ledge, 2,078 ft. The lake is straight down and the whole valley opens up." : `${mi.toFixed(1)} mi in · about ${ft.toLocaleString()} ft · ${Math.round(2078 - elev(mi)).toLocaleString()} ft to go`;
+    };
+    range.addEventListener("input", upd); upd();
+  }
+
+  function select(t, animate = true) {
+    TRIPS.forEach((o) => { o.pin.classList.toggle("on", o === t); o.path.classList.toggle("on", o === t); });
+    info.innerHTML = "";
+    const k = document.createElement("p"); k.className = "trip-kind"; k.textContent = t.kind;
+    const h = document.createElement("h4"); h.textContent = t.name;
+    const s = document.createElement("p"); s.className = "trip-stats"; s.textContent = t.stats;
+    const n = document.createElement("p"); n.className = "trip-note"; n.textContent = t.note;
+    info.append(k, h, s, n);
+    if (t.id === "rattlesnake") { info.insertAdjacentHTML("beforeend", climbHtml()); wireClimb(); }
+    if (animate) drive(t.path); else { car.setAttribute("cx", t.at[0]); car.setAttribute("cy", t.at[1]); }
+  }
+  select(TRIPS[0], false);
+})();
