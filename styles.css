@@ -622,3 +622,94 @@ body.brilliant .nav-inner .logo-piece { animation: spin 0.6s linear infinite; di
   .game-caption { max-width: 100%; }
   .game-progress { max-width: 360px; margin-left: auto; margin-right: auto; }
 }
+
+/* ============ Hero puzzle (playable mate in one) ============ */
+.hero-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 380px); gap: 48px; align-items: center; }
+.puzzle {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px; box-shadow: var(--shadow-lift);
+}
+.puzzle-eyebrow { font-family: var(--font-mono); font-size: 0.78rem; color: var(--purple-deep); margin-bottom: 4px; }
+.puzzle-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.puzzle-count { font-family: var(--font-mono); font-size: 0.76rem; font-weight: 400; color: var(--ink-dim); }
+.puzzle-board {
+  display: grid; grid-template-columns: repeat(8, 1fr); aspect-ratio: 1; width: 100%;
+  border: 4px solid var(--board-dark); border-radius: 10px; overflow: hidden;
+  background: var(--board-light); container-type: inline-size;
+}
+.pz-sq {
+  position: relative; border: 0; padding: 0; margin: 0; background: transparent; aspect-ratio: 1;
+  display: grid; place-items: center; font: inherit; color: inherit; cursor: default;
+}
+.pz-sq.dark { background: var(--board-dark); }
+.pz-sq.movable { cursor: pointer; }
+.pz-sq:focus-visible { outline: 3px solid var(--pink); outline-offset: -3px; z-index: 1; }
+.pz-sq.last { box-shadow: inset 0 0 0 100px rgba(239, 143, 187, 0.34); }
+.pz-sq.sel { box-shadow: inset 0 0 0 100px rgba(154, 111, 208, 0.5); }
+.pz-sq.hint { animation: pzhint 1s ease-in-out infinite; }
+.pz-sq.mated { box-shadow: inset 0 0 0 100px rgba(194, 71, 122, 0.6); }
+.pz-sq.target { cursor: pointer; }
+.pz-sq.target::after {
+  content: ""; position: absolute; width: 30%; height: 30%; border-radius: 50%;
+  background: rgba(47, 29, 56, 0.34);
+}
+.pz-sq.target:has(.pz-piece)::after { width: 84%; height: 84%; background: transparent; border: 3px solid rgba(47, 29, 56, 0.4); }
+.pz-sq.target:hover { box-shadow: inset 0 0 0 100px rgba(154, 111, 208, 0.28); }
+.pz-piece { font-size: 34px; font-size: 9.6cqw; line-height: 1; pointer-events: none; transition: transform 0.15s ease; }
+.pz-piece.w { color: #fff4f9; text-shadow: 0 1px 0 rgba(0,0,0,0.25); -webkit-text-stroke: 1.3px #6b4a7d; }
+.pz-piece.b { color: #2a1834; text-shadow: 0 1px 1px rgba(255,255,255,0.18); }
+.pz-sq.movable:hover .pz-piece, .pz-sq.sel .pz-piece { transform: scale(1.14) translateY(-2px); }
+@keyframes pzhint { 50% { box-shadow: inset 0 0 0 100px rgba(239, 143, 187, 0.75); } }
+.puzzle-board.shake { animation: pzshake 0.4s ease; }
+@keyframes pzshake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+.puzzle-status { font-size: 0.86rem; color: var(--ink-dim); margin: 14px 0; min-height: 2.9em; line-height: 1.45; }
+.puzzle-status.ok { color: var(--purple-deep); font-weight: 600; }
+.puzzle-status.no { color: var(--crimson); }
+.puzzle-actions { display: flex; align-items: center; gap: 10px; }
+.puzzle-actions .btn:disabled { opacity: 0.45; cursor: default; }
+.puzzle-score { margin-left: auto; font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-dim); }
+@media (max-width: 1000px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 44px; padding-bottom: 96px; }
+  .puzzle { max-width: 420px; width: 100%; }
+}
+
+/* ============ Experience move list ============ */
+.move-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
+.move-list button {
+  font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-dim); cursor: pointer;
+  background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.move-list button:hover { border-color: var(--purple); color: var(--ink); transform: translateY(-2px); }
+.move-list button.active { background: var(--gradient); color: #fff; border-color: transparent; }
+.move-list .ml-no { opacity: 0.7; }
+.card.flash { animation: cardflash 1.2s ease; }
+@keyframes cardflash { 0%, 55% { border-color: var(--pink); box-shadow: 0 0 0 4px rgba(239, 143, 187, 0.4), var(--shadow-lift); } }
+
+/* ============ Skill highlight ============ */
+.chips span { cursor: pointer; transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease; }
+.chips span:hover { transform: translateY(-2px); border-color: var(--purple); }
+.chips span:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+.chips span.on { background: var(--gradient); color: #fff; border-color: transparent; }
+body.skill-on #experience .card, body.skill-on .scene, body.skill-on .lab-pawn { transition: opacity 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+body.skill-on #experience .card:not(.skill-hit), body.skill-on .scene:not(.skill-hit), body.skill-on .lab-pawn:not(.skill-hit) { opacity: 0.32 !important; }
+body.skill-on #experience .card.skill-hit, body.skill-on .lab-pawn.skill-hit { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(239, 143, 187, 0.35), var(--shadow-lift); }
+.skill-pill {
+  position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 150;
+  display: flex; align-items: center; gap: 12px; max-width: calc(100vw - 24px);
+  background: var(--card); border: 1px solid var(--pink); border-radius: 999px; padding: 9px 10px 9px 18px;
+  box-shadow: var(--shadow-lift); font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink);
+}
+.skill-pill[hidden] { display: none; }
+.skill-pill button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--purple-deep); border-radius: 999px; padding: 5px 11px; white-space: nowrap; }
+.skill-pill button:hover { border-color: var(--purple); }
+.edu-note { color: var(--ink-dim); font-size: 0.88rem; margin: 10px 0 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pz-sq.hint, .puzzle-board.shake, .card.flash { animation: none; }
+  .pz-sq.hint { box-shadow: inset 0 0 0 100px rgba(239, 143, 187, 0.75); }
+}
+@media (min-width: 1001px) {
+  .hero-stats { gap: 10px; }
+  .hero-stats .stat { padding: 14px 18px; }
+}

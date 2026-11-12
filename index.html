@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=7" />
+  <link rel="stylesheet" href="styles.css?v=8" />
   <script>try { if (localStorage.getItem("ctheme") === "midnight") document.documentElement.classList.add("midnight"); } catch (e) {}</script>
 </head>
 <body>
@@ -54,6 +54,7 @@
   <!-- ===== Hero ===== -->
   <header class="hero" id="top">
     <div class="hero-inner">
+      <div class="hero-copy">
       <p class="hero-eyebrow">♟ opening move · hello, I'm</p>
       <h1 class="hero-name">
         <span class="mask"><span class="hero-line">Vinisha Bala</span></span>
@@ -61,7 +62,7 @@
       </h1>
       <h2 class="hero-roles">a <span id="typed" class="typed"></span><span class="caret">|</span></h2>
       <p class="hero-blurb">
-        Software developer at Eat Together Seattle, Computational Linguistics grad student at the
+        Software developer at Eat Together Seattle, Computational Linguistics (NLP, ML &amp; AI) grad student at the
         University of Washington, ML researcher, and award-winning builder. I think a few moves
         ahead, shipping AI agents and full-stack products that are fast, accessible, and actually
         useful. Off the clock, you'll find me playing chess.
@@ -78,6 +79,18 @@
         <div class="stat"><span class="stat-num">🥈 2nd</span><span class="stat-label">AWS Hacks ’26</span></div>
         <div class="stat"><span class="stat-num">♟ Legend</span><span class="stat-label">Chess.com league</span></div>
       </div>
+      </div>
+      <aside class="puzzle" id="puzzle" aria-label="Chess puzzle: find the mate in one">
+        <p class="puzzle-eyebrow">♟ your move · white to play</p>
+        <h3 class="puzzle-title"><span id="puzzle-title">Mate in one</span> <span class="puzzle-count" id="puzzle-count"></span></h3>
+        <div class="puzzle-board" id="puzzle-board"></div>
+        <p class="puzzle-status" id="puzzle-status" aria-live="polite">Find the checkmate. Tap a white piece, then a square.</p>
+        <div class="puzzle-actions">
+          <button type="button" class="btn btn-sm btn-outline" id="puzzle-hint">Hint</button>
+          <button type="button" class="btn btn-sm btn-outline" id="puzzle-next">Skip →</button>
+          <span class="puzzle-score" id="puzzle-score"></span>
+        </div>
+      </aside>
     </div>
     <div class="scroll-hint" aria-hidden="true"><span></span></div>
   </header>
@@ -87,6 +100,7 @@
     <section id="experience" class="section">
       <span class="giant">moves</span>
       <h2 class="section-title" data-reveal><span class="section-num">01</span> <span class="st-text">The moves so far</span></h2>
+      <nav class="move-list" id="move-list" aria-label="Jump to a role" data-reveal></nav>
       <div class="moves">
         <div class="move" data-reveal>
           <div class="move-no">1.</div>
@@ -107,8 +121,9 @@
               <li>Architected a <strong>multi-agent AI orchestration system</strong> in Microsoft Copilot Studio: a central Interact Agent routes intents to specialized ticket-creation and colleague-lookup subagents.</li>
               <li>Independently built a ServiceNow support subagent that searches TechConnect/SharePoint articles, checks ServiceNow for duplicate tickets, and emails new IT tickets to the client's IT team.</li>
               <li>Built tool-calling workflows connecting the agents to <strong>4 data sources</strong> (ServiceNow, Microsoft Graph/Entra ID, SharePoint, Dataverse) with Power Automate and Power Apps, including a manager-lookup pipeline over M365.</li>
+              <li>Ran <strong>automated testing</strong> and debugging on the agents, then published them to Microsoft Teams.</li>
             </ul>
-            <div class="chips"><span>Copilot Studio</span><span>Power Automate</span><span>Power Apps</span><span>Dataverse</span><span>ServiceNow</span><span>Microsoft Graph</span></div>
+            <div class="chips"><span>Copilot Studio</span><span>Power Automate</span><span>Power Apps</span><span>Dataverse</span><span>ServiceNow</span><span>Microsoft Graph</span><span>Teams</span><span>Automated Testing</span></div>
           </div>
         </div>
         <div class="move" data-reveal>
@@ -117,7 +132,7 @@
             <div class="card-head"><h3>Student Researcher <span class="at">· UW Bothell</span></h3><span class="date">Jun 2024 to Jun 2026</span></div>
             <p class="card-sub">Computed Tomography Reconstruction Lab</p>
             <ul>
-              <li>Improved CT image quality from sparse 144- and 360-projection scans to match full-scan output, <strong>reducing patient radiation exposure</strong>.</li>
+              <li>Improved CT image quality from sparse 144- and 360-projection scans to match full-scan output using convolutional neural networks, <strong>reducing patient radiation exposure</strong>.</li>
               <li>Implemented CNNs with the Simultaneous Algebraic Reconstruction Technique (SART) for sparse-view CT reconstruction.</li>
               <li>Validated with <strong>PSNR 36.5 to 39.9 dB</strong> and <strong>SSIM 0.95 to 0.97</strong>; preparing findings for publication.</li>
             </ul>
@@ -223,7 +238,8 @@
       <div class="about-grid">
         <div class="about-text" data-reveal>
           <p>
-            I'm a Master's student in Computational Linguistics at <strong>UW Seattle</strong>, after
+            I'm a Master's student in Computational Linguistics at <strong>UW Seattle</strong>, a
+            program that teaches <strong>machine learning and AI</strong> alongside NLP, after
             graduating from <strong>UW Bothell</strong> with a double major in Computer Science &amp;
             Software Engineering and Mathematics.
           </p>
@@ -248,7 +264,7 @@
                 <div class="t-out">vinisha · software dev @ eat together seattle · chess player</div>
                 <div><span class="t-prompt">$</span> rating --rapid</div>
                 <div class="t-out">Chess.com rapid ≈ 1074 ✦ league: Legend</div>
-                <div class="t-out t-hint"># try: help · projects · rating · fen · sudo hire-me</div>
+                <div class="t-out t-hint"># try: help · experience · puzzle · rating · sudo hire-me</div>
               </div>
               <div class="term-input-row">
                 <span class="t-prompt">$</span>
@@ -263,6 +279,7 @@
     <section id="skills" class="section">
       <span class="giant">arsenal</span>
       <h2 class="section-title" data-reveal><span class="section-num">05</span> <span class="st-text">The arsenal</span></h2>
+      <p class="section-lead" data-reveal>Tap any skill to light up the roles and projects where I used it.</p>
       <div class="skills-grid">
         <div class="skill-group spot" data-reveal>
           <h3>♟ Languages</h3>
@@ -278,7 +295,7 @@
         </div>
         <div class="skill-group spot" data-reveal>
           <h3>♛ AI Agents &amp; Automation</h3>
-          <div class="chips lg"><span>Copilot Studio</span><span>Power Automate</span><span>Power Apps</span><span>Dataverse</span><span>ServiceNow</span><span>Microsoft Graph</span><span>Entra ID</span><span>SharePoint</span></div>
+          <div class="chips lg"><span>Copilot Studio</span><span>Power Automate</span><span>Power Apps</span><span>Dataverse</span><span>ServiceNow</span><span>Microsoft Graph</span><span>Entra ID</span><span>SharePoint</span><span>Teams</span></div>
         </div>
         <div class="skill-group spot" data-reveal>
           <h3>♚ AI Dev Tools</h3>
@@ -300,6 +317,8 @@
           <p class="edu-when">Jul 2026 to Jun 2028</p>
           <h3>University of Washington, Seattle</h3>
           <p class="edu-degree">M.S. in Computational Linguistics</p>
+          <p class="edu-note">Where language meets machine learning: the program covers NLP, ML, and AI.</p>
+          <div class="chips"><span>NLP</span><span>Machine Learning</span><span>AI</span></div>
         </div>
         <div class="card edu-card spot" data-reveal>
           <p class="edu-when">Sep 2022 to Jun 2026</p>
@@ -357,6 +376,12 @@
     </div>
   </div>
 
+  <div class="skill-pill" id="skill-pill" hidden>
+    <span id="skill-pill-text"></span>
+    <button type="button" id="skill-pill-jump">jump to first ↑</button>
+    <button type="button" id="skill-pill-clear" aria-label="Clear skill highlight">✕</button>
+  </div>
+
   <div class="toast" id="toast" hidden></div>
 
   <footer class="footer">
@@ -372,12 +397,12 @@
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
       </a>
     </div>
-    <p>Designed &amp; built by <strong>Vinisha Bala Dhayanidhi</strong> · © <span id="year"></span> · ♞ press <kbd>⌘K</kbd></p>
+    <p>Designed &amp; built by <strong>Vinisha Bala Dhayanidhi</strong> · © <span id="year"></span> · ♞ press <kbd>⌘K</kbd> or <kbd>?</kbd></p>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js" defer></script>
-  <script src="script.js?v=7" defer></script>
+  <script src="script.js?v=8" defer></script>
 </body>
 </html>

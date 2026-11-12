@@ -140,6 +140,7 @@ if (themeBtn) {
 
   const items = [
     { icon: "⏱", label: "The moves (experience)", hint: "01", action: () => goTo("#experience") },
+    { icon: "♛", label: "Solve a puzzle (mate in one)", hint: "play", action: () => goTo("#puzzle") },
     { icon: "♟", label: "On the board (chess stats)", hint: "02", action: () => goTo("#chess") },
     { icon: "♜", label: "The board (projects)", hint: "03", action: () => goTo("#projects") },
     { icon: "♚", label: "The player (about)", hint: "04", action: () => goTo("#about") },
@@ -229,8 +230,16 @@ if (themeBtn) {
   ];
 
   const commands = {
-    help: () => print("commands: whoami · rating · projects · skills · fen · stats · gh · theme · clear · sudo hire-me"),
+    help: () => print("commands: whoami · experience · school · puzzle · rating · projects · skills · fen · stats · gh · theme · clear · sudo hire-me"),
     whoami: () => print("vinisha · software dev @ eat together seattle · researcher · chess player (Legend league)"),
+    experience: () => {
+      document.querySelectorAll("#experience .move").forEach((m) => {
+        const h = m.querySelector("h3"), d = m.querySelector(".date");
+        if (h) print(`${m.querySelector(".move-no").textContent} ${h.textContent.replace(/\s+/g, " ")} (${d ? d.textContent : ""})`);
+      });
+    },
+    school: () => print("M.S. Computational Linguistics @ UW Seattle (NLP + ML + AI) · B.S. CSSE + B.S. Math @ UW Bothell"),
+    puzzle: () => { print("white to play, mate in one ♟ scrolling to the board…"); goTo("#puzzle"); },
     rating: () => print("Chess.com · rapid ~1074 · blitz ~914 · bullet ~1208 · tactics peak 1603"),
     projects: () => { print("16 projects on the board above. king = Rta, queen = Big Back Bites, pawns = lab experiments."); print("↳ click any piece to read its story"); },
     skills: () => print("python · c/c++/c# · java · sql · js/ts · react · fastapi · tensorflow · aws · azure · copilot studio · power automate · docker"),
@@ -327,7 +336,7 @@ if (hasGsap && !prefersReduced) {
   });
 
   gsap.from(".hero-line", { yPercent: 115, duration: 1.2, ease: "power4.out", stagger: 0.14, delay: 0.15 });
-  gsap.from([".hero-eyebrow", ".hero-roles", ".hero-blurb", ".hero-actions", ".hero-stats"], {
+  gsap.from([".hero-eyebrow", ".hero-roles", ".hero-blurb", ".hero-actions", ".hero-stats", ".puzzle"], {
     y: 26, autoAlpha: 0, duration: 0.9, ease: "power3.out", stagger: 0.1, delay: 0.5,
   });
   gsap.to(".hero-inner", {
@@ -546,6 +555,7 @@ window.addEventListener("keydown", (e) => {
   SCENES.forEach((s, i) => {
     const scene = document.createElement("article");
     scene.className = "scene" + (i % 2 ? " flip" : "");
+    scene.dataset.chips = s.chips.join("|");
     const pieceSrc = `assets/${s.black ? "black-" : ""}${s.piece}.png`;
     const art = `<div class="scene-art"><div class="scene-glow"></div><figure class="piece-photo"><img src="${pieceSrc}" alt="${s.title}, a ${s.black ? "black" : "white"} ${s.piece} chess piece" loading="lazy" /></figure></div>`;
     const body = `<div class="scene-body">
@@ -583,6 +593,7 @@ window.addEventListener("keydown", (e) => {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "lab-pawn";
+    card.dataset.chips = p.chips.join("|");
     card.innerHTML = `<img class="lab-pawn-img" src="assets/pawn.png" alt="" loading="lazy" /><span class="lab-pawn-title">${p.title}</span><span class="lab-pawn-tag">${p.tag}</span>`;
     card.addEventListener("click", () => openLab(p));
     labEl.appendChild(card);
@@ -801,3 +812,226 @@ if (finePointer) {
   let rt;
   window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => render(last), 150); });
 })();
+
+// ===== Playable puzzles: mate in one =====
+(function puzzleInit() {
+  const boardEl = document.getElementById("puzzle-board");
+  if (!boardEl) return;
+  const titleEl = document.getElementById("puzzle-title");
+  const countEl = document.getElementById("puzzle-count");
+  const statusEl = document.getElementById("puzzle-status");
+  const scoreEl = document.getElementById("puzzle-score");
+  const hintBtn = document.getElementById("puzzle-hint");
+  const nextBtn = document.getElementById("puzzle-next");
+
+  // legal moves and mating moves are precomputed, so no engine ships with the page
+  const PUZZLES = [{"title":"Back-rank mate","tip":"The king is boxed in by its own pawns.","fen":"6k1/5ppp/8/8/8/8/5PPP/4R1K1","moves":{"f2":["f3","f4"],"g2":["g3","g4"],"h2":["h3","h4"],"e1":["e2","e3","e4","e5","e6","e7","e8","f1","d1","c1","b1","a1"],"g1":["h1","f1"]},"mates":["e1e8"],"san":"Re8#"},{"title":"Scholar's mate","tip":"f7 is only guarded by the king.","fen":"r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR","moves":{"h5":["g6","f7","h6","h7","h4","h3","g4","f3","e2","d1","g5","f5","e5"],"c4":["b5","a6","d5","e6","f7","d3","e2","f1","b3"],"a2":["a3","a4"],"b2":["b3","b4"],"c2":["c3"],"d2":["d3","d4"],"f2":["f3","f4"],"g2":["g3","g4"],"h2":["h3","h4"],"b1":["a3","c3"],"e1":["e2","f1","d1"],"g1":["e2","f3","h3"]},"mates":["h5f7"],"san":"Qxf7#"},{"title":"Smothered mate","tip":"A knight doesn't care who's in the way.","fen":"6rk/6pp/8/6N1/8/8/8/6K1","moves":{"g5":["e6","f7","h7","h3","f3","e4"],"g1":["f2","g2","h2","h1","f1"]},"mates":["g5f7"],"san":"Nf7#"},{"title":"Légal's mate","tip":"Down a queen, up a checkmate.","fen":"rn1q1bnr/ppp1kB1p/3p2p1/4N3/4P3/2N5/PPPP1PPP/R1BbK2R","moves":{"f7":["e8","g8","g6","e6","d5","c4","b3"],"e5":["c6","d7","g6","g4","f3","d3","c4"],"c3":["a4","b5","d5","e2","d1","b1"],"a2":["a3","a4"],"b2":["b3","b4"],"d2":["d3","d4"],"f2":["f3","f4"],"g2":["g3","g4"],"h2":["h3","h4"],"a1":["b1"],"e1":["f1","d1"],"h1":["g1","f1"]},"mates":["c3d5"],"san":"Nd5#"}];
+  const GLYPH = { k: "♚", q: "♛", r: "♜", b: "♝", n: "♞", p: "♟" };
+  const NAME = { k: "king", q: "queen", r: "rook", b: "bishop", n: "knight", p: "pawn" };
+
+  let solved = new Set();
+  try { solved = new Set(JSON.parse(localStorage.getItem("cpuzzles") || "[]")); } catch (e) {}
+  let idx = PUZZLES.findIndex((_, i) => !solved.has(i));
+  if (idx < 0) idx = 0;
+  let pos = {}, sel = null, locked = false, hint = null, last = [], done = false;
+
+  function parse(fen) {
+    const m = {};
+    fen.split("/").forEach((row, r) => {
+      let f = 0;
+      for (const ch of row) {
+        if (/\d/.test(ch)) { f += +ch; continue; }
+        m[String.fromCharCode(97 + f) + (8 - r)] = { c: ch === ch.toUpperCase() ? "w" : "b", t: ch.toLowerCase() };
+        f++;
+      }
+    });
+    return m;
+  }
+
+  const squares = {};
+  for (let r = 8; r >= 1; r--) for (let f = 0; f < 8; f++) {
+    const sq = String.fromCharCode(97 + f) + r;
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "pz-sq" + ((r + f) % 2 === 1 ? " dark" : "");
+    b.addEventListener("click", () => onSquare(sq));
+    boardEl.appendChild(b);
+    squares[sq] = b;
+  }
+
+  function draw() {
+    const p = PUZZLES[idx];
+    const targets = sel ? p.moves[sel] || [] : [];
+    for (const sq in squares) {
+      const b = squares[sq], pc = pos[sq];
+      b.innerHTML = pc ? `<span class="pz-piece ${pc.c}">${GLYPH[pc.t]}</span>` : "";
+      b.setAttribute("aria-label", sq + (pc ? `, ${pc.c === "w" ? "white" : "black"} ${NAME[pc.t]}` : ""));
+      b.classList.toggle("sel", sq === sel);
+      b.classList.toggle("target", targets.includes(sq));
+      b.classList.toggle("hint", sq === hint);
+      b.classList.toggle("last", last.includes(sq));
+      b.classList.toggle("mated", !!(done && pc && pc.c === "b" && pc.t === "k"));
+      b.classList.toggle("movable", !locked && !!pc && pc.c === "w" && !!p.moves[sq]);
+    }
+    scoreEl.textContent = `solved ${solved.size}/${PUZZLES.length}`;
+  }
+
+  function load(i) {
+    idx = i;
+    const p = PUZZLES[idx];
+    pos = parse(p.fen); sel = null; hint = null; last = []; locked = false; done = false;
+    titleEl.textContent = p.title;
+    countEl.textContent = `${idx + 1}/${PUZZLES.length}`;
+    statusEl.textContent = "Find the checkmate. Tap a white piece, then a square.";
+    statusEl.className = "puzzle-status";
+    nextBtn.textContent = "Skip →";
+    hintBtn.disabled = false;
+    draw();
+  }
+
+  function onSquare(sq) {
+    if (locked) return;
+    const p = PUZZLES[idx];
+    if (sel && (p.moves[sel] || []).includes(sq)) return tryMove(sel, sq);
+    sel = pos[sq] && pos[sq].c === "w" && p.moves[sq] && sel !== sq ? sq : null;
+    draw();
+  }
+
+  function tryMove(from, to) {
+    const p = PUZZLES[idx];
+    const before = Object.assign({}, pos);
+    pos[to] = pos[from]; delete pos[from];
+    sel = null; hint = null; last = [from, to]; locked = true;
+    if (p.mates.includes(from + to)) {
+      done = true;
+      const first = !solved.has(idx);
+      solved.add(idx);
+      try { localStorage.setItem("cpuzzles", JSON.stringify([...solved])); } catch (e) {}
+      statusEl.textContent = `${p.san} Checkmate! ${p.tip}`;
+      statusEl.className = "puzzle-status ok";
+      nextBtn.textContent = "Next puzzle →";
+      hintBtn.disabled = true;
+      draw();
+      const r = squares[to].getBoundingClientRect();
+      pieceBurst(r.left + r.width / 2, r.top + r.height / 2, 12);
+      if (first && solved.size === PUZZLES.length) setTimeout(brilliancy, 500);
+    } else {
+      statusEl.textContent = "Legal, but the king escapes. Try again.";
+      statusEl.className = "puzzle-status no";
+      boardEl.classList.add("shake");
+      draw();
+      setTimeout(() => {
+        boardEl.classList.remove("shake");
+        pos = before; last = []; locked = false;
+        draw();
+      }, 800);
+    }
+  }
+
+  hintBtn.addEventListener("click", () => {
+    if (locked) return;
+    const p = PUZZLES[idx];
+    hint = p.mates[0].slice(0, 2); sel = null;
+    statusEl.textContent = "Hint: " + p.tip;
+    statusEl.className = "puzzle-status";
+    draw();
+  });
+  nextBtn.addEventListener("click", () => load((idx + 1) % PUZZLES.length));
+
+  load(idx);
+})();
+
+// ===== Experience move list: jump to a role, track the current one =====
+(function moveListInit() {
+  const nav = document.getElementById("move-list");
+  const moves = [...document.querySelectorAll("#experience .move")];
+  if (!nav || !moves.length) return;
+  const btns = moves.map((m, i) => {
+    const at = m.querySelector(".at");
+    const b = document.createElement("button");
+    b.type = "button";
+    b.innerHTML = `<span class="ml-no">${i + 1}.</span> `;
+    b.appendChild(document.createTextNode(at ? at.textContent.replace(/^[\s·]+/, "") : "role " + (i + 1)));
+    b.addEventListener("click", () => {
+      goTo(m);
+      const card = m.querySelector(".card");
+      card.classList.remove("flash");
+      void card.offsetWidth;
+      card.classList.add("flash");
+    });
+    nav.appendChild(b);
+    return b;
+  });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (en.isIntersecting) btns.forEach((b, i) => b.classList.toggle("active", moves[i] === en.target));
+    });
+  }, { rootMargin: "-35% 0px -55% 0px" });
+  moves.forEach((m) => io.observe(m));
+})();
+
+// ===== Skill highlight: tap a chip to light up where it was used =====
+(function skillHighlightInit() {
+  const pill = document.getElementById("skill-pill");
+  const pillText = document.getElementById("skill-pill-text");
+  if (!pill) return;
+  const tokens = (s) => s.toLowerCase().split(/[\s/]+/).filter(Boolean);
+  const subset = (a, b) => a.every((t) => b.includes(t));
+  const matches = (skill, chip) => { const a = tokens(skill), b = tokens(chip); return subset(a, b) || subset(b, a); };
+  const targets = () => [
+    ...[...document.querySelectorAll("#experience .card")].map((el) => ({ el, kind: "role", chips: [...el.querySelectorAll(".chips span")].map((c) => c.textContent) })),
+    ...[...document.querySelectorAll("#scenes .scene, #lab-grid .lab-pawn")].map((el) => ({ el, kind: "project", chips: (el.dataset.chips || "").split("|") })),
+  ];
+  let active = null, firstHit = null;
+
+  function clear() {
+    active = null; firstHit = null;
+    document.body.classList.remove("skill-on");
+    document.querySelectorAll(".skill-hit").forEach((el) => el.classList.remove("skill-hit"));
+    document.querySelectorAll(".chips span.on").forEach((el) => el.classList.remove("on"));
+    pill.hidden = true;
+  }
+  function apply(skill) {
+    if (active && active.toLowerCase() === skill.toLowerCase()) return clear();
+    clear();
+    active = skill;
+    let roles = 0, projects = 0;
+    targets().forEach((t) => {
+      if (!t.chips.some((c) => c && matches(skill, c))) return;
+      t.el.classList.add("skill-hit");
+      if (!firstHit) firstHit = t.el;
+      t.kind === "role" ? roles++ : projects++;
+    });
+    document.querySelectorAll(".chips span").forEach((c) => c.classList.toggle("on", matches(skill, c.textContent)));
+    document.body.classList.add("skill-on");
+    const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+    pillText.textContent = roles + projects
+      ? `♟ ${skill} · ${plural(roles, "role")} · ${plural(projects, "project")}`
+      : `♟ ${skill} · in the toolbox, not on the board yet`;
+    document.getElementById("skill-pill-jump").hidden = !firstHit;
+    pill.hidden = false;
+  }
+
+  document.addEventListener("click", (e) => {
+    const chip = e.target.closest(".chips span");
+    if (chip) apply(chip.textContent.trim());
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && active) clear();
+    const chip = e.target.closest && e.target.closest(".chips span");
+    if (chip && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); apply(chip.textContent.trim()); }
+  });
+  document.getElementById("skill-pill-clear").addEventListener("click", clear);
+  document.getElementById("skill-pill-jump").addEventListener("click", () => { if (firstHit) goTo(firstHit); });
+  document.querySelectorAll(".chips span").forEach((c) => { c.tabIndex = 0; c.setAttribute("role", "button"); });
+})();
+
+// ===== Keyboard shortcuts =====
+window.addEventListener("keydown", (e) => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.target.closest && e.target.closest("input, textarea, [role=button]")) return;
+  if (e.key === "?") showToast("⌨ e moves · p puzzle · t flip board · ⌘K menu");
+  else if (e.key === "t") { if (themeBtn) themeBtn.click(); }
+  else if (e.key === "p") goTo("#puzzle");
+  else if (e.key === "e") goTo("#experience");
+});
