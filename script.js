@@ -484,6 +484,17 @@ window.addEventListener("keydown", (e) => {
   if (kIdx === KONAMI.length) { kIdx = 0; brilliancy(); }
 });
 
+// ===== Chess set: hand-drawn outline pieces for the playable boards =====
+const PIECE_ART = {
+  p: '<circle class="f" cx="50" cy="31" r="13"/><path class="f" d="M50 43 C40 43 35 49 40 53 C46 58 41 73 27 79 L27 89 L73 89 L73 79 C59 73 54 58 60 53 C65 49 60 43 50 43 Z"/><path class="d" d="M33 79 H67"/>',
+  r: '<path class="f" d="M24 16 H36 V24 H44 V16 H56 V24 H64 V16 H76 V37 H24 Z"/><path class="f" d="M30 37 H70 V75 H30 Z"/><path class="f" d="M21 75 H79 V89 H21 Z"/><path class="d" d="M24 30 H76 M30 50 H70 M30 62 H70 M43 37 V50 M57 37 V50 M37 50 V62 M50 50 V62 M63 50 V62 M43 62 V75 M57 62 V75 M21 82 H79"/>',
+  n: '<path class="f" d="M27 89 L75 89 L75 80 C76 58 71 39 59 25 L61 11 L50 18 C37 16 26 26 20 40 L13 54 C12 59 16 63 21 61 L27 66 C32 66 35 62 39 58 C45 56 49 52 51 46 C51 60 41 68 31 79 Z"/><path class="d" d="M30 36 L38 33 M17 55 L20 53 M59 25 C66 36 69 50 69 64 M31 80 H75"/>',
+  b: '<circle class="f" cx="50" cy="12" r="5"/><path class="f" d="M50 16 C63 26 67 40 59 52 L41 52 C33 40 37 26 50 16 Z"/><path class="f" d="M37 52 H63 V59 H37 Z"/><path class="f" d="M43 59 C43 68 34 73 25 79 L25 89 L75 89 L75 79 C66 73 57 68 57 59 Z"/><path class="d" d="M50 27 V44 M44 33 H56 M31 80 H69"/>',
+  q: '<path class="f" d="M27 70 L16 35 L30 51 L33 25 L42 49 L50 21 L58 49 L67 25 L70 51 L84 35 L73 70 Z"/><circle class="f" cx="16" cy="32" r="5"/><circle class="f" cx="33" cy="22" r="5"/><circle class="f" cx="50" cy="18" r="5"/><circle class="f" cx="67" cy="22" r="5"/><circle class="f" cx="84" cy="32" r="5"/><path class="f" d="M24 70 H76 V79 H24 Z"/><path class="f" d="M21 79 H79 V89 H21 Z"/><path class="d" d="M44 74.5 L50 71.5 L56 74.5 L50 77.5 Z"/>',
+  k: '<path class="f" d="M46 5 H54 V11 H60 V19 H54 V28 H46 V19 H40 V11 H46 Z"/><path class="f" d="M50 28 C40 21 21 27 21 44 C21 56 30 63 30 70 L70 70 C70 63 79 56 79 44 C79 27 60 21 50 28 Z"/><path class="f" d="M24 70 H76 V79 H24 Z"/><path class="f" d="M21 79 H79 V89 H21 Z"/><path class="d" d="M50 30 V68 M44 74.5 L50 71.5 L56 74.5 L50 77.5 Z M38 40 C34 46 36 56 41 62 M62 40 C66 46 64 56 59 62"/>',
+};
+const pieceArt = (type, color, cls = "") => `<svg class="cp cp-${color} ${cls}" viewBox="0 0 100 100" aria-hidden="true">${PIECE_ART[type]}</svg>`;
+
 // ===== Build project scenes + lab pawns =====
 (function buildProjects() {
   const scenesEl = document.getElementById("scenes");
@@ -752,7 +763,7 @@ if (finePointer) {
   const els = pieces.map((p) => {
     const el = document.createElement("div");
     el.className = "gp " + p.color;
-    el.textContent = GLYPH[p.type];
+    el.innerHTML = pieceArt(p.type.toLowerCase(), p.color);
     board.appendChild(el);
     return el;
   });
@@ -864,7 +875,7 @@ if (finePointer) {
     const targets = sel ? p.moves[sel] || [] : [];
     for (const sq in squares) {
       const b = squares[sq], pc = pos[sq];
-      b.innerHTML = pc ? `<span class="pz-piece ${pc.c}">${GLYPH[pc.t]}</span>` : "";
+      b.innerHTML = pc ? pieceArt(pc.t, pc.c, "pz-piece") : "";
       b.setAttribute("aria-label", sq + (pc ? `, ${pc.c === "w" ? "white" : "black"} ${NAME[pc.t]}` : ""));
       b.classList.toggle("sel", sq === sel);
       b.classList.toggle("target", targets.includes(sq));

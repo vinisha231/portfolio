@@ -3,6 +3,9 @@
   --bg: #fcebf2;
   --bg-deep: #f6dde9;
   --card: #fff8fb;
+  --ice-light: #8c9cb4;
+  --ice-dark: #5c6e89;
+  --ice-edge: #44536b;
   --board-light: #fbe4ef;
   --board-dark: #b99ad8;
   --ink: #2f1d38;
@@ -589,11 +592,11 @@ body.brilliant .nav-inner .logo-piece { animation: spin 0.6s linear infinite; di
 .game-stage { flex: 0 0 auto; display: grid; place-items: center; }
 .game-board {
   position: relative; width: min(46vh, 440px); aspect-ratio: 1;
-  border-radius: 10px; overflow: hidden; border: 4px solid var(--board-dark);
-  box-shadow: var(--shadow-lift); background: var(--board-light);
+  border-radius: 10px; overflow: hidden; border: 4px solid var(--ice-edge);
+  box-shadow: var(--shadow-lift); background: var(--ice-light);
 }
 .game-sq { position: absolute; width: 12.5%; height: 12.5%; }
-.game-sq.dark { background: var(--board-dark); }
+.game-sq.dark { background: var(--ice-dark); }
 .gp {
   position: absolute; width: 12.5%; height: 12.5%; top: 0; left: 0;
   display: grid; place-items: center; will-change: transform;
@@ -634,14 +637,14 @@ body.brilliant .nav-inner .logo-piece { animation: spin 0.6s linear infinite; di
 .puzzle-count { font-family: var(--font-mono); font-size: 0.76rem; font-weight: 400; color: var(--ink-dim); }
 .puzzle-board {
   display: grid; grid-template-columns: repeat(8, 1fr); aspect-ratio: 1; width: 100%;
-  border: 4px solid var(--board-dark); border-radius: 10px; overflow: hidden;
-  background: var(--board-light); container-type: inline-size;
+  border: 4px solid var(--ice-edge); border-radius: 10px; overflow: hidden;
+  background: var(--ice-light); container-type: inline-size; position: relative;
 }
 .pz-sq {
   position: relative; border: 0; padding: 0; margin: 0; background: transparent; aspect-ratio: 1;
   display: grid; place-items: center; font: inherit; color: inherit; cursor: default;
 }
-.pz-sq.dark { background: var(--board-dark); }
+.pz-sq.dark { background: var(--ice-dark); }
 .pz-sq.movable { cursor: pointer; }
 .pz-sq:focus-visible { outline: 3px solid var(--pink); outline-offset: -3px; z-index: 1; }
 .pz-sq.last { box-shadow: inset 0 0 0 100px rgba(239, 143, 187, 0.34); }
@@ -713,3 +716,31 @@ body.skill-on #experience .card.skill-hit, body.skill-on .lab-pawn.skill-hit { b
   .hero-stats { gap: 10px; }
   .hero-stats .stat { padding: 14px 18px; }
 }
+
+/* ============ Frosted board + outline chess set ============ */
+.cp { display: block; overflow: visible; }
+.cp .f { stroke-width: 3.2; stroke-linejoin: round; stroke-linecap: round; }
+.cp .d { fill: none; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.cp-w .f { fill: #f6f7f9; stroke: #121316; }
+.cp-w .d { stroke: #121316; }
+.cp-b .f { fill: #2c2e33; stroke: #050506; }
+.cp-b .d { stroke: #8e949d; }
+.cp { filter: drop-shadow(0 2px 1.5px rgba(10, 20, 40, 0.35)); }
+.pz-piece.cp { width: 100%; height: 100%; }
+.gp .cp { width: 100%; height: 100%; }
+/* inset bevel on every square, like panes of ice */
+.pz-sq, .game-sq { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07), inset 0 0 14px rgba(255, 255, 255, 0.05); }
+/* snow resting on the board */
+.puzzle-board::after, .game-board::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 5;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.95) 0 1.3px, transparent 2px),
+    radial-gradient(circle, rgba(255,255,255,0.8) 0 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(255,255,255,0.9) 0 1.8px, transparent 2.6px),
+    radial-gradient(circle, rgba(255,255,255,0.65) 0 1px, transparent 1.5px);
+  background-size: 97px 113px, 61px 79px, 151px 139px, 43px 53px;
+  background-position: 12px 20px, 40px 6px, 70px 90px, 5px 31px;
+  animation: snowtwinkle 5s ease-in-out infinite alternate;
+}
+@keyframes snowtwinkle { from { opacity: 0.55; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .puzzle-board::after, .game-board::after { animation: none; } }
