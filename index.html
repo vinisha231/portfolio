@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=9" />
+  <link rel="stylesheet" href="styles.css?v=8" />
   <script>try { if (localStorage.getItem("ctheme") === "midnight") document.documentElement.classList.add("midnight"); } catch (e) {}</script>
 </head>
 <body>
@@ -40,7 +40,6 @@
         <li><a href="#chess">Chess</a></li>
         <li><a href="#projects">Board</a></li>
         <li><a href="#about">About</a></li>
-        <li><a href="#hobbies">Life</a></li>
         <li><a href="#skills">Arsenal</a></li>
         <li><a href="#game">Game</a></li>
       </ul>
@@ -66,7 +65,7 @@
         Software developer at Eat Together Seattle, Computational Linguistics (NLP, ML &amp; AI) grad student at the
         University of Washington, ML researcher, and award-winning builder. I think a few moves
         ahead, shipping AI agents and full-stack products that are fast, accessible, and actually
-        useful. Off the clock, you'll find me playing chess, reading, hiking, or watching the sky.
+        useful. Off the clock, you'll find me playing chess.
       </p>
       <div class="hero-actions">
         <a href="#experience" class="btn btn-primary magnetic">See my moves ↓</a>
@@ -255,10 +254,6 @@
             Chess taught me to plan several moves ahead and to stay calm when the position gets
             sharp, the same instincts I bring to shipping software that meets people where they are.
           </p>
-          <p>
-            Away from the keyboard I reread Harry Potter, hike (the view from Rattlesnake Ledge is
-            my favorite), take road trips up the coast, and <a href="#hobbies">watch the sky</a>.
-          </p>
         </div>
         <div class="about-card" data-reveal>
           <div class="terminal" id="terminal">
@@ -280,71 +275,10 @@
         </div>
       </div>
     </section>
-    <!-- ===== Off the board (hobbies) ===== -->
-    <section id="hobbies" class="section">
-      <span class="giant">life</span>
-      <h2 class="section-title" data-reveal><span class="section-num">05</span> <span class="st-text">Off the board</span></h2>
-      <p class="section-lead" data-reveal>
-        When I'm not coding or playing chess I'm usually looking up, reading, or driving somewhere with a trail at the end of it.
-      </p>
-
-      <div class="sky-card spot" data-reveal>
-        <div class="sky-head">
-          <div>
-            <p class="hobby-eyebrow">☾ sky watching · live over Seattle</p>
-            <h3 class="hobby-title" id="sky-title">The sky right now</h3>
-          </div>
-          <p class="sky-clock" id="sky-clock"></p>
-        </div>
-        <div class="sky-stage">
-          <canvas id="sky-canvas" aria-label="Live view of the sky over Seattle with the sun, moon and constellations at their real positions"></canvas>
-          <p class="sky-tip" id="sky-tip">drag to look around · hover a star · click the sky</p>
-        </div>
-        <div class="sky-controls">
-          <label for="sky-time">time travel</label>
-          <input type="range" id="sky-time" min="-720" max="720" step="10" value="0" />
-          <button type="button" class="btn btn-sm btn-outline" id="sky-now">Now</button>
-        </div>
-        <div class="sky-facts">
-          <div><span class="sf-label">Sun</span><span class="sf-val" id="sky-sun">—</span></div>
-          <div><span class="sf-label">Sunrise</span><span class="sf-val" id="sky-rise">—</span></div>
-          <div><span class="sf-label">Sunset</span><span class="sf-val" id="sky-set">—</span></div>
-          <div><span class="sf-label">Moon</span><span class="sf-val" id="sky-moon">—</span></div>
-          <div><span class="sf-label">Look for</span><span class="sf-val" id="sky-look">—</span></div>
-        </div>
-      </div>
-
-      <div class="hobby-grid">
-        <div class="card hobby-card spot" data-reveal>
-          <p class="hobby-eyebrow">⚡ reading · the shelf I keep going back to</p>
-          <h3 class="hobby-title">Harry Potter, all seven</h3>
-          <div class="shelf" id="shelf" role="list"></div>
-          <div class="shelf-plank" aria-hidden="true"></div>
-          <div class="book-detail" id="book-detail" aria-live="polite">
-            <p class="book-name">Pick a book off the shelf.</p>
-            <p class="book-note">Each one has a note. One of them involves chess, obviously.</p>
-          </div>
-          <div class="spells">
-            <button type="button" class="btn btn-sm btn-outline" id="spell-lumos">Lumos ✦</button>
-            <button type="button" class="btn btn-sm btn-outline" id="spell-nox">Nox ☾</button>
-            <span class="spell-hint">or type them in the terminal</span>
-          </div>
-        </div>
-
-        <div class="card hobby-card spot" data-reveal>
-          <p class="hobby-eyebrow">▲ hiking &amp; road trips · from Seattle</p>
-          <h3 class="hobby-title">Trails and long drives</h3>
-          <div class="trip-wrap">
-            <svg class="trip-map" id="trip-map" viewBox="0 0 300 340" role="img" aria-label="Map of trips from Seattle to Bellingham, Anacortes and Rattlesnake Ledge"></svg>
-            <div class="trip-info" id="trip-info" aria-live="polite"></div>
-          </div>
-        </div>
-      </div>
-    </section>
     <!-- ===== Skills (arsenal) ===== -->
     <section id="skills" class="section">
       <span class="giant">arsenal</span>
-      <h2 class="section-title" data-reveal><span class="section-num">06</span> <span class="st-text">The arsenal</span></h2>
+      <h2 class="section-title" data-reveal><span class="section-num">05</span> <span class="st-text">The arsenal</span></h2>
       <p class="section-lead" data-reveal>Tap any skill to light up the roles and projects where I used it.</p>
       <div class="skills-grid">
         <div class="skill-group spot" data-reveal>
@@ -377,7 +311,7 @@
     <!-- ===== Education ===== -->
     <section id="education" class="section">
       <span class="giant">study</span>
-      <h2 class="section-title" data-reveal><span class="section-num">07</span> <span class="st-text">Education</span></h2>
+      <h2 class="section-title" data-reveal><span class="section-num">06</span> <span class="st-text">Education</span></h2>
       <div class="edu-grid">
         <div class="card edu-card spot" data-reveal>
           <p class="edu-when">Jul 2026 to Jun 2028</p>
@@ -399,7 +333,7 @@
       <span class="giant">mate</span>
       <h2 class="contact-title" data-reveal>Your move.<br /><em class="gradient-text">Let's play.</em></h2>
       <p class="contact-blurb" data-reveal>
-        ML for healthcare, serverless architecture, NLP, a good chess game, a trail recommendation, or that project you've
+        ML for healthcare, serverless architecture, NLP, a good chess game, or that project you've
         been meaning to build. My inbox is open.
       </p>
       <a href="mailto:viba2022@gmail.com" class="btn btn-primary btn-lg magnetic" data-reveal>Say hello ♟</a>
@@ -469,6 +403,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js" defer></script>
-  <script src="script.js?v=9" defer></script>
+  <script src="script.js?v=8" defer></script>
 </body>
 </html>

@@ -10,8 +10,6 @@ My personal portfolio, built with vanilla HTML, CSS, and JavaScript. No framewor
 - ♚ **Live Chess.com stats** rapid, blitz, and bullet ratings with peak, plus tactics, league, and years playing, pulled live from the public Chess.com API for [@Vinu2023](https://www.chess.com/member/Vinu2023).
 - ♛ **Playable puzzles** four mate-in-one puzzles in the hero: tap a piece, see its legal moves, find the checkmate. Progress is remembered.
 - 🎯 **Tap a skill** any skill chip lights up the roles and projects that used it, and the experience move list jumps between roles.
-- ☾ **Live sky over Seattle** a canvas sky with the real sun, moon phase and constellations for the current time, computed in the browser. Drag to look around, scrub time, hover stars.
-- ⚡ **Off the board** a Harry Potter bookshelf (with Lumos/Nox theme spells) and a trips map with a Rattlesnake Ledge climb you can scrub.
 - ⛶ **Flip the board** blush pink (light) and midnight plum (dark) board themes, remembered between visits.
 - 🎛️ **⌘K command palette** for keyboard navigation (doubles as the mobile menu).
 - ⌨️ **Playable terminal** try `help`, `rating`, `fen`, `stats` (live), or `sudo hire-me`.
